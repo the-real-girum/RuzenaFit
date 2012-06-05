@@ -14,3 +14,22 @@ gen/
 
 # Local configuration file (sdk path, etc)
 local.properties
+
+
+# ---------  Stuff to ignore from Rails ----- #
+*.rbc
+*.sassc
+.sass-cache
+capybara-*.html
+.rspec
+/.bundle
+/vendor/bundle
+/log/*
+/tmp/*
+/db/*.sqlite3
+/public/system/*
+/coverage/
+/spec/tmp/*
+**.orig
+rerun.txt
+pickle-email-*.html
