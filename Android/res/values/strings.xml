@@ -3,5 +3,9 @@
 
     <string name="hello">Hello World, HomeActivity!</string>
     <string name="app_name">RuzenaFit Android Client</string>
+    <string name="tracking">Tracking</string>
+    <string name="ranking">Ranking</string>
+    <string name="preferences">Preferences</string>
+    <string name="main_menu">Main Menu</string>
 
 </resources>
