@@ -7,5 +7,13 @@
     <string name="ranking">Ranking</string>
     <string name="preferences">Preferences</string>
     <string name="main_menu">Main Menu</string>
+    <string name="low">Low</string>
+    <string name="mid">Medium</string>
+    <string name="high">High</string>
+    <string name="pref_text">Click a button to change the text.</string>
+    <string name="pref_low">Low Preferences</string>
+    <string name="pref_mid">Medium Preferences</string>
+    <string name="pref_high">High Preferences</string>
+    
 
 </resources>
