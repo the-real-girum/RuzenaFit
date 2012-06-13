@@ -1,6 +1,7 @@
 package edu.berkeley.eecs.ruzenafit;
 
 import edu.berkeley.eecs.ruzenafit.R;
+import edu.berkeley.eecs.ruzenafit.oldstuff.Workout;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -32,7 +33,7 @@ public class Main extends Activity {
 			public void onClick(View v) {
 				// Starting a new Intent
 				Intent nextScreen = new Intent(getApplicationContext(),
-						Tracking.class);
+						Workout.class);
 
 				// Sending data to another Activity
 
