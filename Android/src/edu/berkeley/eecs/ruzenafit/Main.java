@@ -1,7 +1,5 @@
 package edu.berkeley.eecs.ruzenafit;
 
-import edu.berkeley.eecs.ruzenafit.R;
-import edu.berkeley.eecs.ruzenafit.oldstuff.Workout;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,6 +7,8 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import edu.berkeley.eecs.ruzenafit.oldstuff.ViewHistory;
+import edu.berkeley.eecs.ruzenafit.oldstuff.Workout;
 
 public class Main extends Activity {
 
@@ -49,7 +49,7 @@ public class Main extends Activity {
 			public void onClick(View v) {
 				// Starting a new Intent
 				Intent nextScreen = new Intent(getApplicationContext(),
-						Ranking.class);
+						ViewHistory.class);
 
 				// Sending data to another Activity
 
