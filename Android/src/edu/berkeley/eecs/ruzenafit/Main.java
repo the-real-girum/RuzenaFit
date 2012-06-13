@@ -1,5 +1,6 @@
 package edu.berkeley.eecs.ruzenafit;
 
+import edu.berkeley.eecs.ruzenafit.R;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -21,7 +22,6 @@ public class Main extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        
         
         buttonTracking = (Button)findViewById(R.id.button1);
         buttonRanking = (Button)findViewById(R.id.button5);

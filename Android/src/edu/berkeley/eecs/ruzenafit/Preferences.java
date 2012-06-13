@@ -1,5 +1,6 @@
 package edu.berkeley.eecs.ruzenafit;
 
+import edu.berkeley.eecs.ruzenafit.R;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;

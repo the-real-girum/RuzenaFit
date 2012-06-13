@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content">
+	<TextView
+		android:id="@+id/data_header1"
+		android:layout_marginLeft="5dip"
+		android:layout_width="wrap_content"
+		android:layout_height="20dip"
+		android:textSize="13dip"
+		android:text="Date"
+		android:textColor="#00AAFF" />
+	<TextView
+		android:id="@+id/data_header2"
+		android:layout_width="wrap_content"
+		android:layout_height="20dip"
+		android:textSize="13dip"
+		android:layout_toRightOf="@id/data_header1"
+        android:layout_marginLeft="24.5dip"
+		android:text="Duration"
+		android:textColor="#00AAFF" />
+	<TextView
+        android:id="@+id/data_header3"
+        android:layout_width="wrap_content"
+        android:layout_height="20dip"
+        android:textSize="13dip"
+        android:layout_toRightOf="@id/data_header2"
+        android:layout_marginLeft="22dip"
+        android:text="kCal"
+        android:textColor="#00AAFF" />
+    <TextView
+        android:id="@+id/data_header4"
+        android:layout_width="wrap_content"
+        android:layout_height="20dip"
+        android:textSize="13dip"
+        android:layout_toRightOf="@id/data_header3"
+        android:layout_marginLeft="21.5dip"
+        android:text="Avg Speed"
+        android:textColor="#00AAFF" />
+    <TextView
+        android:id="@+id/data_header5"
+        android:layout_width="wrap_content"
+        android:layout_height="20dip"
+        android:textSize="13dip"
+        android:layout_toRightOf="@id/data_header4"
+        android:layout_marginLeft="17.5dip"
+        android:text="Distance"
+        android:textColor="#00AAFF" />
+
+	<ListView
+		android:id="@id/android:list"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_below="@id/data_header1" />
+	<TextView
+		android:id="@id/android:empty"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_below="@id/data_header1"
+		android:text="No workouts saved" />
+</RelativeLayout>
+
+<!-- 
+    <TextView
+        android:id="@+id/data_header"
+        android:layout_width ="wrap_content"
+        android:layout_height="20dip"
+        android:textSize="13dip"
+        android:text="  Date       Duration       kCal      Avg Speed     Distance"/>
+-->
