@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+	android:id="@+id/personalLayout"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:scrollbars="vertical"
+	xmlns:android="http://schemas.android.com/apk/res/android">
+	<RelativeLayout
+		android:id="@+id/innerPersonal2Layout4"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_alignParentTop="true">
+		<TextView
+			android:id="@+id/calfit_title"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="CalFit"
+			android:textSize="90sp"
+			android:layout_centerHorizontal="true"
+			android:layout_marginTop="70dip"
+			android:textColor="#2277ff"  />
+		<Button
+			android:id="@+id/personal_workout"
+			android:layout_width="180dip"
+			android:layout_height="wrap_content"
+			android:textSize="20sp"
+			android:text="Personal Workout"
+            android:layout_below="@+id/calfit_title"
+			android:layout_centerHorizontal="true"
+            android:layout_marginTop="70dip" />
+		<Button
+			android:id="@+id/competitive_workout"
+			android:layout_width="180dip"
+			android:layout_height="wrap_content"
+			android:textSize="20sp"
+			android:text="Competitive Workout"
+			android:layout_below="@+id/personal_workout"
+			android:layout_centerHorizontal="true"
+			android:layout_marginTop="10dip" />
+		<Button
+			android:id="@+id/about_box"
+			android:layout_width="180dip"
+			android:layout_height="wrap_content"
+			android:textSize="20sp"
+			android:text="About"
+            android:layout_below="@+id/competitive_workout"
+			android:layout_centerHorizontal="true"
+			android:layout_marginTop="10dip" />
+			
+			
+	</RelativeLayout>
+</RelativeLayout>

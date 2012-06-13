@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string-array
+		name="charts">
+		<item>Speed vs. Time</item>
+        <item>Calories vs. Time</item>
+        <item>Cumul. Calories vs. Time</item>
+		<item>Distance vs. Time</item>
+		<item>Altitude vs. Time</item>
+		<item>Pace vs. Time</item>
+		<item>Speed vs. Distance</item>
+		<item>Calories vs. Distance</item>
+		<item>Pace vs. Distance</item>
+		<item>Altitude vs. Distance</item>
+	</string-array>
+</resources>
