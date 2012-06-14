@@ -7,7 +7,7 @@
  * @author Irving Lin, Curtis Wang, Edmund Seto
  */
 
-package edu.berkeley.eecs.calfit;
+package edu.berkeley.eecs.ruzenafit;
 
 import android.app.Activity;
 import android.app.ProgressDialog;

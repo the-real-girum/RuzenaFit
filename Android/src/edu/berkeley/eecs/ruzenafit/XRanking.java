@@ -1,4 +1,4 @@
-package edu.berkeley.eecs.calfit;
+package edu.berkeley.eecs.ruzenafit;
 
 import android.app.Activity;
 import android.os.Bundle;

@@ -1,4 +1,4 @@
-package edu.berkeley.eecs.calfit;
+package edu.berkeley.eecs.ruzenafit;
 
 import java.util.Date;
 import java.util.List;

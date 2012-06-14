@@ -1,4 +1,4 @@
-package edu.berkeley.eecs.calfit;
+package edu.berkeley.eecs.ruzenafit;
 
 /*
  * Integer Square Root function
