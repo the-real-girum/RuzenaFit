@@ -36,7 +36,7 @@ public class CalFit extends Activity {
 		// if somehow a new CalFit application is opened before current one is
 		// closed (shouldn't, but does happen), kill it and open old one.
         if (!WorkoutHelper.workoutStarted && !WorkoutHelper.workoutOpened) {
-	        setContentView(R.layout.main);
+	        setContentView(R.layout.our_main);
 	        myContext = this;
 	        
 	        // TODO: be able to login/change users
@@ -56,37 +56,28 @@ public class CalFit extends Activity {
 				// TODO: tell user save to database fail.
 			}
 	        
-			// load personal page with workout and history tabs
-	        Button personalWorkout = (Button) findViewById(R.id.personal_workout);
-	        personalWorkout.setOnClickListener(new Button.OnClickListener() {
+			// load tracking page
+	        Button tracking = (Button) findViewById(R.id.button1);
+	        tracking.setOnClickListener(new Button.OnClickListener() {
 				public void onClick(View v) {
 					startActivity(new Intent(myContext, PersonalPage.class));
 				}
 			});
 	        
-	        Button competitiveWorkout = (Button) findViewById(R.id.competitive_workout);
-	        competitiveWorkout.setVisibility(View.INVISIBLE);
-/*	        competitiveWorkout.setOnClickListener(new Button.OnClickListener() {
+	        // load ranking page
+	        Button ranking = (Button) findViewById(R.id.button5);
+	        ranking.setOnClickListener(new Button.OnClickListener() {
 				public void onClick(View v) {
-	    			Toast.makeText(getApplicationContext(), "Personal Workout allows you to SMS workout results to friends.  Additional competitive features of CalFit will be coming soon...", Toast.LENGTH_LONG).show();
+	    			startActivity(new Intent(myContext, XRanking.class));
 				}
 			});
-			*/
 	        
-	        Button aboutBox = (Button) findViewById(R.id.about_box);
-	        aboutBox.setOnClickListener(new Button.OnClickListener() {
+	        // load preferences page
+	        Button preferences = (Button) findViewById(R.id.button2);
+	        preferences.setOnClickListener(new Button.OnClickListener() {
 				public void onClick(View v) {
 	           		// start the About view
-	    			startActivity(new Intent(myContext, AboutActivity.class));
-					
-/*					// the intent will open our website.
-					// TODO: need to change this to something specific to CalFit and this particular version.
-					Intent i = new Intent();
-					i.setAction(Intent.ACTION_VIEW);
-					i.addCategory(Intent.CATEGORY_BROWSABLE);
-					i.setData(Uri.parse("http://bsn.citris.berkeley.edu/"));
-					startActivity(i);
-					*/ 
+	    			startActivity(new Intent(myContext, XPreferences.class));
 				}
 			});
         } else {
