@@ -7,74 +7,76 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import edu.berkeley.eecs.ruzenafit.oldstuff.ViewHistory;
-import edu.berkeley.eecs.ruzenafit.oldstuff.Workout;
 
 public class Main extends Activity {
-
+	
 	// Initializing variables
 	Button buttonRanking, buttonTracking, buttonPreferences;
 
+	
 	private static String t = "Something";
+	
+    /** Called when the activity is first created. */
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.main);
+        
+        
+        buttonTracking = (Button)findViewById(R.id.button1);
+        buttonRanking = (Button)findViewById(R.id.button5);
+        buttonPreferences = (Button)findViewById(R.id.button2);
 
-	/** Called when the activity is first created. */
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.main);
 
-		buttonTracking = (Button) findViewById(R.id.button1);
-		buttonRanking = (Button) findViewById(R.id.button5);
-		buttonPreferences = (Button) findViewById(R.id.button2);
-
-		// Listening to button event
-		buttonTracking.setOnClickListener(new OnClickListener() {
-
+        //Listening to button event
+        buttonTracking.setOnClickListener(new OnClickListener() {
+			
 			public void onClick(View v) {
-				// Starting a new Intent
-				Intent nextScreen = new Intent(getApplicationContext(),
-						Workout.class);
+                //Starting a new Intent
+                Intent nextScreen = new Intent(getApplicationContext(), Tracking.class);
+ 
+                //Sending data to another Activity
 
-				// Sending data to another Activity
-
-				startActivity(nextScreen);
-
+                startActivity(nextScreen);
+                
 				Log.d(t, "Blah  !!!!");
 			}
 		});
-
-		// Listening to button event
-		buttonRanking.setOnClickListener(new OnClickListener() {
-
+        
+        
+      //Listening to button event
+        buttonRanking.setOnClickListener(new OnClickListener() {
+			
 			public void onClick(View v) {
-				// Starting a new Intent
-				Intent nextScreen = new Intent(getApplicationContext(),
-						ViewHistory.class);
+                //Starting a new Intent
+                Intent nextScreen = new Intent(getApplicationContext(), Ranking.class);
+ 
+                //Sending data to another Activity
 
-				// Sending data to another Activity
-
-				startActivity(nextScreen);
-
+                startActivity(nextScreen);
+                
 				Log.d(t, "Blah Blah  !!!!");
 			}
 		});
+        
 
-		// Listening to button event
-		buttonPreferences.setOnClickListener(new OnClickListener() {
-
+        //Listening to button event
+        buttonPreferences.setOnClickListener(new OnClickListener() {
+			
 			public void onClick(View v) {
-				// Starting a new Intent
-				Intent nextScreen = new Intent(getApplicationContext(),
-						Preferences.class);
+                //Starting a new Intent
+                Intent nextScreen = new Intent(getApplicationContext(), Preferences.class);
+ 
+                //Sending data to another Activity
 
-				// Sending data to another Activity
-
-				startActivity(nextScreen);
-
+                startActivity(nextScreen);
+                
 				Log.d(t, "Blah Blah Blah !!!!");
 			}
 		});
-
-	}
-
+        
+        
+    }
+    
 }
+
