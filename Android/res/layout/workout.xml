@@ -271,7 +271,7 @@
 			android:layout_height="fill_parent"
 			android:enabled="true"
 			android:clickable="true"
-			android:apiKey="0dhSzsycBGkjiFdnxz40AtjPR4ZHCvn3LTo7YZw" />
+			android:apiKey="0WY8EhMPzBkf_BtcxAMaWhdb-C2k_h2ymTI5BHA" />
 		<Button
 			android:id="@+id/toggle_gps"
 			android:layout_width="wrap_content"
