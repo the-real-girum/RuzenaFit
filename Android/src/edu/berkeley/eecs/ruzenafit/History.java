@@ -180,6 +180,8 @@ public class History extends ListActivity {
 	 */
 	private void retrieveDataFromGAE() {
 		Log.d(TAG, "(retrieveDataFromGAE)");
+		
+		
 	}
 
 	@Override
