@@ -18,5 +18,7 @@
     <string name="pref_low">Low Preferences</string>
     <string name="pref_mid">Medium Preferences</string>
     <string name="pref_high">High Preferences</string>
+    <string name="submit_data">Submit Data</string>
+    <string name="retrieve_data">Retrieve Data</string>
 
 </resources>

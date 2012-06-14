@@ -10,6 +10,7 @@
 package edu.berkeley.eecs.calfit;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.app.TabActivity;
 import android.content.Context;
 import android.content.Intent;
@@ -26,6 +27,7 @@ import android.widget.TabHost;
 public class CalFit extends Activity {
 	public static Context myContext;
 	public static final String TAG = "CalFit Activity";
+	private ProgressDialog progressDialog;
 	
     /** Called when the activity is first created. */
     @Override
@@ -36,7 +38,7 @@ public class CalFit extends Activity {
 		// if somehow a new CalFit application is opened before current one is
 		// closed (shouldn't, but does happen), kill it and open old one.
         if (!WorkoutHelper.workoutStarted && !WorkoutHelper.workoutOpened) {
-	        setContentView(R.layout.our_main);
+	        setContentView(R.layout.main);
 	        myContext = this;
 	        
 	        // TODO: be able to login/change users
@@ -60,7 +62,10 @@ public class CalFit extends Activity {
 	        Button tracking = (Button) findViewById(R.id.button1);
 	        tracking.setOnClickListener(new Button.OnClickListener() {
 				public void onClick(View v) {
+//					Log.d(TAG, "Before startActivity()");
+					progressDialog = ProgressDialog.show(CalFit.this, "", "Loading... please wait");
 					startActivity(new Intent(myContext, PersonalPage.class));
+//					Log.d(TAG, "After startActivity()");
 				}
 			});
 	        
@@ -88,6 +93,11 @@ public class CalFit extends Activity {
     @Override
     public void onResume() {
     	super.onResume();
+    	
+    	if (progressDialog != null) {
+    		progressDialog.hide();
+    	}
+    	
     	if (WorkoutHelper.workoutStarted) {
     		WorkoutHelper.disableNotification();
     	}
@@ -121,7 +131,7 @@ public class CalFit extends Activity {
 		    tabHost.getCurrentView().setId(R.layout.personal);
 		    Log.d(TAG, "current view id: " + tabHost.getCurrentView().getId());
     	}
-    	
+
     	private OnClickListener onClickListener = new OnClickListener() {
     		public void onClick(final View v) {
     			if (tabHost.getCurrentTab() == 0) {
