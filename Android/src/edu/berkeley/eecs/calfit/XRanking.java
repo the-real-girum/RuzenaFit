@@ -1,11 +1,11 @@
-package edu.berkeley.eecs.ruzenafit;
+package edu.berkeley.eecs.calfit;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 
-public class Ranking extends Activity {
+public class XRanking extends Activity {
 	// Initializing variables
 	Button buttonRanking, buttonTracking, buttonPreferences;
 

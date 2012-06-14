@@ -1,4 +1,4 @@
-package edu.berkeley.eecs.ruzenafit;
+package edu.berkeley.eecs.calfit;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -9,7 +9,7 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
-public class Preferences extends Activity {
+public class XPreferences extends Activity {
 	// Initializing variables
 	RadioButton rbLow, rbMedium, rbHigh;
 	TextView textOut;

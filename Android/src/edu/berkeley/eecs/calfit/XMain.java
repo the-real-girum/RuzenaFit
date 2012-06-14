@@ -1,4 +1,4 @@
-package edu.berkeley.eecs.ruzenafit;
+package edu.berkeley.eecs.calfit;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
-public class Main extends Activity {
+public class XMain extends Activity {
 	
 	// Initializing variables
 	Button buttonRanking, buttonTracking, buttonPreferences;
@@ -20,7 +20,7 @@ public class Main extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
+        setContentView(R.layout.our_main);
         
         
         buttonTracking = (Button)findViewById(R.id.button1);
@@ -33,7 +33,7 @@ public class Main extends Activity {
 			
 			public void onClick(View v) {
                 //Starting a new Intent
-                Intent nextScreen = new Intent(getApplicationContext(), Tracking.class);
+                Intent nextScreen = new Intent(getApplicationContext(), XTracking.class);
  
                 //Sending data to another Activity
 
@@ -49,7 +49,7 @@ public class Main extends Activity {
 			
 			public void onClick(View v) {
                 //Starting a new Intent
-                Intent nextScreen = new Intent(getApplicationContext(), Ranking.class);
+                Intent nextScreen = new Intent(getApplicationContext(), XRanking.class);
  
                 //Sending data to another Activity
 
@@ -65,7 +65,7 @@ public class Main extends Activity {
 			
 			public void onClick(View v) {
                 //Starting a new Intent
-                Intent nextScreen = new Intent(getApplicationContext(), Preferences.class);
+                Intent nextScreen = new Intent(getApplicationContext(), XPreferences.class);
  
                 //Sending data to another Activity
 
