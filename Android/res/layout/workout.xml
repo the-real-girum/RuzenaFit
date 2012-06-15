@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE doc [
+	<!ENTITY key SYSTEM "key.file">
+]>
+
 <RelativeLayout
 	android:id="@+layout/workoutLayout"
 	android:layout_width="fill_parent"
@@ -271,7 +276,9 @@
 			android:layout_height="fill_parent"
 			android:enabled="true"
 			android:clickable="true"
-			android:apiKey="0WY8EhMPzBkf_BtcxAMaWhdb-C2k_h2ymTI5BHA" />
+			android:apiKey="0WY8EhMPzBkf_BtcxAMaWhdb-C2k_h2ymTI5BHA">
+		    
+		</com.google.android.maps.MapView>
 		<Button
 			android:id="@+id/toggle_gps"
 			android:layout_width="wrap_content"
