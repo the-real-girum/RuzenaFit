@@ -1,6 +1,7 @@
 package edu.berkeley.eecs.ruzenafit.access;
 
-import java.io.IOException;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -8,10 +9,10 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
-
-import edu.berkeley.eecs.ruzenafit.model.AnActualWorkoutModelX_X;
+import org.w3c.dom.Document;
 
 import android.util.Log;
+import edu.berkeley.eecs.ruzenafit.model.AnActualWorkoutModelX_X;
 
 
 /**
@@ -25,7 +26,8 @@ public class GAEConnection {
 	
 //	/** The username for the GAE account */
 //	private static final String username = "ibssagirum";
-	private static final String URL = "http://ruzenafit.appspot.com/rest/workouts";
+	private static final String URL = "http://ruzenafit.appspot.com/rest/hello";
+//	private static final String URL = "http://localhost:8888/rest/hello";
 	private static String deviceID = "";
 	
 	/**
@@ -44,17 +46,27 @@ public class GAEConnection {
 	 */
 	public static AnActualWorkoutModelX_X[] retrieveDataFromGAE(){
 		Log.d(TAG, "retrieveDataFromGAE");
+		AnActualWorkoutModelX_X[] allWorkouts = null;
 		
+		// Setup HTTP GET request.
 		HttpClient httpClient = new DefaultHttpClient();
 		HttpGet request = new HttpGet(URL);
 		request.addHeader("deviceID:", deviceID);
 		
-		AnActualWorkoutModelX_X[] allWorkouts = null;
-		
 		try {
+			// Make the HTTP GET request.
 			HttpResponse response = httpClient.execute(request);
 			HttpEntity entity = response.getEntity();
-			Log.d(TAG, EntityUtils.toString(entity));
+			
+			// Spit out the string literal of the XML
+//			Log.d(TAG, EntityUtils.toString(entity));
+			
+			// Parse the resulting XML
+			DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			Document result = documentBuilder.parse(entity.getContent());
+			
+			Log.d(TAG, "Hello world string: " + result.getDocumentElement().getFirstChild().getNodeValue());
+			
 		}
 		catch (Exception e) {
 			Log.e(TAG, "Exception occurred: " + e.getMessage());
@@ -63,6 +75,8 @@ public class GAEConnection {
 		
 		return allWorkouts;
 	}
+	
+	
 	
 	
 }
