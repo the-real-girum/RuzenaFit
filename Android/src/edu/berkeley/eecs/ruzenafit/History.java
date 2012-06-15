@@ -13,18 +13,28 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
+
+import edu.berkeley.eecs.ruzenafit.access.GAEConnection;
+import edu.berkeley.eecs.ruzenafit.access.SQLiteHelper;
+import edu.berkeley.eecs.ruzenafit.model.AnActualWorkoutModelX_X;
 
 import android.app.AlertDialog;
 import android.app.ListActivity;
@@ -56,20 +66,17 @@ public class History extends ListActivity {
 
 	public static long rowId;
 	
+	/** The up-to-date workout history, once per this activity's resumption */
+	private AnActualWorkoutModelX_X[] allWorkouts;
+	
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.history);
+		setContentView(R.layout.history);		
 		
-
 		// TRUST-REU takeover.
 		setupGAEConnectionButtons();
-		
-		
-		
-		
-		
 		
 		mDbHelper = new DBAdapter(this);
 		context = this;
@@ -157,29 +164,15 @@ public class History extends ListActivity {
 		
 		sendData.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				submitDataToGAE();				
+				GAEConnection.submitDataToGAE(allWorkouts);
 			}
 		});
 		
 		retrieveData.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				retrieveDataFromGAE();
+				allWorkouts = GAEConnection.retrieveDataFromGAE();
 			}
 		});	
-	}
-
-	/**
-	 * Submits data to Google App Engine (Girum's account)
-	 */
-	private void submitDataToGAE() {
-		Log.d(TAG, "submitDataToGAE()");
-	}
-	
-	/**
-	 * Retrieves data from Google App Engine (Girum's account)
-	 */
-	private void retrieveDataFromGAE() {
-		Log.d(TAG, "(retrieveDataFromGAE)");
 	}
 
 	@Override
@@ -188,14 +181,19 @@ public class History extends ListActivity {
 		try {
 			mDbHelper.open();
 			fillData();
+			
+			// TRUST-REU takeover.
+			this.allWorkouts = SQLiteHelper.saveCurrentDataInMemory(mDbHelper);
+			
 			mDbHelper.close();
 		} catch (Exception e) {
 			// TODO: tell user save to database fail.
 		}
 	}
+	
 
 	/**
-	 * 
+	 * This method appears to use the DBHelper to fill up the ListView with the pertinent data.
 	 */
 	private void fillData() {
 		// Get all of the workouts from the database 
