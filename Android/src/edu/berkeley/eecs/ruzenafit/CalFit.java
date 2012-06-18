@@ -85,6 +85,16 @@ public class CalFit extends Activity {
 	    			startActivity(new Intent(myContext, XPreferences.class));
 				}
 			});
+	        
+	        // load settings (fb login) page
+	        Button settings = (Button) findViewById(R.id.Button4);
+	        settings.setOnClickListener(new Button.OnClickListener() {
+				public void onClick(View v) {
+	           		// start the About view
+	    			startActivity(new Intent(myContext, settings.class));
+				}
+			});
+	        
         } else {
 	        this.finish();
         }
