@@ -164,13 +164,16 @@ public class History extends ListActivity {
 		
 		sendData.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				GAEConnection.submitDataToGAE(allWorkouts);
+				int successfulSubmissions = GAEConnection.submitDataToGAE(allWorkouts);
+				Toast.makeText(getApplicationContext(), "Submitted " + successfulSubmissions + 
+						" workouts to GAE", 5).show();
 			}
 		});
 		
 		retrieveData.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				allWorkouts = GAEConnection.retrieveDataFromGAE();
+				Toast.makeText(getApplicationContext(), "Got " + allWorkouts.length + " workouts from GAE", 5).show();
 			}
 		});	
 	}

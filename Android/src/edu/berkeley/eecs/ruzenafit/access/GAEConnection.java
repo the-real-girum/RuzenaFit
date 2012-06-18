@@ -21,6 +21,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import android.util.Log;
+import android.widget.Toast;
 import edu.berkeley.eecs.ruzenafit.model.AnActualWorkoutModelX_X;
 
 
@@ -43,24 +44,31 @@ public class GAEConnection {
 	 * Submits data to Google App Engine (Girum's account, as set by URL).
 	 * Returns false if there is a GAE connection error.
 	 */
-	public static boolean submitDataToGAE(AnActualWorkoutModelX_X[] allWorkouts) {
+	public static int submitDataToGAE(AnActualWorkoutModelX_X[] allWorkouts) {
 		Log.d(TAG, "submitDataToGAE: " + allWorkouts.toString());
 		
+		int successfulSubmissions = 0;
+		for (AnActualWorkoutModelX_X workout : allWorkouts) {
+			if (submitOneWorkout(workout)) {
+				successfulSubmissions++;
+			}
+		}
+		
+		return successfulSubmissions;
+	}
+	
+	private static boolean submitOneWorkout(AnActualWorkoutModelX_X workout) {
 		// Throw all of the fields of the workout into a list of nameValuePairs for
 		// the POST request to use.
 		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+		Log.d(TAG, "Workout: " + workout);
 		
-//		AnActualWorkoutModelX_X workout = allWorkouts[0];
-		
-		// FIXME: I HATE HACKSSSSS.  String concatenation of array index here
-		for (int i = 0; i < allWorkouts.length; i++) {
-			nameValuePairs.add(new BasicNameValuePair("date" + "["+i+"]", 			allWorkouts[i].getDate()));
-			nameValuePairs.add(new BasicNameValuePair("duration" + "["+i+"]", 		allWorkouts[i].getDuration()));
-			nameValuePairs.add(new BasicNameValuePair("averageSpeed" + "["+i+"]", 	allWorkouts[i].getAverageSpeed()));
-			nameValuePairs.add(new BasicNameValuePair("totalCalories" + "["+i+"]", 	allWorkouts[i].getTotalCalories()));
-			nameValuePairs.add(new BasicNameValuePair("totalDistance" + "["+i+"]", 	allWorkouts[i].getTotalDistance()));
-		}
-		
+		nameValuePairs.add(new BasicNameValuePair("user", 			"testUser1"));
+		nameValuePairs.add(new BasicNameValuePair("date", 			workout.getDate()));
+		nameValuePairs.add(new BasicNameValuePair("duration", 		workout.getDuration()));
+		nameValuePairs.add(new BasicNameValuePair("averageSpeed", 	workout.getAverageSpeed()));
+		nameValuePairs.add(new BasicNameValuePair("totalCalories", 	workout.getTotalCalories()));
+		nameValuePairs.add(new BasicNameValuePair("totalDistance", 	workout.getTotalDistance()));
 		
 		// Setup the POST Request
 		HttpClient httpClient = new DefaultHttpClient();
@@ -141,7 +149,7 @@ public class GAEConnection {
 		catch (Exception e) {
 			Log.e(TAG, "Exception occurred: " + e.getMessage());
 			e.printStackTrace();
-		} 
+		}
 		
 		return allWorkouts;
 	}

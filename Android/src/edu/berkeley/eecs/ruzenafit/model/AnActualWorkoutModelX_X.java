@@ -60,4 +60,14 @@ public class AnActualWorkoutModelX_X {
 	public void setTotalDistance(String totalDistance) {
 		this.totalDistance = totalDistance;
 	}
+
+	@Override
+	public String toString() {
+		return "AnActualWorkoutModelX_X [date=" + date + ", duration="
+				+ duration + ", totalCalories=" + totalCalories
+				+ ", averageSpeed=" + averageSpeed + ", totalDistance="
+				+ totalDistance + "]";
+	}
+	
+	
 }
