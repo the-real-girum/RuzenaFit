@@ -42,7 +42,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="30dip"
+        android:layout_marginTop="-30dip"
         android:text="Post to Wall"
         android:visibility="gone" />
     <!-- Facebook Logout Button -->
@@ -52,7 +52,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="30dip"
+        android:layout_marginTop="0dip"
         android:src="@drawable/btn_logout"
         android:text="Get Profile Data"
         android:visibility="gone" />
