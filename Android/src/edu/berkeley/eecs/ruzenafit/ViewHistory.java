@@ -140,14 +140,14 @@ public class ViewHistory extends MapActivity{
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	private void chartSetup() {
 		// TODO: need to make charts better integrated into CalFit summary. For
 		// example: if the chart can be overlayed with the route, and show at
 		// which points activity levels correspod to which parts of the route, etc.
 		
 		Spinner s = (Spinner) findViewById(R.id.chart_spinner);
-	    ArrayAdapter adapter = ArrayAdapter.createFromResource(this, R.array.charts, android.R.layout.simple_spinner_item);
+	    @SuppressWarnings("rawtypes")
+		ArrayAdapter adapter = ArrayAdapter.createFromResource(this, R.array.charts, android.R.layout.simple_spinner_item);
 	    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 	    s.setAdapter(adapter);
 	    
@@ -349,6 +349,7 @@ public class ViewHistory extends MapActivity{
 	 * @param geopointsList
 	 * @return
 	 */
+	@SuppressWarnings("unused")
 	@Deprecated
 	private ArrayList<GeoPoint> removeBadAndRepeating(ArrayList<GeoPoint> geopointsList) {
 		ArrayList<GeoPoint> newGPList = new ArrayList<GeoPoint>();

@@ -15,16 +15,12 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import android.content.SharedPreferences;
 import android.util.Log;
-import android.widget.Toast;
 import edu.berkeley.eecs.ruzenafit.model.AnActualWorkoutModelX_X;
 
 
@@ -37,6 +33,7 @@ import edu.berkeley.eecs.ruzenafit.model.AnActualWorkoutModelX_X;
 public class ExternalDB {
 	private static final String TAG = "ExternalDB";
 	
+	@SuppressWarnings("unused")
 	private static final String TEST_URL = "http://ruzenafit.appspot.com/rest/workout/test";
 	private static final String RETRIEVE_WORKOUTS_URL = "http://ruzenafit.appspot.com/rest/workout/getAllWorkouts"; 
 	private static final String SAVE_WORKOUTS_URL = "http://ruzenafit.appspot.com/rest/workout/saveWorkout";

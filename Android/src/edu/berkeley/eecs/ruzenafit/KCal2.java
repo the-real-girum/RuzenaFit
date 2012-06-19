@@ -46,23 +46,16 @@ public class KCal2 extends Service {
     private static long lasttime = 0; static long counter = 0;
 	private static double accum_minute_V = 0, accum_minute_H = 0;
 	private static double GRAVITY = 9.81;
+	@SuppressWarnings("unused")
 	private static int samplesperwindow, secondsprocessed;
 	private static final int WINDOWTIMEMILLISEC = 1000;	// 1 seconds
 	private static int manysamples = 128;  // should be plenty for 2 seconds (DELAY_UI on G1 was ~10 samples/sec)
 	private static double[][] data = new double[3][manysamples];
+	@SuppressWarnings("unused")
 	private static double[] twoprevious = new double[3];
-	private static double[] oneprevious = new double[3];
-	private static double interim_V = 0;
 	private static float mTotal_kCal = 0;
-	private static double localV;
-	private static double localH;
-    private static float mMostrecent_Sensor_X = 0;
-    private static float mMostrecent_Sensor_Y = 0;
-    private static float mMostrecent_Sensor_Z = 0;
-    private static float mMostrecent_kCal = 0;
-    private static int mMostrecent_Time = 0;
-    private final static int SENSOR_DELAY = SensorManager.SENSOR_DELAY_UI; 	// TODO: in production version consider using SensorManager.SENSOR_DELAY_FASTEST
-	private static String genformat = "####0.00";
+	private static float mMostrecent_kCal = 0;
+    private static String genformat = "####0.00";
 	private static DecimalFormat genfmt = new DecimalFormat( genformat, new DecimalFormatSymbols(Locale.US));
 	private static boolean contextSet = false;
 	public static PowerManager.WakeLock wl;
@@ -301,8 +294,6 @@ public class KCal2 extends Service {
 		counter++;
 		long seconds = counter * WINDOWTIMEMILLISEC/1000;
 		
-		interim_V = accum_minute_V/counter;
-		
 		if (seconds >= 1) {
 			// EEact(k) = a*H^p1 + b*V^p2
 			//
@@ -323,12 +314,8 @@ public class KCal2 extends Service {
 			}
 			Log.i(TAG, "*** EE result: " + genfmt.format(EE_minute));
 	
-			// Returns the current system time in milliseconds since January 1, 1970 00:00:00 UTC.
-			// this is the clock on the device as set by user/network.
-			long currenttime = System.currentTimeMillis();
-			mMostrecent_Time = (int) ((currenttime) / 1000);
-			localV = accum_minute_V;
-			localH = accum_minute_H;
+			System.currentTimeMillis();
+			
 
 /* commented out.. should be in workout.java, not here.			
 			// write to website server with POST request...

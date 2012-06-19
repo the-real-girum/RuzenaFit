@@ -1,8 +1,5 @@
 package edu.berkeley.eecs.ruzenafit.controller;
 
-import edu.berkeley.eecs.ruzenafit.R;
-import edu.berkeley.eecs.ruzenafit.R.id;
-import edu.berkeley.eecs.ruzenafit.R.layout;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,6 +8,7 @@ import android.view.View.OnClickListener;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.TextView;
+import edu.berkeley.eecs.ruzenafit.R;
 
 public class PreferencesActivity extends Activity {
 	// Initializing variables

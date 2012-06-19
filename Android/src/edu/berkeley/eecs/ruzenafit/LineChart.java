@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.graphics.Color;
 
 public class LineChart extends AbstractChart {
+	@SuppressWarnings("unused")
 	private static final String TAG = "LineChart";
 	
 	/**

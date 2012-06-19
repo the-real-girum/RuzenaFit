@@ -13,37 +13,18 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.ResponseHandler;
-import org.apache.http.client.UserTokenHandler;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
-
-import edu.berkeley.eecs.ruzenafit.CalFit;
-import edu.berkeley.eecs.ruzenafit.DBAdapter;
-import edu.berkeley.eecs.ruzenafit.R;
-import edu.berkeley.eecs.ruzenafit.Utils;
-import edu.berkeley.eecs.ruzenafit.ViewHistory;
-import edu.berkeley.eecs.ruzenafit.CalFit.PersonalPage;
-import edu.berkeley.eecs.ruzenafit.R.id;
-import edu.berkeley.eecs.ruzenafit.R.layout;
-import edu.berkeley.eecs.ruzenafit.access.ExternalDB;
-import edu.berkeley.eecs.ruzenafit.access.InternalDBHelper;
-import edu.berkeley.eecs.ruzenafit.model.AnActualWorkoutModelX_X;
 
 import android.app.AlertDialog;
 import android.app.ListActivity;
@@ -65,6 +46,14 @@ import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
+import edu.berkeley.eecs.ruzenafit.CalFit;
+import edu.berkeley.eecs.ruzenafit.DBAdapter;
+import edu.berkeley.eecs.ruzenafit.R;
+import edu.berkeley.eecs.ruzenafit.Utils;
+import edu.berkeley.eecs.ruzenafit.ViewHistory;
+import edu.berkeley.eecs.ruzenafit.access.ExternalDB;
+import edu.berkeley.eecs.ruzenafit.access.InternalDBHelper;
+import edu.berkeley.eecs.ruzenafit.model.AnActualWorkoutModelX_X;
  
 public class HistoryActivity extends ListActivity {
 	private static DBAdapter mDbHelper;

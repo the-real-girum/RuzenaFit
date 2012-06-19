@@ -1,6 +1,5 @@
 package edu.berkeley.eecs.ruzenafit.model;
 
-import java.util.Date;
 
 
 /**

@@ -15,6 +15,7 @@ import android.content.Intent;
 import android.graphics.Color;
 
 public class MyBarChart extends AbstractChart {
+	@SuppressWarnings("unused")
 	private static final String TAG = "LineChart";
 	
 	/**

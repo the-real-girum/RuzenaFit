@@ -18,6 +18,7 @@ import com.google.android.maps.OverlayItem;
 import com.google.android.maps.Projection;
 
 
+@SuppressWarnings("rawtypes")
 public class RouteItemizedOverlay extends ItemizedOverlay {
 	public static final String TAG = "RouteItemizedOverlay Class";
 	

@@ -19,38 +19,36 @@
         android:text="Twitter"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical" >
 
-    <!-- Facebook Login Button -->
+        <!-- Facebook Login Button -->
 
+        <Button
+            android:id="@+id/btn_twitlogin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="200dip"
+            android:src="@drawable/btn_login"
+            android:text="Login with Twitter" />
 
+        <!-- Facebook Post to Wall Button -->
 
+        <Button
+            android:id="@+id/btn_twit_post_to_wall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="30dip"
+            android:text="Post to Timeline"
+            android:visibility="gone" />
 
-
-    <Button
-        android:id="@+id/btn_twitlogin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="200dip"
-        android:src="@drawable/btn_login"
-        android:text="Login with Twitter" />
-
-    <!-- Facebook Post to Wall Button -->
-
-    <Button
-        android:id="@+id/btn_twit_post_to_wall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="30dip"
-        android:text="Post to Timeline"
-        android:visibility="gone" />
-    
-    <!-- Facebook Logout Button 
+        <!--
+    Facebook Logout Button 
 
     <Button
         android:id="@+id/btn_get_profile"
@@ -60,10 +58,12 @@
         android:layout_marginTop="30dip"
         android:src="@drawable/btn_logout"
         android:text="Get Profile Data"
-        android:visibility="gone" />
--->
+        android:visibility="gone" />
+        -->
 
-    <!-- Button to show access tokens 
+
+        <!--
+    Button to show access tokens 
 
     <Button
         android:id="@+id/btn_show_access_tokens"
@@ -72,9 +72,9 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="30dip"
         android:text="Show Access Tokens"
-        android:visibility="gone" />
--->
+        android:visibility="gone" />
+        -->
 
-</LinearLayout>
+    </LinearLayout>
 
 </RelativeLayout>

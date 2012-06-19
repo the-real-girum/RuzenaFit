@@ -1,11 +1,10 @@
 package edu.berkeley.eecs.ruzenafit.controller;
 
-import edu.berkeley.eecs.ruzenafit.R;
-import edu.berkeley.eecs.ruzenafit.R.layout;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
+import edu.berkeley.eecs.ruzenafit.R;
 
 public class RankingActivity extends Activity {
 	// Initializing variables

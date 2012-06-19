@@ -9,10 +9,6 @@
 
 package edu.berkeley.eecs.ruzenafit;
 
-import edu.berkeley.eecs.ruzenafit.controller.HistoryActivity;
-import edu.berkeley.eecs.ruzenafit.controller.PreferencesActivity;
-import edu.berkeley.eecs.ruzenafit.controller.RankingActivity;
-import edu.berkeley.eecs.ruzenafit.controller.SettingsActivity;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.app.TabActivity;
@@ -27,6 +23,10 @@ import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.TabHost;
+import edu.berkeley.eecs.ruzenafit.controller.HistoryActivity;
+import edu.berkeley.eecs.ruzenafit.controller.PreferencesActivity;
+import edu.berkeley.eecs.ruzenafit.controller.RankingActivity;
+import edu.berkeley.eecs.ruzenafit.controller.SettingsActivity;
 
 public class CalFit extends Activity {
 	public static Context myContext;
@@ -146,7 +146,8 @@ public class CalFit extends Activity {
 		    Log.d(TAG, "current view id: " + tabHost.getCurrentView().getId());
     	}
 
-    	private OnClickListener onClickListener = new OnClickListener() {
+    	@SuppressWarnings("unused")
+		private OnClickListener onClickListener = new OnClickListener() {
     		public void onClick(final View v) {
     			if (tabHost.getCurrentTab() == 0) {
     			    tabHost.getCurrentView().setId(R.layout.workout);

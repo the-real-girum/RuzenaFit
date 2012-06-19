@@ -108,6 +108,7 @@ public class Utils {
 	 * @param arr
 	 * @return
 	 */
+	@SuppressWarnings("rawtypes")
 	public static String arrayListToString(ArrayList arr) {
 		// TODO: should not rely on toString() method and need to parametrize arraylist
 		String result = "";
