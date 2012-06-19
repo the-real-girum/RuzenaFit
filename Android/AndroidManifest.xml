@@ -4,7 +4,7 @@
     android:versionCode="1"
     android:versionName="1.0" >
 
-    <uses-sdk android:minSdkVersion="10" />
+    <uses-sdk android:minSdkVersion="8" />
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -27,9 +27,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".AboutActivity" >
+        <activity android:name=".controller.AboutActivity" >
         </activity>
-        <activity android:name=".History" >
+        <activity android:name=".controller.HistoryActivity" >
         </activity>
         <activity android:name=".CalFit$PersonalPage" >
         </activity>
@@ -43,7 +43,7 @@
         </activity>
         <activity android:name=".XTracking" >
         </activity>
-        <activity android:name=".SettingsActivity" >
+        <activity android:name=".controller.SettingsActivity" >
         </activity>
         <activity android:name="edu.berkeley.eecs.ruzenafit.XPreferences" >
         </activity>
@@ -56,7 +56,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-  .Preferences 
+  .Preferences 
     </application>
 
 </manifest>

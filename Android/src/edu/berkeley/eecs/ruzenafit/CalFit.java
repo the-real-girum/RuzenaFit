@@ -9,6 +9,10 @@
 
 package edu.berkeley.eecs.ruzenafit;
 
+import edu.berkeley.eecs.ruzenafit.controller.HistoryActivity;
+import edu.berkeley.eecs.ruzenafit.controller.PreferencesActivity;
+import edu.berkeley.eecs.ruzenafit.controller.RankingActivity;
+import edu.berkeley.eecs.ruzenafit.controller.SettingsActivity;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.app.TabActivity;
@@ -73,7 +77,7 @@ public class CalFit extends Activity {
 	        Button ranking = (Button) findViewById(R.id.button5);
 	        ranking.setOnClickListener(new Button.OnClickListener() {
 				public void onClick(View v) {
-	    			startActivity(new Intent(myContext, XRanking.class));
+	    			startActivity(new Intent(myContext, RankingActivity.class));
 				}
 			});
 	        
@@ -82,7 +86,7 @@ public class CalFit extends Activity {
 	        preferences.setOnClickListener(new Button.OnClickListener() {
 				public void onClick(View v) {
 	           		// start the About view
-	    			startActivity(new Intent(myContext, XPreferences.class));
+	    			startActivity(new Intent(myContext, PreferencesActivity.class));
 				}
 			});
 	        
@@ -130,7 +134,7 @@ public class CalFit extends Activity {
 	        tabHost = getTabHost();
 	        tabSpecWorkout = tabHost.newTabSpec("tab_test1").setIndicator("Workout").setContent(new Intent(this, Workout.class));
 	        tabHost.addTab(tabSpecWorkout);
-	        tabSpecHistory = tabHost.newTabSpec("tab_test2").setIndicator("History").setContent(new Intent(this, History.class));
+	        tabSpecHistory = tabHost.newTabSpec("tab_test2").setIndicator("History").setContent(new Intent(this, HistoryActivity.class));
 		    tabHost.addTab(tabSpecHistory);
 		    tabHost.setCurrentTab(0);
 		    tabHost.getTabWidget().getChildAt(0).getLayoutParams().height = 50;

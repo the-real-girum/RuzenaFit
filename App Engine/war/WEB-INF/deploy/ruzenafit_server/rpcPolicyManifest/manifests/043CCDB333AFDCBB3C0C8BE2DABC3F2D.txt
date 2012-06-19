@@ -1,0 +1,2 @@
+serviceClass: edu.berkeley.eecs.ruzenafit.client.GreetingService
+path: 8FB2820263E637F7C463D9319CA4C061.gwt.rpc

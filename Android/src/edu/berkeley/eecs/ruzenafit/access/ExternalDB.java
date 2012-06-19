@@ -15,6 +15,8 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -36,7 +38,8 @@ public class ExternalDB {
 	private static final String TAG = "ExternalDB";
 	
 	private static final String TEST_URL = "http://ruzenafit.appspot.com/rest/workout/test";
-	private static final String SAVE_WORKOUT_URL = "http://ruzenafit.appspot.com/rest/workout/saveWorkout";
+	private static final String RETRIEVE_WORKOUTS_URL = "http://ruzenafit.appspot.com/rest/workout/getAllWorkouts"; 
+	private static final String SAVE_WORKOUTS_URL = "http://ruzenafit.appspot.com/rest/workout/saveWorkout";
 	
 	private static String deviceID = "";
 	
@@ -44,25 +47,25 @@ public class ExternalDB {
 	 * Submits data to Google App Engine (Girum's account, as set by URL).
 	 * Returns false if there is a GAE connection error.
 	 */
-	public static int submitDataToGAE(AnActualWorkoutModelX_X[] allWorkouts, String userName) {
+	public static int submitDataToGAE(AnActualWorkoutModelX_X[] allWorkouts, String userEmail) {
 		Log.d(TAG, "submitDataToGAE: " + allWorkouts.toString());
 		
 		int successfulSubmissions = 0;
 		for (AnActualWorkoutModelX_X workout : allWorkouts) {
-			if (submitOneWorkout(workout, userName))
+			if (submitOneWorkout(workout, userEmail))
 				successfulSubmissions++;
 		}
 		
 		return successfulSubmissions;
 	}
 	
-	private static boolean submitOneWorkout(AnActualWorkoutModelX_X workout, String userName) {
+	private static boolean submitOneWorkout(AnActualWorkoutModelX_X workout, String userEmail) {
 		// Throw all of the fields of the workout into a list of nameValuePairs for
 		// the POST request to use.
 		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 		Log.d(TAG, "Workout: " + workout);
 		
-		nameValuePairs.add(new BasicNameValuePair("user", 			userName));
+		nameValuePairs.add(new BasicNameValuePair("user", 			userEmail));
 		nameValuePairs.add(new BasicNameValuePair("date", 			workout.getDate()));
 		nameValuePairs.add(new BasicNameValuePair("duration", 		workout.getDuration()));
 		nameValuePairs.add(new BasicNameValuePair("averageSpeed", 	workout.getAverageSpeed()));
@@ -71,7 +74,7 @@ public class ExternalDB {
 		
 		// Setup the POST Request
 		HttpClient httpClient = new DefaultHttpClient();
-		HttpPost request = new HttpPost(SAVE_WORKOUT_URL);
+		HttpPost request = new HttpPost(SAVE_WORKOUTS_URL);
 		request.addHeader("deviceID:" , deviceID);
 		
 		// Execute the POST request.
@@ -93,14 +96,14 @@ public class ExternalDB {
 	 * Retrieves data from Google App Engine (Girum's account, as set by URL).
 	 * Returns null if there is a error in the data retrieval.
 	 */
-	// TODO: Return the workout data for only one particular user.
-	public static AnActualWorkoutModelX_X[] retrieveDataFromGAE(String userName){
-		Log.d(TAG, "retrieveDataFromGAE");
+	public static AnActualWorkoutModelX_X[] retrieveDataFromGAE(String userEmail){
+		Log.d(TAG, "retrieveDataFromGAE with userEmail: " + userEmail);
 		AnActualWorkoutModelX_X[] allWorkouts = null;
 		
 		// Setup HTTP GET request.
 		HttpClient httpClient = new DefaultHttpClient();
-		HttpGet request = new HttpGet(TEST_URL);
+		HttpGet request = new HttpGet(RETRIEVE_WORKOUTS_URL + "?userName=" + userEmail);
+		
 		request.addHeader("deviceID:", deviceID);
 		
 		try {

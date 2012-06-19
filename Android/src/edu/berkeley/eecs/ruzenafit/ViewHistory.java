@@ -32,6 +32,8 @@ import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
 import com.google.android.maps.OverlayItem;
 
+import edu.berkeley.eecs.ruzenafit.controller.HistoryActivity;
+
 public class ViewHistory extends MapActivity{
 	public static final String TAG = "ViewHistory Activity";
 	public final short MAPVIEW = 0, SATVIEW = 1;
@@ -64,7 +66,7 @@ public class ViewHistory extends MapActivity{
 	
 	private void dataSetup() {
 		dbHelper.open();
-		Cursor c = dbHelper.getUserWorkout(1, History.rowId);
+		Cursor c = dbHelper.getUserWorkout(1, HistoryActivity.rowId);
 
 		TextView dateView = (TextView) findViewById(R.id.date);
 		TextView durationView = (TextView) findViewById(R.id.duration);
@@ -129,7 +131,7 @@ public class ViewHistory extends MapActivity{
 		// the activity.
 		try {
 			dbHelper.open();
-			Cursor c = dbHelper.getWorkoutSampledata(History.rowId, new String[] {"geopoint_lat", "geopoint_long"});
+			Cursor c = dbHelper.getWorkoutSampledata(HistoryActivity.rowId, new String[] {"geopoint_lat", "geopoint_long"});
 			showRoute(removeBadAndRepeating(c));
 			c.close();
 			dbHelper.close();
@@ -204,7 +206,7 @@ public class ViewHistory extends MapActivity{
 	    	
 	    	try {
 		    	dbHelper.open();
-				Cursor c = dbHelper.getWorkoutSampledata(History.rowId);
+				Cursor c = dbHelper.getWorkoutSampledata(HistoryActivity.rowId);
 		    	
 		    	showChart(currString, c);
 		    	c.close();
