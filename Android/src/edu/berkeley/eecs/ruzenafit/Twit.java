@@ -3,10 +3,12 @@ package edu.berkeley.eecs.ruzenafit;
 import winterwell.jtwitter.Twitter;
 import winterwell.jtwitter.TwitterException;
 import android.app.Activity;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class Twit extends Activity {
 	static final String TAG = "StatusActivity";
@@ -34,13 +36,25 @@ public class Twit extends Activity {
 					Twitter twitter = new Twitter("student", "password");
 					// twitter.setAPIRootUrl("http://yamba.markana.com/api");
 					twitter.setStatus(statusText);
+					Log.d(TAG, "Successfully posted: " + statusText);
+					Toast.makeText(Twit.this,
+							"Successfully posted: " + statusText,
+							Toast.LENGTH_LONG).show();
+
 				} catch (TwitterException e) {
 					Log.e(TAG, "Died", e);
 					e.printStackTrace();
+					Toast.makeText(Twit.this,
+							"Failed posting: " + statusText,
+							Toast.LENGTH_LONG).show();
 				}
 			}
 		}.start();
 
 		Log.d(TAG, "onClicked with text: " + statusText);
+	}
+	
+	class PostToTwitter extends AsyncTask<String, Void, String>{
+		
 	}
 }
