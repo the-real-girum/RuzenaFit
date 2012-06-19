@@ -24,6 +24,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.UserTokenHandler;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -32,8 +33,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
-import edu.berkeley.eecs.ruzenafit.access.GAEConnection;
-import edu.berkeley.eecs.ruzenafit.access.SQLiteHelper;
+import edu.berkeley.eecs.ruzenafit.access.ExternalDB;
+import edu.berkeley.eecs.ruzenafit.access.InternalDBHelper;
 import edu.berkeley.eecs.ruzenafit.model.AnActualWorkoutModelX_X;
 
 import android.app.AlertDialog;
@@ -41,6 +42,7 @@ import android.app.ListActivity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Environment;
@@ -164,18 +166,41 @@ public class History extends ListActivity {
 		
 		sendData.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				int successfulSubmissions = GAEConnection.submitDataToGAE(allWorkouts);
-				Toast.makeText(getApplicationContext(), "Submitted " + successfulSubmissions + 
-						" workouts to GAE", 5).show();
+				
+				String facebookLoginName = getFacebookLoginName();
+				
+				if (facebookLoginName != null) {
+					int successfulSubmissions = ExternalDB.submitDataToGAE(allWorkouts, facebookLoginName);
+					Toast.makeText(getApplicationContext(), "Submitted " + successfulSubmissions + 
+							" workouts to GAE", 5).show();
+				}
 			}
 		});
 		
 		retrieveData.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				allWorkouts = GAEConnection.retrieveDataFromGAE();
-				Toast.makeText(getApplicationContext(), "Got " + allWorkouts.length + " workouts from GAE", 5).show();
+				
+				String facebookLoginName = getFacebookLoginName();
+				
+				if (facebookLoginName != null) {
+					allWorkouts = ExternalDB.retrieveDataFromGAE(facebookLoginName);
+					Toast.makeText(getApplicationContext(), "Got " + allWorkouts.length + " workouts from GAE", 5).show();
+				}
 			}
 		});	
+	}
+	
+	private String getFacebookLoginName() {
+		SharedPreferences sharedPreferences = getSharedPreferences("RuzenaFitPrefs", 0);
+
+		String facebookLoginName = sharedPreferences.getString("userName", "__undefinedUserName");
+		
+		if (facebookLoginName.equals("__undefinedUserName")) {
+			Toast.makeText(getApplicationContext(), "FB Username isn't set.", 5).show();
+			return null;
+		}
+		
+		return facebookLoginName;
 	}
 
 	@Override
@@ -186,7 +211,7 @@ public class History extends ListActivity {
 			fillData();
 			
 			// TRUST-REU takeover.
-			this.allWorkouts = SQLiteHelper.saveCurrentDataInMemory(mDbHelper);
+			this.allWorkouts = InternalDBHelper.saveCurrentDataInMemory(mDbHelper);
 			
 			mDbHelper.close();
 		} catch (Exception e) {

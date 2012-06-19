@@ -5,7 +5,7 @@ import android.util.Log;
 import edu.berkeley.eecs.ruzenafit.DBAdapter;
 import edu.berkeley.eecs.ruzenafit.model.AnActualWorkoutModelX_X;
 
-public class SQLiteHelper {
+public class InternalDBHelper {
 	private static final String TAG = "SQLiteHelper";
 	
 	/**

@@ -20,6 +20,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.widget.Toast;
 import edu.berkeley.eecs.ruzenafit.model.AnActualWorkoutModelX_X;
@@ -31,39 +32,37 @@ import edu.berkeley.eecs.ruzenafit.model.AnActualWorkoutModelX_X;
  * @author gibssa
  *
  */
-public class GAEConnection {
-	private static final String TAG = "GAEConnection";
+public class ExternalDB {
+	private static final String TAG = "ExternalDB";
 	
-//	/** The username for the GAE account */
-//	private static final String username = "ibssagirum";
-	private static final String URL = "http://ruzenafit.appspot.com/rest/workout/test";
-//	private static final String URL = "http://localhost:8888/rest/hello";
+	private static final String TEST_URL = "http://ruzenafit.appspot.com/rest/workout/test";
+	private static final String SAVE_WORKOUT_URL = "http://ruzenafit.appspot.com/rest/workout/saveWorkout";
+	
 	private static String deviceID = "";
 	
 	/**
 	 * Submits data to Google App Engine (Girum's account, as set by URL).
 	 * Returns false if there is a GAE connection error.
 	 */
-	public static int submitDataToGAE(AnActualWorkoutModelX_X[] allWorkouts) {
+	public static int submitDataToGAE(AnActualWorkoutModelX_X[] allWorkouts, String userName) {
 		Log.d(TAG, "submitDataToGAE: " + allWorkouts.toString());
 		
 		int successfulSubmissions = 0;
 		for (AnActualWorkoutModelX_X workout : allWorkouts) {
-			if (submitOneWorkout(workout)) {
+			if (submitOneWorkout(workout, userName))
 				successfulSubmissions++;
-			}
 		}
 		
 		return successfulSubmissions;
 	}
 	
-	private static boolean submitOneWorkout(AnActualWorkoutModelX_X workout) {
+	private static boolean submitOneWorkout(AnActualWorkoutModelX_X workout, String userName) {
 		// Throw all of the fields of the workout into a list of nameValuePairs for
 		// the POST request to use.
 		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 		Log.d(TAG, "Workout: " + workout);
 		
-		nameValuePairs.add(new BasicNameValuePair("user", 			"testUser1"));
+		nameValuePairs.add(new BasicNameValuePair("user", 			userName));
 		nameValuePairs.add(new BasicNameValuePair("date", 			workout.getDate()));
 		nameValuePairs.add(new BasicNameValuePair("duration", 		workout.getDuration()));
 		nameValuePairs.add(new BasicNameValuePair("averageSpeed", 	workout.getAverageSpeed()));
@@ -72,7 +71,7 @@ public class GAEConnection {
 		
 		// Setup the POST Request
 		HttpClient httpClient = new DefaultHttpClient();
-		HttpPost request = new HttpPost("http://ruzenafit.appspot.com/rest/workout/saveWorkout");
+		HttpPost request = new HttpPost(SAVE_WORKOUT_URL);
 		request.addHeader("deviceID:" , deviceID);
 		
 		// Execute the POST request.
@@ -94,13 +93,14 @@ public class GAEConnection {
 	 * Retrieves data from Google App Engine (Girum's account, as set by URL).
 	 * Returns null if there is a error in the data retrieval.
 	 */
-	public static AnActualWorkoutModelX_X[] retrieveDataFromGAE(){
+	// TODO: Return the workout data for only one particular user.
+	public static AnActualWorkoutModelX_X[] retrieveDataFromGAE(String userName){
 		Log.d(TAG, "retrieveDataFromGAE");
 		AnActualWorkoutModelX_X[] allWorkouts = null;
 		
 		// Setup HTTP GET request.
 		HttpClient httpClient = new DefaultHttpClient();
-		HttpGet request = new HttpGet(URL);
+		HttpGet request = new HttpGet(TEST_URL);
 		request.addHeader("deviceID:", deviceID);
 		
 		try {

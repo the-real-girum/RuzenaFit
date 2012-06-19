@@ -91,7 +91,7 @@ public class CalFit extends Activity {
 	        settings.setOnClickListener(new Button.OnClickListener() {
 				public void onClick(View v) {
 	           		// start the About view
-	    			startActivity(new Intent(myContext, settings.class));
+	    			startActivity(new Intent(myContext, SettingsActivity.class));
 				}
 			});
 	        

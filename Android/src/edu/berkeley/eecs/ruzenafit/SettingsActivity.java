@@ -23,7 +23,7 @@ import com.facebook.android.Facebook;
 import com.facebook.android.Facebook.DialogListener;
 import com.facebook.android.FacebookError;
 
-public class settings extends Activity {
+public class SettingsActivity extends Activity {
 
 		// Your Facebook APP ID
 		private static String APP_ID = "187275568066559"; // Replace with your App
@@ -109,6 +109,9 @@ public class settings extends Activity {
 
 			if (access_token != null) {
 				facebook.setAccessToken(access_token);
+				
+				// Saving facebook info onto phone's internal DB
+				saveFacebookInfoInternally();
 
 				btnFbLogin.setVisibility(View.INVISIBLE);
 
@@ -160,6 +163,9 @@ public class settings extends Activity {
 
 								// Making show access tokens button visible
 								btnShowAccessTokens.setVisibility(View.VISIBLE);
+								
+								// Saving facebook info onto phone's internal DB
+								saveFacebookInfoInternally();
 							}
 
 							
@@ -176,6 +182,57 @@ public class settings extends Activity {
 
 						});
 			}
+		}
+		
+		private void saveFacebookInfoInternally() {
+			mAsyncRunner.request("me", new RequestListener() {
+				
+				public void onComplete(String response, Object state) {
+					Log.d("Profile", response);
+					String json = response;
+					try {
+						// Facebook Profile JSON data
+						JSONObject profile = new JSONObject(json);
+
+						// getting name of the user
+						final String name = profile.getString("name");
+
+						// getting email of the user
+						final String email = profile.getString("email");
+
+						// Save this FB info internally.
+						SharedPreferences sharedPreferences = getSharedPreferences("RuzenaFitPrefs", 0);
+						SharedPreferences.Editor sharedPreferencesEditor = sharedPreferences.edit();
+						sharedPreferencesEditor.putString("userName", name);
+						sharedPreferencesEditor.putString("userEmail", email);
+						sharedPreferencesEditor.commit();
+						
+						runOnUiThread(new Runnable() {
+							public void run() {
+								Toast.makeText(getApplicationContext(),
+										"Saved Facebook data into phone:  " +
+										"Name: " + name + "\nEmail: " + email,
+										Toast.LENGTH_LONG).show();
+							}
+						});
+
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+				}
+				
+				public void onMalformedURLException(MalformedURLException e, Object state) {
+				}
+				
+				public void onIOException(IOException e, Object state) {
+				}
+				
+				public void onFileNotFoundException(FileNotFoundException e, Object state) {
+				}
+				
+				public void onFacebookError(FacebookError e, Object state) {
+				}
+			});
 		}
 
 		
