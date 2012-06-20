@@ -7,7 +7,7 @@
  * @author Irving Lin, Curtis Wang, Edmund Seto
  */
 
-package edu.berkeley.eecs.ruzenafit;
+package edu.berkeley.eecs.ruzenafit.controller;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -23,12 +23,14 @@ import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.TabHost;
-import edu.berkeley.eecs.ruzenafit.controller.HistoryActivity;
-import edu.berkeley.eecs.ruzenafit.controller.PreferencesActivity;
-import edu.berkeley.eecs.ruzenafit.controller.RankingActivity;
-import edu.berkeley.eecs.ruzenafit.controller.SettingsActivity;
+import edu.berkeley.eecs.ruzenafit.DBAdapter;
+import edu.berkeley.eecs.ruzenafit.R;
+import edu.berkeley.eecs.ruzenafit.Workout;
+import edu.berkeley.eecs.ruzenafit.WorkoutHelper;
+import edu.berkeley.eecs.ruzenafit.R.id;
+import edu.berkeley.eecs.ruzenafit.R.layout;
 
-public class CalFit extends Activity {
+public class CalFitActivity extends Activity {
 	public static Context myContext;
 	public static final String TAG = "CalFit Activity";
 	private ProgressDialog progressDialog;
@@ -67,7 +69,7 @@ public class CalFit extends Activity {
 	        tracking.setOnClickListener(new Button.OnClickListener() {
 				public void onClick(View v) {
 //					Log.d(TAG, "Before startActivity()");
-					progressDialog = ProgressDialog.show(CalFit.this, "", "Loading... please wait");
+					progressDialog = ProgressDialog.show(CalFitActivity.this, "", "Loading... please wait");
 					startActivity(new Intent(myContext, PersonalPage.class));
 //					Log.d(TAG, "After startActivity()");
 				}

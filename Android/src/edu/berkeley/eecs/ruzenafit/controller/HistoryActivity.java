@@ -46,7 +46,6 @@ import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
-import edu.berkeley.eecs.ruzenafit.CalFit;
 import edu.berkeley.eecs.ruzenafit.DBAdapter;
 import edu.berkeley.eecs.ruzenafit.R;
 import edu.berkeley.eecs.ruzenafit.Utils;
@@ -288,9 +287,9 @@ public class HistoryActivity extends ListActivity {
 	
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			CalFit.PersonalPage.tabHost.setCurrentTab(0);
-			CalFit.PersonalPage.tabHost.getCurrentView().setId(R.layout.workout);
-		    Log.d(TAG, "current view id: " + CalFit.PersonalPage.tabHost.getCurrentView().getId());
+			CalFitActivity.PersonalPage.tabHost.setCurrentTab(0);
+			CalFitActivity.PersonalPage.tabHost.getCurrentView().setId(R.layout.workout);
+		    Log.d(TAG, "current view id: " + CalFitActivity.PersonalPage.tabHost.getCurrentView().getId());
 			return true;
 		}
 		return false;
