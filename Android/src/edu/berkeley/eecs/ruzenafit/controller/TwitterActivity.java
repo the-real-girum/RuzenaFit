@@ -39,14 +39,14 @@ public class TwitterActivity extends Activity {
 					// twitter.setAPIRootUrl("http://yamba.markana.com/api");
 					twitter.setStatus(statusText);
 					Log.d(TAG, "Successfully posted: " + statusText);
-					Toast.makeText(Twit.this,
+					Toast.makeText(TwitterActivity.this,
 							"Successfully posted: " + statusText,
 							Toast.LENGTH_LONG).show();
 
 				} catch (TwitterException e) {
 					Log.e(TAG, "Died", e);
 					e.printStackTrace();
-					Toast.makeText(Twit.this,
+					Toast.makeText(TwitterActivity.this,
 							"Failed posting: " + statusText,
 							Toast.LENGTH_LONG).show();
 				}
@@ -57,6 +57,12 @@ public class TwitterActivity extends Activity {
 	}
 	
 	class PostToTwitter extends AsyncTask<String, Void, String>{
+
+		@Override
+		protected String doInBackground(String... arg0) {
+			// TODO Auto-generated method stub
+			return null;
+		}
 		
 	}
 }
