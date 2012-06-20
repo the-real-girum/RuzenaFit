@@ -42,27 +42,31 @@ public class ExternalDB {
 	
 	/**
 	 * Submits data to Google App Engine (Girum's account, as set by URL).
-	 * Returns false if there is a GAE connection error.
+	 * Returns the number of successful GAE submissions.
 	 */
-	public static int submitDataToGAE(AnActualWorkoutModelX_X[] allWorkouts, String userEmail) {
-		Log.d(TAG, "submitDataToGAE: " + allWorkouts.toString());
+	public static int submitDataToGAE(AnActualWorkoutModelX_X[] allWorkouts, String userEmail, String privacySetting) {
 		
 		int successfulSubmissions = 0;
 		for (AnActualWorkoutModelX_X workout : allWorkouts) {
-			if (submitOneWorkout(workout, userEmail))
+			if (submitOneWorkout(workout, userEmail, privacySetting))
 				successfulSubmissions++;
 		}
 		
 		return successfulSubmissions;
 	}
 	
-	private static boolean submitOneWorkout(AnActualWorkoutModelX_X workout, String userEmail) {
+	private static boolean submitOneWorkout(AnActualWorkoutModelX_X workout, String userEmail, String privacySetting) {
+		
+		if (workout == null)
+			return false;
+		
 		// Throw all of the fields of the workout into a list of nameValuePairs for
 		// the POST request to use.
 		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 		Log.d(TAG, "Workout: " + workout);
 		
 		nameValuePairs.add(new BasicNameValuePair("user", 			userEmail));
+		nameValuePairs.add(new BasicNameValuePair("privacySetting", privacySetting));
 		nameValuePairs.add(new BasicNameValuePair("date", 			workout.getDate()));
 		nameValuePairs.add(new BasicNameValuePair("duration", 		workout.getDuration()));
 		nameValuePairs.add(new BasicNameValuePair("averageSpeed", 	workout.getAverageSpeed()));
@@ -79,14 +83,13 @@ public class ExternalDB {
 			request.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 			
 			HttpResponse response = httpClient.execute(request);
-			Log.d(TAG, "HttpResponse: " + EntityUtils.toString(response.getEntity()));
-			
+			String responseString = EntityUtils.toString(response.getEntity());
+			Log.d(TAG, "HttpResponse: " + responseString);
+			return responseString.equals("success"); 
 		} catch (Exception e) {
 			Log.e(TAG, "ERROR: " + e.getMessage());
 			return false;
 		}
-		
-		return true;
 	}
 	
 	/**

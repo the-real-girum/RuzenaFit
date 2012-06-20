@@ -31,6 +31,20 @@ public class AnActualWorkoutModelX_X {
 		this.averageSpeed = averageSpeed;
 		this.totalDistance = totalDistance;
 	}
+	
+	@Override
+	public boolean equals(Object arg0) {
+		if (!(arg0 instanceof AnActualWorkoutModelX_X))
+			return false;
+		AnActualWorkoutModelX_X workout = (AnActualWorkoutModelX_X)arg0;
+		
+		return (this.averageSpeed.equals(	workout.getAverageSpeed()) 	&&
+				this.date.equals(			workout.getDate()) 			&&
+				this.duration.equals(		workout.getDuration()) 		&&
+				this.totalCalories.equals(	workout.getTotalCalories()) &&
+				this.totalDistance.equals(	workout.getTotalDistance()));
+	}
+
 	public String getDate() {
 		return date;
 	}

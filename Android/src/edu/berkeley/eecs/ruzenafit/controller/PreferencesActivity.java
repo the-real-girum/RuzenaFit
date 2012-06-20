@@ -1,6 +1,7 @@
 package edu.berkeley.eecs.ruzenafit.controller;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -8,7 +9,9 @@ import android.view.View.OnClickListener;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.Toast;
 import edu.berkeley.eecs.ruzenafit.R;
+import edu.berkeley.eecs.ruzenafit.model.PrivacyPreference;
 
 public class PreferencesActivity extends Activity {
 	// Initializing variables
@@ -37,9 +40,8 @@ public class PreferencesActivity extends Activity {
 		rbLow.setOnClickListener(new OnClickListener() {
 
 			public void onClick(View v) {
- 
+				setPrivacySetting(PrivacyPreference.lowPrivacy);
 				textOut.setText("Low Preferences");
-
 			}
 		});
 
@@ -47,8 +49,8 @@ public class PreferencesActivity extends Activity {
 		rbMedium.setOnClickListener(new OnClickListener() {
 
 			public void onClick(View v) {
+				setPrivacySetting(PrivacyPreference.mediumPrivacy);
 				textOut.setText("Medium Preferences");
-
 			}
 		});
 
@@ -56,10 +58,24 @@ public class PreferencesActivity extends Activity {
 		rbHigh.setOnClickListener(new OnClickListener() {
 
 			public void onClick(View v) {
-
+				setPrivacySetting(PrivacyPreference.highPrivacy);
 				textOut.setText("High Preferences");
 			}
 		});
 
+	}
+	
+	/**
+	 * Saves the selected privacy setting into the phone's internal
+	 * SharedPreferences storage.
+	 * 
+	 * @param privacyPreference
+	 */
+	private void setPrivacySetting(PrivacyPreference privacyPreference) {
+		SharedPreferences.Editor preferences = getSharedPreferences("RuzenaFitPrefs", 0).edit();
+		preferences.putString("privacySetting", privacyPreference.toString());
+		preferences.commit();
+		
+		Toast.makeText(getApplicationContext(), "Saved privacy setting: " + privacyPreference.toString(), 3).show();
 	}
 }

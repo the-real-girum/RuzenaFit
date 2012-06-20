@@ -31,7 +31,7 @@
         </activity>
         <activity android:name=".controller.HistoryActivity" >
         </activity>
-        <activity android:name=".CalFit$PersonalPage" >
+        <activity android:name=".controller.CalFitActivity$PersonalPage" >
         </activity>
         <activity android:name=".ViewHistory" >
         </activity>

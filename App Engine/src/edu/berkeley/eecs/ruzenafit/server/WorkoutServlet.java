@@ -21,9 +21,122 @@ import com.google.appengine.api.datastore.Query;
 
 import edu.berkeley.eecs.ruzenafit.shared.model.AnActualWorkoutModelX_X;
 
+// TODO: Optimize the uniqueness sanity check to ensure that you only load in all
+// of the workouts for a user once.
 @Path("/workout")
 public class WorkoutServlet {
 
+
+	/**
+	 * Returns all workout data for a particular user.
+	 */
+	@GET
+	@Produces(MediaType.TEXT_XML)
+	@Path("/getAllWorkouts")
+	public AnActualWorkoutModelX_X[] getAllWorkouts(@QueryParam("userName") String userName) {
+		
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		Key key = KeyFactory.createKey("Workout User", userName);
+		Query query = new Query("Workout", key);
+		
+		List<Entity> workoutEntities = datastore.prepare(query).asList(FetchOptions.Builder.withDefaults());
+		
+		AnActualWorkoutModelX_X[] workouts = new AnActualWorkoutModelX_X[workoutEntities.size()];
+		int i = 0;
+		for (Entity workoutEntity : workoutEntities) {
+			AnActualWorkoutModelX_X workout = new AnActualWorkoutModelX_X();
+			workout.setAverageSpeed((String) workoutEntity.getProperty(	"averageSpeed"));
+			workout.setDate((String) workoutEntity.getProperty(			"date"));
+			workout.setDuration((String) workoutEntity.getProperty(		"duration"));
+			workout.setTotalCalories((String) workoutEntity.getProperty("totalCalories"));
+			workout.setTotalDistance((String) workoutEntity.getProperty("totalDistance"));
+			
+			workouts[i++] = workout;
+		}
+		
+		return workouts;
+		
+	}
+	
+	
+	/**
+	 * Saves one workout for a particular user.
+	 */
+	@POST
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(MediaType.TEXT_PLAIN)
+	@Path("/saveWorkout")
+	public String saveWorkout(@FormParam("user") String user,
+			@FormParam("privacySetting") String privacySetting,
+			@FormParam("date") String date,
+			@FormParam("averageSpeed") String averageSpeed,
+			@FormParam("duration") String duration,
+			@FormParam("totalCalories") String totalCalories,
+			@FormParam("totalDistance") String totalDistance) {
+
+		AnActualWorkoutModelX_X workout = new AnActualWorkoutModelX_X();
+		workout.setDate(date);
+		workout.setAverageSpeed(averageSpeed);
+		workout.setDuration(duration);
+		workout.setTotalCalories(totalCalories);
+		workout.setTotalDistance(totalDistance);
+				
+		// Save this particular workout to the GAE datastore.
+		boolean result = saveWorkoutToDatastore(user, workout);
+		
+		return (result ? "success" : "failure");
+	}
+	
+	/**
+	 * Helper method to save the workout to GAE datastore.
+	 * @param user
+	 * @param workout
+	 */
+	private boolean saveWorkoutToDatastore(String user, AnActualWorkoutModelX_X workout) {
+
+		AnActualWorkoutModelX_X[] currentWorkouts = getAllWorkouts(user);
+		boolean isUnique = true;
+		
+		for (AnActualWorkoutModelX_X iteratedWorkout : currentWorkouts) {
+			if (iteratedWorkout.equals(workout)) {
+				isUnique = false;
+			}
+		}
+		
+		if (isUnique) {
+			Key userKey = KeyFactory.createKey("Workout User", user);	
+			
+			Entity workoutEntity = new Entity("Workout", userKey);
+			workoutEntity.setProperty("date", workout.getDate());
+			workoutEntity.setProperty("averageSpeed", workout.getAverageSpeed());
+			workoutEntity.setProperty("duration", workout.getDuration());
+			workoutEntity.setProperty("totalCalories", workout.getTotalCalories());
+			workoutEntity.setProperty("totalDistance", workout.getTotalDistance());
+			
+			DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+			datastore.put(workoutEntity);
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	
+	/**
+	 * Saves all workouts TODO: for a specific user.
+	 */
+	@POST
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(MediaType.APPLICATION_XML)
+	@Path("/saveAllWorkouts")
+	public List<AnActualWorkoutModelX_X> saveWorkout(@FormParam("workoutsArray") List<AnActualWorkoutModelX_X> workouts) {
+		return workouts;
+	}
+
+	
+	//***************************************************************************
+	//* Sample request
+	//***************************************************************************
 	/**
 	 * A test request, sent when you want to grab sample workout data from GAE
 	 * 
@@ -64,88 +177,5 @@ public class WorkoutServlet {
 		return allWorkouts;
 	}
 	
-	/**
-	 * Returns all workout data for a particular user.
-	 */
-	@GET
-	@Produces(MediaType.TEXT_XML)
-	@Path("/getAllWorkouts")
-	public AnActualWorkoutModelX_X[] getAllWorkouts(@QueryParam("userName") String userName) {
-		
-		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-		Key key = KeyFactory.createKey("Workout User", userName);
-		Query query = new Query("Workout", key);
-		
-		List<Entity> workoutEntities = datastore.prepare(query).asList(FetchOptions.Builder.withDefaults());
-		
-		AnActualWorkoutModelX_X[] workouts = new AnActualWorkoutModelX_X[workoutEntities.size()];
-		int i = 0;
-		for (Entity workoutEntity : workoutEntities) {
-			AnActualWorkoutModelX_X workout = new AnActualWorkoutModelX_X();
-			workout.setAverageSpeed((String) workoutEntity.getProperty(	"averageSpeed"));
-			workout.setDate((String) workoutEntity.getProperty(			"date"));
-			workout.setDuration((String) workoutEntity.getProperty(		"duration"));
-			workout.setTotalCalories((String) workoutEntity.getProperty("totalCalories"));
-			workout.setTotalDistance((String) workoutEntity.getProperty("totalDistance"));
-			
-			workouts[i++] = workout;
-		}
-		
-		return workouts;
-		
-	}
 	
-	
-	/**
-	 * Saves one workout for a particular user.
-	 */
-	@POST
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Produces(MediaType.APPLICATION_XML)
-	@Path("/saveWorkout")
-	public AnActualWorkoutModelX_X saveWorkout(@FormParam("user") String user,
-			@FormParam("date") String date,
-			@FormParam("averageSpeed") String averageSpeed,
-			@FormParam("duration") String duration,
-			@FormParam("totalCalories") String totalCalories,
-			@FormParam("totalDistance") String totalDistance) {
-
-		AnActualWorkoutModelX_X workout = new AnActualWorkoutModelX_X();
-		workout.setDate(date);
-		workout.setAverageSpeed(averageSpeed);
-		workout.setDuration(duration);
-		workout.setTotalCalories(totalCalories);
-		workout.setTotalDistance(totalDistance);
-		
-		// Save this particular workout to the GAE datastore.
-		saveWorkoutToDatastore(user, workout);	
-		
-		return workout;
-	}
-	
-	private void saveWorkoutToDatastore(String user, AnActualWorkoutModelX_X workout) {
-		Key userKey = KeyFactory.createKey("Workout User", user);	
-
-		Entity workoutEntity = new Entity("Workout", userKey);
-		workoutEntity.setProperty("date", workout.getDate());
-		workoutEntity.setProperty("averageSpeed", workout.getAverageSpeed());
-		workoutEntity.setProperty("duration", workout.getDuration());
-		workoutEntity.setProperty("totalCalories", workout.getTotalCalories());
-		workoutEntity.setProperty("totalDistance", workout.getTotalDistance());
-		
-		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-		datastore.put(workoutEntity);
-	}
-	
-	/**
-	 * Saves all workouts TODO: for a specific user.
-	 */
-	@POST
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Produces(MediaType.APPLICATION_XML)
-	@Path("/saveAllWorkouts")
-	public List<AnActualWorkoutModelX_X> saveWorkout(@FormParam("workoutsArray") List<AnActualWorkoutModelX_X> workouts) {
-		return workouts;
-	}
-
 }

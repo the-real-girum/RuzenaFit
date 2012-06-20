@@ -162,14 +162,21 @@ public class HistoryActivity extends ListActivity {
 		
 		sendData.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
+				if (allWorkouts == null || allWorkouts.length == 0) {
+					Toast.makeText(getApplicationContext(), "There are no workouts to send.", 3).show();
+					return;
+				}
 				
 				String facebookLoginEmail = getFacebookLoginEmail();
+				String privacySetting = getPrivacySetting();
 				
-				if (facebookLoginEmail != null) {
-					int successfulSubmissions = ExternalDB.submitDataToGAE(allWorkouts, facebookLoginEmail);
+				
+				if (facebookLoginEmail != null && privacySetting != null) {
+					int successfulSubmissions = ExternalDB.submitDataToGAE(allWorkouts, facebookLoginEmail, privacySetting);
 					Toast.makeText(getApplicationContext(), "Submitted " + successfulSubmissions + 
 							" workouts to GAE", 5).show();
 				}
+				
 			}
 		});
 		
@@ -186,6 +193,7 @@ public class HistoryActivity extends ListActivity {
 		});	
 	}
 	
+	// TODO: Refactor this method and getPrivacySetting() to be DRY.
 	private String getFacebookLoginEmail() {
 		SharedPreferences sharedPreferences = getSharedPreferences("RuzenaFitPrefs", 0);
 
@@ -197,6 +205,19 @@ public class HistoryActivity extends ListActivity {
 		}
 		
 		return facebookLoginName;
+	}
+	
+	// TODO: Refactor this method and getFacebookLoginEmail() to be DRY.
+	private String getPrivacySetting() {
+		SharedPreferences preferences = getSharedPreferences("RuzenaFitPrefs", 0);
+		String privacySetting = preferences.getString("privacySetting", "__undefinedPrivacySetting");
+		
+		if (privacySetting.equals("__undefinedUserEmail")) {
+			Toast.makeText(getApplicationContext(), "FB user email isn't set.", 5).show();
+			return null;
+		}
+		
+		return privacySetting;
 	}
 
 	@Override
