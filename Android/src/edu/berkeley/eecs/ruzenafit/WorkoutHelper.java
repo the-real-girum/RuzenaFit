@@ -4,7 +4,8 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 
-import edu.berkeley.eecs.ruzenafit.controller.CalFitActivity;
+import edu.berkeley.eecs.ruzenafit.activity.MainActivity;
+import edu.berkeley.eecs.ruzenafit.activity.WorkoutActivity;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -49,7 +50,7 @@ public class WorkoutHelper extends Service {
 		first = true;
 		context = this;
 		prevKCal = 0.0;
-		wContext = Workout.workoutContext;
+		wContext = WorkoutActivity.workoutContext;
 		workoutHelper = new WorkoutHelper();
 	}
 	
@@ -96,7 +97,7 @@ public class WorkoutHelper extends Service {
 				
 				CharSequence contentTitle = "CalFit";
 				CharSequence contentText = genfmt.format(WAVE.getKCal()) + " total kCals";
-				Intent notificationIntent = new Intent(context, CalFitActivity.class); // must use CalFit.class because this notification loads a new activity onto the stack, and if you call CalFit.class, it is hacked to auto kill it and brings about the previous activity layer, which in the case is the tabbed view personal page. you can't load perosnal page directly because it'll reset many of the global/instance/static variables that need to remain untouched for the duration of the application.
+				Intent notificationIntent = new Intent(context, MainActivity.class); // must use CalFit.class because this notification loads a new activity onto the stack, and if you call CalFit.class, it is hacked to auto kill it and brings about the previous activity layer, which in the case is the tabbed view personal page. you can't load perosnal page directly because it'll reset many of the global/instance/static variables that need to remain untouched for the duration of the application.
 				PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
 				notification.setLatestEventInfo(context, contentTitle, contentText, contentIntent);
 				

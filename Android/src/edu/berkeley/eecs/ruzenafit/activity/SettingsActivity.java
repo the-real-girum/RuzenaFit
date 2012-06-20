@@ -1,4 +1,4 @@
-package edu.berkeley.eecs.ruzenafit.controller;
+package edu.berkeley.eecs.ruzenafit.activity;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;

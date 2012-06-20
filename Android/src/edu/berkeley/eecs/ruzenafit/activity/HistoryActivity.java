@@ -7,7 +7,7 @@
  * @author Irving Lin, Curtis Wang, Edmund Seto
  */
 
-package edu.berkeley.eecs.ruzenafit.controller;
+package edu.berkeley.eecs.ruzenafit.activity;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -49,7 +49,6 @@ import android.widget.Toast;
 import edu.berkeley.eecs.ruzenafit.DBAdapter;
 import edu.berkeley.eecs.ruzenafit.R;
 import edu.berkeley.eecs.ruzenafit.Utils;
-import edu.berkeley.eecs.ruzenafit.ViewHistory;
 import edu.berkeley.eecs.ruzenafit.access.ExternalDB;
 import edu.berkeley.eecs.ruzenafit.access.InternalDBHelper;
 import edu.berkeley.eecs.ruzenafit.model.AnActualWorkoutModelX_X;
@@ -100,7 +99,7 @@ public class HistoryActivity extends ListActivity {
 							// this new one. If possible, will then also need to
 							// set "back" button to return to original history
 							// page view.
-							startActivity(new Intent(context, ViewHistory.class)); // temporary solution.
+							startActivity(new Intent(context, ViewHistoryActivity.class)); // temporary solution.
 							// This doesn't work... but need to find solution to this.
 //							PersonalPage.tabSpecHistory.setContent(new Intent(context, ViewHistory.class));
 //							PersonalPage.tabSpecWorkout.setContent(new Intent(context, Workout.class));
@@ -308,9 +307,9 @@ public class HistoryActivity extends ListActivity {
 	
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			CalFitActivity.PersonalPage.tabHost.setCurrentTab(0);
-			CalFitActivity.PersonalPage.tabHost.getCurrentView().setId(R.layout.workout);
-		    Log.d(TAG, "current view id: " + CalFitActivity.PersonalPage.tabHost.getCurrentView().getId());
+			MainActivity.PersonalPage.tabHost.setCurrentTab(0);
+			MainActivity.PersonalPage.tabHost.getCurrentView().setId(R.layout.workout);
+		    Log.d(TAG, "current view id: " + MainActivity.PersonalPage.tabHost.getCurrentView().getId());
 			return true;
 		}
 		return false;

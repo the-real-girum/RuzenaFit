@@ -7,7 +7,7 @@
  * @author Irving Lin, Curtis Wang
  */
 
-package edu.berkeley.eecs.ruzenafit;
+package edu.berkeley.eecs.ruzenafit.activity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,9 +32,18 @@ import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
 import com.google.android.maps.OverlayItem;
 
-import edu.berkeley.eecs.ruzenafit.controller.HistoryActivity;
+import edu.berkeley.eecs.ruzenafit.DBAdapter;
+import edu.berkeley.eecs.ruzenafit.LineChart;
+import edu.berkeley.eecs.ruzenafit.MyBarChart;
+import edu.berkeley.eecs.ruzenafit.R;
+import edu.berkeley.eecs.ruzenafit.RouteItemizedOverlay;
+import edu.berkeley.eecs.ruzenafit.Utils;
+import edu.berkeley.eecs.ruzenafit.R.array;
+import edu.berkeley.eecs.ruzenafit.R.drawable;
+import edu.berkeley.eecs.ruzenafit.R.id;
+import edu.berkeley.eecs.ruzenafit.R.layout;
 
-public class ViewHistory extends MapActivity{
+public class ViewHistoryActivity extends MapActivity{
 	public static final String TAG = "ViewHistory Activity";
 	public final short MAPVIEW = 0, SATVIEW = 1;
 

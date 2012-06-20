@@ -18,47 +18,31 @@
             android:name="com.google.android.maps"
             android:required="true" />
 
-        <activity
-            android:name=".controller.CalFitActivity"
-            android:label="@string/app_name" >
+        <activity android:name=".activity.MainActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".controller.AboutActivity" >
+        
+        <activity android:name=".activity.AboutActivity" >
         </activity>
-        <activity android:name=".controller.HistoryActivity" >
+        <activity android:name=".activity.HistoryActivity" >
         </activity>
-        <activity android:name=".controller.CalFitActivity$PersonalPage" >
+        <activity android:name=".activity.MainActivity$PersonalPage" >
         </activity>
-        <activity android:name=".ViewHistory" >
+        <activity android:name=".activity.PreferencesActivity" >
         </activity>
-        <activity android:name=".Workout" >
+        <activity android:name=".activity.RankingActivity" >
         </activity>
-        <activity android:name=".XMain" >
+        <activity android:name=".activity.SettingsActivity" >
         </activity>
-        <activity android:name=".XRanking" >
+        <activity android:name=".activity.TwitterActivity" >
         </activity>
-        <activity android:name=".XTracking" >
+        <activity android:name=".activity.ViewHistoryActivity" >
         </activity>
-        <activity android:name=".controller.SettingsActivity" >
+        <activity android:name=".activity.WorkoutActivity" >
         </activity>
-        <activity android:name=".controller.PreferencesActivity" >
-        </activity>
-        <activity android:name="edu.berkeley.eecs.ruzenafit.XPreferences" >
-        </activity>
-        <activity
-            android:name=".AndroidFacebookConnectActivity"
-            android:label="@string/app_name" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-  .Preferences 
     </application>
 
 </manifest>

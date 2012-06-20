@@ -7,7 +7,7 @@
  * @author Irving Lin, Curtis Wang, Edmund Seto
  */
 
-package edu.berkeley.eecs.ruzenafit.controller;
+package edu.berkeley.eecs.ruzenafit.activity;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -25,12 +25,11 @@ import android.widget.Button;
 import android.widget.TabHost;
 import edu.berkeley.eecs.ruzenafit.DBAdapter;
 import edu.berkeley.eecs.ruzenafit.R;
-import edu.berkeley.eecs.ruzenafit.Workout;
 import edu.berkeley.eecs.ruzenafit.WorkoutHelper;
 import edu.berkeley.eecs.ruzenafit.R.id;
 import edu.berkeley.eecs.ruzenafit.R.layout;
 
-public class CalFitActivity extends Activity {
+public class MainActivity extends Activity {
 	public static Context myContext;
 	public static final String TAG = "CalFit Activity";
 	private ProgressDialog progressDialog;
@@ -69,7 +68,7 @@ public class CalFitActivity extends Activity {
 	        tracking.setOnClickListener(new Button.OnClickListener() {
 				public void onClick(View v) {
 //					Log.d(TAG, "Before startActivity()");
-					progressDialog = ProgressDialog.show(CalFitActivity.this, "", "Loading... please wait");
+					progressDialog = ProgressDialog.show(MainActivity.this, "", "Loading... please wait");
 					startActivity(new Intent(myContext, PersonalPage.class));
 //					Log.d(TAG, "After startActivity()");
 				}
@@ -134,7 +133,7 @@ public class CalFitActivity extends Activity {
 			context = this;
 
 	        tabHost = getTabHost();
-	        tabSpecWorkout = tabHost.newTabSpec("tab_test1").setIndicator("Workout").setContent(new Intent(this, Workout.class));
+	        tabSpecWorkout = tabHost.newTabSpec("tab_test1").setIndicator("Workout").setContent(new Intent(this, WorkoutActivity.class));
 	        tabHost.addTab(tabSpecWorkout);
 	        tabSpecHistory = tabHost.newTabSpec("tab_test2").setIndicator("History").setContent(new Intent(this, HistoryActivity.class));
 		    tabHost.addTab(tabSpecHistory);

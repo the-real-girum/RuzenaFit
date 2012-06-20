@@ -7,7 +7,7 @@
  * @author Irving Lin, Curtis Wang, Edmund Seto
  */
 
-package edu.berkeley.eecs.ruzenafit;
+package edu.berkeley.eecs.ruzenafit.activity;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -61,6 +61,16 @@ import com.google.android.maps.MyLocationOverlay;
 import com.google.android.maps.Overlay;
 import com.google.android.maps.OverlayItem;
 
+import edu.berkeley.eecs.ruzenafit.DBAdapter;
+import edu.berkeley.eecs.ruzenafit.R;
+import edu.berkeley.eecs.ruzenafit.RouteItemizedOverlay;
+import edu.berkeley.eecs.ruzenafit.Utils;
+import edu.berkeley.eecs.ruzenafit.WAVE;
+import edu.berkeley.eecs.ruzenafit.WorkoutHelper;
+import edu.berkeley.eecs.ruzenafit.R.drawable;
+import edu.berkeley.eecs.ruzenafit.R.id;
+import edu.berkeley.eecs.ruzenafit.R.layout;
+
 /* To Input Mock Locations to Emulator 5554 for testing:
  *     telnet localhost 5554
  * 
@@ -79,7 +89,7 @@ import com.google.android.maps.OverlayItem;
  *     geo fix -123 39
  */
 
-public class Workout extends MapActivity {
+public class WorkoutActivity extends MapActivity {
 	public static final String TAG = "Workout Activity";
 
 	// workout state
@@ -669,7 +679,7 @@ public class Workout extends MapActivity {
 		}
 	};
 
-	static Lock lock = new ReentrantLock();
+	public static Lock lock = new ReentrantLock();
 
 	/**
 	 * Takes in a GeoPoint and adds it to the route, and then draws it.

@@ -17,6 +17,8 @@ import com.google.android.maps.MapView;
 import com.google.android.maps.OverlayItem;
 import com.google.android.maps.Projection;
 
+import edu.berkeley.eecs.ruzenafit.activity.WorkoutActivity;
+
 
 @SuppressWarnings("rawtypes")
 public class RouteItemizedOverlay extends ItemizedOverlay {
@@ -85,9 +87,9 @@ public class RouteItemizedOverlay extends ItemizedOverlay {
 	public void draw(Canvas canvas, MapView mapView, boolean shadow) {
 		super.draw(canvas, mapView, false);
 		
-		Workout.lock.lock();
+		WorkoutActivity.lock.lock();
 		ArrayList<GeoPoint> gpListTemp = gpList;
-		Workout.lock.unlock();
+		WorkoutActivity.lock.unlock();
 		Projection projection = mapView.getProjection();
 		Point curPoint = new Point();
 		Point prevPoint = new Point();

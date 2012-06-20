@@ -1,4 +1,4 @@
-package edu.berkeley.eecs.ruzenafit.controller;
+package edu.berkeley.eecs.ruzenafit.activity;
 
 import edu.berkeley.eecs.ruzenafit.R;
 import edu.berkeley.eecs.ruzenafit.R.layout;
