@@ -41,7 +41,10 @@ public class PreferencesActivity extends Activity {
 
 			public void onClick(View v) {
 				setPrivacySetting(PrivacyPreference.lowPrivacy);
-				textOut.setText("Low Preferences");
+				textOut.setText("    With this setting you will earn a 1.8x multiplier to your points. "
+						+ "You will also share the maximum amount of data about yourself possible. "
+						+ "For example anyone will be able to see exactly where you are working out "
+						+ "at whichever time your data is saved.");
 			}
 		});
 
@@ -50,7 +53,12 @@ public class PreferencesActivity extends Activity {
 
 			public void onClick(View v) {
 				setPrivacySetting(PrivacyPreference.mediumPrivacy);
-				textOut.setText("Medium Preferences");
+				textOut.setText("    With this setting you will earn a 1.2x multiplier to "
+						+ "your points. "
+						+ "You will also share a moderate amount of data about yourself. "
+						+ "For example people will be able to see the area where you are working out "
+						+ "but not the exact street or location "
+						+ "at whichever time your data is saved.");
 			}
 		});
 
@@ -59,12 +67,13 @@ public class PreferencesActivity extends Activity {
 
 			public void onClick(View v) {
 				setPrivacySetting(PrivacyPreference.highPrivacy);
-				textOut.setText("High Preferences");
+				textOut.setText("    With this setting you will earn a 0.8x multiplier to your points. "
+						+ "You will also share a minimal amount of data about yourself.");
 			}
 		});
 
 	}
-	
+
 	/**
 	 * Saves the selected privacy setting into the phone's internal
 	 * SharedPreferences storage.
@@ -72,10 +81,13 @@ public class PreferencesActivity extends Activity {
 	 * @param privacyPreference
 	 */
 	private void setPrivacySetting(PrivacyPreference privacyPreference) {
-		SharedPreferences.Editor preferences = getSharedPreferences("RuzenaFitPrefs", 0).edit();
+		SharedPreferences.Editor preferences = getSharedPreferences(
+				"RuzenaFitPrefs", 0).edit();
 		preferences.putString("privacySetting", privacyPreference.toString());
 		preferences.commit();
-		
-		Toast.makeText(getApplicationContext(), "Saved privacy setting: " + privacyPreference.toString(), 3).show();
+
+		Toast.makeText(getApplicationContext(),
+				"Saved privacy setting: " + privacyPreference.toString(), 3)
+				.show();
 	}
 }
