@@ -5,8 +5,8 @@ import java.util.Date;
 import com.google.android.maps.GeoPoint;
 
 public class Geopoint_Time {
+	
 	private GeoPoint geoPoint;
-
 	private Date date;
 
 	public GeoPoint getGeoPoint() {

@@ -173,7 +173,7 @@ public class HistoryActivity extends ListActivity {
 				if (facebookLoginEmail != null && privacySetting != null) {
 					int successfulSubmissions = ExternalDB.submitDataToGAE(allWorkouts, facebookLoginEmail, privacySetting);
 					Toast.makeText(getApplicationContext(), "Submitted " + successfulSubmissions + 
-							" workouts to GAE", 5).show();
+							" new workouts to GAE", 5).show();
 				}
 				
 			}

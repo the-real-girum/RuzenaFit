@@ -12,6 +12,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "workout")
 public class AnActualWorkoutModelX_X {
 
+	private String privacySetting;
 	private String date;
 	private String duration;
 	private String totalCalories;
@@ -22,9 +23,10 @@ public class AnActualWorkoutModelX_X {
 		super();
 	}
 	
-	public AnActualWorkoutModelX_X(String date, String duration,
+	public AnActualWorkoutModelX_X(String privacySetting, String date, String duration,
 			String totalCalories, String averageSpeed, String totalDistance) {
 		super();
+		this.privacySetting = privacySetting;
 		this.date = date;
 		this.duration = duration;
 		this.totalCalories = totalCalories;
@@ -45,6 +47,13 @@ public class AnActualWorkoutModelX_X {
 				this.totalDistance.equals(	workout.getTotalDistance()));
 	}
 
+	
+	public String getPrivacySetting() {
+		return privacySetting;
+	}
+	public void setPrivacySetting(String privacySetting) {
+		this.privacySetting = privacySetting;
+	}
 	public String getDate() {
 		return date;
 	}

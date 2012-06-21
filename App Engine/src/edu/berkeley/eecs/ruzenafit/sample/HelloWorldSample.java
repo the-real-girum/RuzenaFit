@@ -1,4 +1,4 @@
-package edu.berkeley.eecs.ruzenafit.server;
+package edu.berkeley.eecs.ruzenafit.sample;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;

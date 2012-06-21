@@ -6,6 +6,8 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import nu.xom.Element;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -36,7 +38,9 @@ public class ExternalDB {
 	@SuppressWarnings("unused")
 	private static final String TEST_URL = "http://ruzenafit.appspot.com/rest/workout/test";
 	private static final String RETRIEVE_WORKOUTS_URL = "http://ruzenafit.appspot.com/rest/workout/getAllWorkouts"; 
-	private static final String SAVE_WORKOUTS_URL = "http://ruzenafit.appspot.com/rest/workout/saveWorkout";
+	private static final String SAVE_WORKOUT_URL = "http://ruzenafit.appspot.com/rest/workout/saveWorkout";
+	private static final String SAVE_ALL_WORKOUTS_URL = "http://ruzenafit.appspot.com/rest/workout/saveAllWorkouts";
+	
 	
 	private static String deviceID = "";
 	
@@ -55,6 +59,14 @@ public class ExternalDB {
 		return successfulSubmissions;
 	}
 	
+	/**
+	 * @deprecated
+	 * 
+	 * @param workout
+	 * @param userEmail
+	 * @param privacySetting
+	 * @return
+	 */
 	private static boolean submitOneWorkout(AnActualWorkoutModelX_X workout, String userEmail, String privacySetting) {
 		
 		if (workout == null)
@@ -65,17 +77,18 @@ public class ExternalDB {
 		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 		Log.d(TAG, "Workout: " + workout);
 		
-		nameValuePairs.add(new BasicNameValuePair("user", 			userEmail));
-		nameValuePairs.add(new BasicNameValuePair("privacySetting", privacySetting));
-		nameValuePairs.add(new BasicNameValuePair("date", 			workout.getDate()));
-		nameValuePairs.add(new BasicNameValuePair("duration", 		workout.getDuration()));
-		nameValuePairs.add(new BasicNameValuePair("averageSpeed", 	workout.getAverageSpeed()));
-		nameValuePairs.add(new BasicNameValuePair("totalCalories", 	workout.getTotalCalories()));
-		nameValuePairs.add(new BasicNameValuePair("totalDistance", 	workout.getTotalDistance()));
+		nameValuePairs.add(new BasicNameValuePair("user", 					userEmail));
+		nameValuePairs.add(new BasicNameValuePair("privacySetting", 		privacySetting));
+		nameValuePairs.add(new BasicNameValuePair("date", 					workout.getDate()));
+		nameValuePairs.add(new BasicNameValuePair("duration", 				workout.getDuration()));
+		nameValuePairs.add(new BasicNameValuePair("averageSpeed", 			workout.getAverageSpeed()));
+		nameValuePairs.add(new BasicNameValuePair("totalCalories", 			workout.getTotalCalories()));
+		nameValuePairs.add(new BasicNameValuePair("totalDistance", 			workout.getTotalDistance()));
+		nameValuePairs.add(new BasicNameValuePair("coordinatesXMLString", 	sampleCoordinatesXMLString()));
 		
 		// Setup the POST Request
 		HttpClient httpClient = new DefaultHttpClient();
-		HttpPost request = new HttpPost(SAVE_WORKOUTS_URL);
+		HttpPost request = new HttpPost(SAVE_WORKOUT_URL);
 		request.addHeader("deviceID:" , deviceID);
 		
 		// Execute the POST request.
@@ -90,6 +103,57 @@ public class ExternalDB {
 			Log.e(TAG, "ERROR: " + e.getMessage());
 			return false;
 		}
+	}
+	
+	/**
+	 * Use the library "XOM" to setup the 
+	 * <coordinates></coordinates> XML section.
+	 * It should look like the following:
+	 * 
+	 * <coordinates>
+	 *    <coordinate>
+	 *       <longitude>123</longitude>
+	 *       <latitude>123</latitude>
+	 *       <timestamp>sometimestamp</timestamp>
+	 *    </coordinate>
+	 *    <coordinate>
+	 *       <longitude>456</longitude>
+	 *       <latitude>456</latitude>
+	 *       <timestamp>sometimestamp2</timestamp>
+	 *    </coordinate>
+	 * </coordinates>
+	 */
+	private static String sampleCoordinatesXMLString() {
+		Element coordinates = new Element("coordinates");
+		
+		Element coordinate1 = new Element("coordinate");
+		Element latitude1 = new Element("latitude");
+		latitude1.appendChild("123");
+		Element longitude1 = new Element("longitude");
+		longitude1.appendChild("123");
+		Element timestamp1 = new Element("timestamp");
+		timestamp1.appendChild("some-timestamp");
+		
+		Element coordinate2 = new Element("coordinate");
+		Element latitude2 = new Element("latitude");
+		latitude2.appendChild("456");
+		Element longitude2 = new Element("longitude");
+		longitude2.appendChild("456");
+		Element timestamp2 = new Element("timestamp");
+		timestamp2.appendChild("some-other-timestamp");
+		
+		coordinate1.appendChild(latitude1);
+		coordinate1.appendChild(longitude1);
+		coordinate1.appendChild(timestamp1);
+		
+		coordinate2.appendChild(latitude2);
+		coordinate2.appendChild(longitude2);
+		coordinate2.appendChild(timestamp2);
+		
+		coordinates.appendChild(coordinate1);
+		coordinates.appendChild(coordinate2);
+		
+		return coordinates.toXML();
 	}
 	
 	/**

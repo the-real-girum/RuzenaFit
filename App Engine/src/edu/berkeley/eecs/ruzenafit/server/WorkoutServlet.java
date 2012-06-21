@@ -72,9 +72,11 @@ public class WorkoutServlet {
 			@FormParam("averageSpeed") String averageSpeed,
 			@FormParam("duration") String duration,
 			@FormParam("totalCalories") String totalCalories,
-			@FormParam("totalDistance") String totalDistance) {
+			@FormParam("totalDistance") String totalDistance,
+			@FormParam("coordinatesXMLString") String coordinatesXMLString) {
 
 		AnActualWorkoutModelX_X workout = new AnActualWorkoutModelX_X();
+		workout.setPrivacySetting(privacySetting);
 		workout.setDate(date);
 		workout.setAverageSpeed(averageSpeed);
 		workout.setDuration(duration);
@@ -127,10 +129,16 @@ public class WorkoutServlet {
 	 */
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Produces(MediaType.APPLICATION_XML)
+	@Produces(MediaType.TEXT_PLAIN)
 	@Path("/saveAllWorkouts")
-	public List<AnActualWorkoutModelX_X> saveWorkout(@FormParam("workoutsArray") List<AnActualWorkoutModelX_X> workouts) {
-		return workouts;
+	public String saveAllWorkouts(@FormParam("xmlInput") String xmlInput) {
+		
+		int newUniqueWorkouts = 0;
+		
+		
+		
+		
+		return "" + newUniqueWorkouts;
 	}
 
 	
