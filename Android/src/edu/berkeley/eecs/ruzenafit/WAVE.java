@@ -210,32 +210,12 @@ public class WAVE extends Service {
 		}
 		
 		public void onProviderDisabled(String provider) {
-//			Log.d(TAG, "GPS Provider is not enabled.");
-//			Log.d(TAG, "Enabling GPS Provider...");
-//			Intent enableGPS = new Intent("android.location.GPS_ENABLED_CHANGE");
-//			enableGPS.putExtra("enabled", true);
-//			myContext.sendBroadcast(enableGPS);
-//			Log.d(TAG, "GPS Provider has been enabled.");
 		}
 		
 		public void onProviderEnabled(String provider) {
-//			Log.d(TAG, "GPS Provider is not enabled.");
-//			Log.d(TAG, "Enabling GPS Provider...");
-//			Intent enableGPS = new Intent("android.location.GPS_ENABLED_CHANGE");
-//			enableGPS.putExtra("enabled", true);
-//			myContext.sendBroadcast(enableGPS);
-//			Log.d(TAG, "GPS Provider has been enabled.");
 		}
 		
 		public void onStatusChanged(String provider, int status, Bundle extras) {
-//			if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-//				Log.d(TAG, "GPS Provider is not enabled.");
-//				Log.d(TAG, "Enabling GPS Provider...");
-//				Intent enableGPS = new Intent("android.location.GPS_ENABLED_CHANGE");
-//				enableGPS.putExtra("enabled", true);
-//				myContext.sendBroadcast(enableGPS);
-//				Log.d(TAG, "GPS Provider has been enabled.");
-//			}
 		}
 	}
 	
@@ -387,17 +367,6 @@ public class WAVE extends Service {
 		
 		locationManager.removeUpdates(myLocationListener);
 		appContext = null;
-
-//		curLocation = null; prevLocation = null; curGeoPoint = null; prevGeoPoint = null;
-//		curSpeed = 0; avgSpeed = 0; maxSpeed = 0;
-//		distance = 0;
-//		curAltitude = 0; avgAltitude = 0; maxAltitude = 0; minAltitude = 0;
-//		
-//		// initializing default minUpdateTime and minUpdateDist
-//		// user can override with setLocationUpdateMinTime() or setLocationUpdateMinDist()
-//		minUpdateTime = 0; minUpdateDist = 10;
-//		
-//		locationManager.removeUpdates(myLocationListener);
 	}
 	
 	@Override

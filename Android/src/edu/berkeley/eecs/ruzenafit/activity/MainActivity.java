@@ -23,11 +23,9 @@ import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.TabHost;
-import edu.berkeley.eecs.ruzenafit.DBAdapter;
 import edu.berkeley.eecs.ruzenafit.R;
 import edu.berkeley.eecs.ruzenafit.WorkoutHelper;
-import edu.berkeley.eecs.ruzenafit.R.id;
-import edu.berkeley.eecs.ruzenafit.R.layout;
+import edu.berkeley.eecs.ruzenafit.access.CalFitDBAdapter;
 
 public class MainActivity extends Activity {
 	public static Context myContext;
@@ -49,7 +47,7 @@ public class MainActivity extends Activity {
 	        // TODO: be able to login/change users
 	        // temporarily fix: create a fake user (only the first time using this application)
 //	         Log.d(TAG, "DEVICE ID: " + System.getString(this.getContentResolver(), System.ANDROID_ID));
-	        DBAdapter dbHelper = new DBAdapter(this);
+	        CalFitDBAdapter dbHelper = new CalFitDBAdapter(this);
 	        try {
 		        dbHelper.open();
 		        String user = System.getString(this.getContentResolver(), System.ANDROID_ID);

@@ -1,5 +1,7 @@
 package edu.berkeley.eecs.ruzenafit.model;
 
+import com.google.android.maps.GeoPoint;
+
 
 
 /**
@@ -10,24 +12,23 @@ package edu.berkeley.eecs.ruzenafit.model;
  */
 public class AnActualWorkoutModelX_X {
 
+	private long workoutID;
 	private String date;
 	private String duration;
 	private String totalCalories;
 	private String averageSpeed;
 	private String totalDistance;
+	private GeoPoint_Time[] geopoints;
 	
 	public AnActualWorkoutModelX_X() {
 		super();
 	}
-	
-	public AnActualWorkoutModelX_X(String date, String duration,
-			String totalCalories, String averageSpeed, String totalDistance) {
-		super();
-		this.date = date;
-		this.duration = duration;
-		this.totalCalories = totalCalories;
-		this.averageSpeed = averageSpeed;
-		this.totalDistance = totalDistance;
+
+	public long getWorkoutID() {
+		return workoutID;
+	}
+	public void setWorkoutID(long workoutID) {
+		this.workoutID = workoutID;
 	}
 	public String getDate() {
 		return date;
@@ -58,6 +59,12 @@ public class AnActualWorkoutModelX_X {
 	}
 	public void setTotalDistance(String totalDistance) {
 		this.totalDistance = totalDistance;
+	}
+	public GeoPoint_Time[] getGeopoints() {
+		return geopoints;
+	}
+	public void setGeopoints(GeoPoint_Time[] geopoints) {
+		this.geopoints = geopoints;
 	}
 
 	@Override

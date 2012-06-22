@@ -4,31 +4,36 @@ import java.util.Date;
 
 import com.google.android.maps.GeoPoint;
 
-public class Geopoint_Time {
+public class GeoPoint_Time {
+
+	private GeoPoint geopoint;
+	private String date;
+
+	public GeoPoint_Time(GeoPoint geopoint) {
+		super();
+		this.geopoint = geopoint;
+		this.date = new Date().toGMTString();  // set date to be current system time.
+	}
 	
-	private GeoPoint geoPoint;
-	private Date date;
-
-	public GeoPoint getGeoPoint() {
-		return geoPoint;
+	/**
+	 * Convience constructor for reading strings from database.
+	 * @param latitude
+	 * @param longitude
+	 * @param date
+	 */
+	public GeoPoint_Time(String latitude, String longitude, String date) {
+		this.geopoint = new GeoPoint(Integer.parseInt(latitude), Integer.parseInt(longitude));
+		this.date = date;
 	}
-
-	public void setGeoPoint(GeoPoint geoPoint) {
-		this.geoPoint = geoPoint;
+	
+	public GeoPoint getGeopoint() {
+		return geopoint;
 	}
-
-	public Date getDate() {
+	public void setGeopoint(GeoPoint geopoint) {
+		this.geopoint = geopoint;
+	}
+	public String getDate() {
 		return date;
 	}
-
-	public void setDate(Date date) {
-		this.date = date;
-	}
-
-	public Geopoint_Time(GeoPoint geoPoint, Date date) {
-		super();
-		this.geoPoint = geoPoint;
-		this.date = date;
-	}
-
+	
 }

@@ -22,8 +22,11 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.google.android.maps.GeoPoint;
+
 import android.util.Log;
 import edu.berkeley.eecs.ruzenafit.model.AnActualWorkoutModelX_X;
+import edu.berkeley.eecs.ruzenafit.model.GeoPoint_Time;
 
 
 /**
@@ -32,7 +35,7 @@ import edu.berkeley.eecs.ruzenafit.model.AnActualWorkoutModelX_X;
  * @author gibssa
  *
  */
-public class ExternalDB {
+public class ExternalDBHelper {
 	private static final String TAG = "ExternalDB";
 	
 	@SuppressWarnings("unused")
@@ -60,7 +63,7 @@ public class ExternalDB {
 	}
 	
 	/**
-	 * @deprecated
+	 * @deprecated -- Should send a single XML string containing all of the workouts.
 	 * 
 	 * @param workout
 	 * @param userEmail
@@ -85,6 +88,14 @@ public class ExternalDB {
 		nameValuePairs.add(new BasicNameValuePair("totalCalories", 			workout.getTotalCalories()));
 		nameValuePairs.add(new BasicNameValuePair("totalDistance", 			workout.getTotalDistance()));
 		nameValuePairs.add(new BasicNameValuePair("coordinatesXMLString", 	sampleCoordinatesXMLString()));
+		
+		for (GeoPoint_Time geopoint : workout.getGeopoints()) {
+			Log.d(TAG, "Workout latitude: " + 	geopoint.getGeopoint().getLatitudeE6());
+			Log.d(TAG, "Workout longitude: " + 	geopoint.getGeopoint().getLongitudeE6());
+			Log.d(TAG, "Workout date: " + 		geopoint.getDate());
+		}
+		
+//		nameValuePairs.add(new BasicNameValuePair("coordinates", 			workout.getGeopoints()));
 		
 		// Setup the POST Request
 		HttpClient httpClient = new DefaultHttpClient();

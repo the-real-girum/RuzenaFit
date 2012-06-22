@@ -46,15 +46,16 @@ import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
-import edu.berkeley.eecs.ruzenafit.DBAdapter;
+import edu.berkeley.eecs.ruzenafit.Constants;
 import edu.berkeley.eecs.ruzenafit.R;
 import edu.berkeley.eecs.ruzenafit.Utils;
-import edu.berkeley.eecs.ruzenafit.access.ExternalDB;
+import edu.berkeley.eecs.ruzenafit.access.CalFitDBAdapter;
+import edu.berkeley.eecs.ruzenafit.access.ExternalDBHelper;
 import edu.berkeley.eecs.ruzenafit.access.InternalDBHelper;
 import edu.berkeley.eecs.ruzenafit.model.AnActualWorkoutModelX_X;
  
 public class HistoryActivity extends ListActivity {
-	private static DBAdapter mDbHelper;
+	private static CalFitDBAdapter mDbHelper;
 	private final static String TAG = "History Activity";
 	private static Context context;
 	
@@ -75,7 +76,7 @@ public class HistoryActivity extends ListActivity {
 		// TRUST-REU takeover.
 		setupGAEConnectionButtons();
 		
-		mDbHelper = new DBAdapter(this);
+		mDbHelper = new CalFitDBAdapter(this);
 		context = this;
 		
 		ListView lv = getListView();
@@ -100,13 +101,6 @@ public class HistoryActivity extends ListActivity {
 							// set "back" button to return to original history
 							// page view.
 							startActivity(new Intent(context, ViewHistoryActivity.class)); // temporary solution.
-							// This doesn't work... but need to find solution to this.
-//							PersonalPage.tabSpecHistory.setContent(new Intent(context, ViewHistory.class));
-//							PersonalPage.tabSpecWorkout.setContent(new Intent(context, Workout.class));
-//							PersonalPage.tabHost.clearAllTabs();
-//							PersonalPage.tabHost.addTab(PersonalPage.tabSpecWorkout);
-//							PersonalPage.tabHost.addTab(PersonalPage.tabSpecHistory);
-//							PersonalPage.tabHost.setCurrentTab(1);
 						} else if (item == SMS) {
 							try {
 								mDbHelper.open();
@@ -151,7 +145,7 @@ public class HistoryActivity extends ListActivity {
 
 	
 	/**
-	 * Connects the GAE buttons to their respective methods
+	 * Connects the GAE buttons to their respective methods in the Access layer.
 	 */
 	private void setupGAEConnectionButtons() {
 		sendData = (Button) findViewById(R.id.buttonSubmit);
@@ -161,17 +155,22 @@ public class HistoryActivity extends ListActivity {
 		
 		sendData.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
+				
+				allWorkouts = InternalDBHelper.loadSQLiteWorkoutDataIntoMemory(mDbHelper.open());
+				
+				// Don't save workouts if there aren't any new ones.
 				if (allWorkouts == null || allWorkouts.length == 0) {
 					Toast.makeText(getApplicationContext(), "There are no workouts to send.", 3).show();
 					return;
 				}
 				
+				// Access the SharedPreferences to get app-wide data.
 				String facebookLoginEmail = getFacebookLoginEmail();
 				String privacySetting = getPrivacySetting();
 				
-				
+				// Execute code from the Access layer.
 				if (facebookLoginEmail != null && privacySetting != null) {
-					int successfulSubmissions = ExternalDB.submitDataToGAE(allWorkouts, facebookLoginEmail, privacySetting);
+					int successfulSubmissions = ExternalDBHelper.submitDataToGAE(allWorkouts, facebookLoginEmail, privacySetting);
 					Toast.makeText(getApplicationContext(), "Submitted " + successfulSubmissions + 
 							" new workouts to GAE", 5).show();
 				}
@@ -182,10 +181,12 @@ public class HistoryActivity extends ListActivity {
 		retrieveData.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				
+				// Use SharedPreferences.  Abstracted to be DRY for method above.
 				String facebookLoginEmail = getFacebookLoginEmail();
 				
+				// Execute code from the Access Layer.
 				if (facebookLoginEmail != null) {
-					allWorkouts = ExternalDB.retrieveDataFromGAE(facebookLoginEmail);
+					allWorkouts = ExternalDBHelper.retrieveDataFromGAE(facebookLoginEmail);
 					Toast.makeText(getApplicationContext(), "Got " + allWorkouts.length + " workouts from GAE", 5).show();
 				}
 			}
@@ -194,12 +195,12 @@ public class HistoryActivity extends ListActivity {
 	
 	// TODO: Refactor this method and getPrivacySetting() to be DRY.
 	private String getFacebookLoginEmail() {
-		SharedPreferences sharedPreferences = getSharedPreferences("RuzenaFitPrefs", 0);
+		SharedPreferences sharedPreferences = getSharedPreferences(Constants.SHARED_PREFS_NAMESPACE, 0);
 
-		String facebookLoginName = sharedPreferences.getString("userEmail", "__undefinedUserEmail");
+		String facebookLoginName = sharedPreferences.getString("userEmail", Constants.UNDEFINED_USER_EMAIL);
 		
-		if (facebookLoginName.equals("__undefinedUserEmail")) {
-			Toast.makeText(getApplicationContext(), "FB user email isn't set.", 5).show();
+		if (facebookLoginName.equals(Constants.UNDEFINED_USER_EMAIL)) {
+			Toast.makeText(getApplicationContext(), "FB user email isn't set.", 3).show();
 			return null;
 		}
 		
@@ -208,11 +209,11 @@ public class HistoryActivity extends ListActivity {
 	
 	// TODO: Refactor this method and getFacebookLoginEmail() to be DRY.
 	private String getPrivacySetting() {
-		SharedPreferences preferences = getSharedPreferences("RuzenaFitPrefs", 0);
-		String privacySetting = preferences.getString("privacySetting", "__undefinedPrivacySetting");
+		SharedPreferences preferences = getSharedPreferences(Constants.SHARED_PREFS_NAMESPACE, 0);
+		String privacySetting = preferences.getString("privacySetting", Constants.UNDEFINED_PRIVACY_SETTING);
 		
-		if (privacySetting.equals("__undefinedUserEmail")) {
-			Toast.makeText(getApplicationContext(), "FB user email isn't set.", 5).show();
+		if (privacySetting.equals(Constants.UNDEFINED_PRIVACY_SETTING)) {
+			Toast.makeText(getApplicationContext(), "Privacy settings aren't set.", 3).show();
 			return null;
 		}
 		
@@ -227,11 +228,12 @@ public class HistoryActivity extends ListActivity {
 			fillData();
 			
 			// TRUST-REU takeover.
-			this.allWorkouts = InternalDBHelper.saveCurrentDataInMemory(mDbHelper);
+			this.allWorkouts = InternalDBHelper.loadSQLiteWorkoutDataIntoMemory(mDbHelper);
 			
 			mDbHelper.close();
 		} catch (Exception e) {
 			// TODO: tell user save to database fail.
+			Log.e(TAG, "InternalDBHelper failed: " + e.getMessage());
 		}
 	}
 	
@@ -254,8 +256,6 @@ public class HistoryActivity extends ListActivity {
 				R.id.text9 };
 
 		// Now create an array adapter and set it to display rows.
-		// TODO: maybe should only display a full page of data.. and then upon
-		// "scrolling down", display more.
 		PersonalizedCursorAdapter workouts = new PersonalizedCursorAdapter(this, R.layout.workout_row, c, from, to);
 		setListAdapter(workouts);
 	}

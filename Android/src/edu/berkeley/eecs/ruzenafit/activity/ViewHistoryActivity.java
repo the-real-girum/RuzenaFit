@@ -32,16 +32,12 @@ import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
 import com.google.android.maps.OverlayItem;
 
-import edu.berkeley.eecs.ruzenafit.DBAdapter;
 import edu.berkeley.eecs.ruzenafit.LineChart;
 import edu.berkeley.eecs.ruzenafit.MyBarChart;
 import edu.berkeley.eecs.ruzenafit.R;
 import edu.berkeley.eecs.ruzenafit.RouteItemizedOverlay;
 import edu.berkeley.eecs.ruzenafit.Utils;
-import edu.berkeley.eecs.ruzenafit.R.array;
-import edu.berkeley.eecs.ruzenafit.R.drawable;
-import edu.berkeley.eecs.ruzenafit.R.id;
-import edu.berkeley.eecs.ruzenafit.R.layout;
+import edu.berkeley.eecs.ruzenafit.access.CalFitDBAdapter;
 
 public class ViewHistoryActivity extends MapActivity{
 	public static final String TAG = "ViewHistory Activity";
@@ -49,7 +45,7 @@ public class ViewHistoryActivity extends MapActivity{
 
 	public static Context context;
 	
-	private static DBAdapter dbHelper;
+	private static CalFitDBAdapter dbHelper;
 	private static long time_interval = 0;
 	private int viewstate;
 	
@@ -70,7 +66,7 @@ public class ViewHistoryActivity extends MapActivity{
 	
 	private void init() {
 		context = this;
-		dbHelper = new DBAdapter(this);
+		dbHelper = new CalFitDBAdapter(this);
 	}
 	
 	private void dataSetup() {

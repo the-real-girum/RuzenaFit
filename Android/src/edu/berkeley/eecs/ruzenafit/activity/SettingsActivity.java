@@ -23,6 +23,7 @@ import com.facebook.android.Facebook;
 import com.facebook.android.Facebook.DialogListener;
 import com.facebook.android.FacebookError;
 
+import edu.berkeley.eecs.ruzenafit.Constants;
 import edu.berkeley.eecs.ruzenafit.R;
 
 public class SettingsActivity extends Activity {
@@ -203,7 +204,7 @@ public class SettingsActivity extends Activity {
 						final String email = profile.getString("email");
 
 						// Save this FB info internally.
-						SharedPreferences sharedPreferences = getSharedPreferences("RuzenaFitPrefs", 0);
+						SharedPreferences sharedPreferences = getSharedPreferences(Constants.SHARED_PREFS_NAMESPACE, 0);
 						SharedPreferences.Editor sharedPreferencesEditor = sharedPreferences.edit();
 						sharedPreferencesEditor.putString("userName", name);
 						sharedPreferencesEditor.putString("userEmail", email);

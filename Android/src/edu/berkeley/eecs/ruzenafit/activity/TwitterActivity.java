@@ -1,7 +1,5 @@
 package edu.berkeley.eecs.ruzenafit.activity;
 
-import edu.berkeley.eecs.ruzenafit.R;
-import edu.berkeley.eecs.ruzenafit.R.layout;
 import winterwell.jtwitter.Twitter;
 import winterwell.jtwitter.TwitterException;
 import android.app.Activity;
@@ -11,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
+import edu.berkeley.eecs.ruzenafit.R;
 
 public class TwitterActivity extends Activity {
 	static final String TAG = "StatusActivity";

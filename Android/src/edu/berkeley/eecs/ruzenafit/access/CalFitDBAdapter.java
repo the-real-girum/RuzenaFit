@@ -7,7 +7,7 @@
  * @author Irving Lin, Curtis Wang
  */
 
-package edu.berkeley.eecs.ruzenafit;
+package edu.berkeley.eecs.ruzenafit.access;
 
 import java.util.ArrayList;
 
@@ -21,7 +21,9 @@ import android.util.Log;
 
 import com.google.android.maps.GeoPoint;
 
-public class DBAdapter {
+import edu.berkeley.eecs.ruzenafit.model.GeoPoint_Time;
+
+public class CalFitDBAdapter {
 	public static final String TAG = "DBAdapter";
     
     private static final String DATABASE_NAME = "history";
@@ -42,13 +44,13 @@ public class DBAdapter {
     private static final String CREATE_DATASAMPLES_TABLE =
     	"CREATE TABLE " + DATASAMPLES_TABLE + " ( _id INTEGER PRIMARY KEY AUTOINCREMENT, workout_id INTEGER, "
     		+ "kcals REAL NOT NULL, speed REAL NOT NULL, distance FLOAT NOT NULL, pace REAL NOT NULL, altitude REAL NOT NULL, "
-    		+ "geopoint_lat INTEGER NOT NULL, geopoint_long INTEGER NOT NULL, FOREIGN KEY (workout_id) REFERENCES workouts(_id) ON DELETE CASCADE );";
+    		+ "geopoint_lat INTEGER NOT NULL, geopoint_long INTEGER NOT NULL, geopoint_date TEXT NOT NULL, FOREIGN KEY (workout_id) REFERENCES workouts(_id) ON DELETE CASCADE );";
     
     private final Context context;
     private DatabaseHelper mDbHelper;
     private static SQLiteDatabase db;
     
-	public DBAdapter(Context context) {
+	public CalFitDBAdapter(Context context) {
 		this.context = context;
         mDbHelper = new DatabaseHelper(this.context);
 	}
@@ -81,7 +83,7 @@ public class DBAdapter {
      * @return
      * @throws SQLException
      */
-	public DBAdapter open() throws SQLException {
+	public CalFitDBAdapter open() throws SQLException {
 		db = mDbHelper.getWritableDatabase();
 		return this;
 	}
@@ -133,14 +135,14 @@ public class DBAdapter {
 	 * @param distances
 	 * @param paces
 	 * @param altitudes
-	 * @param geopoints
-	 * @param geopointsMap
+	 * @param gpList
+	 * 
 	 * @return
 	 */
 	public long insertWorkout(long user_id, String date, long duration, long time_interval, 
 			float total_calories, float average_speed, float total_distance, float altitude_gain,
 			ArrayList<Float> calories, ArrayList<Float> speeds, ArrayList<Float> distances,
-			ArrayList<Float> paces, ArrayList<Float> altitudes, ArrayList<GeoPoint> geopoints, ArrayList<GeoPoint> geopointsMap) {
+			ArrayList<Float> paces, ArrayList<Float> altitudes, ArrayList<GeoPoint_Time> gpList) {
 		long row = 0;
 		
 		// insert basic workout data into workouts table
@@ -163,12 +165,12 @@ public class DBAdapter {
 		
 		// insert workout comprehensive sample data into datasamples table
 		int size = calories.size();
-		if (speeds.size() == size && distances.size() == size && paces.size() == size && altitudes.size() == size && geopoints.size() == size) {
+		if (speeds.size() == size && distances.size() == size && paces.size() == size && altitudes.size() == size && gpList.size() == size) {
 			db.beginTransaction();
 			try {
 				long workoutID = row;
 				for (int i = 0; i < size; i++) {
-					row = insertDatasamples(workoutID, calories.get(i), speeds.get(i), distances.get(i), paces.get(i), altitudes.get(i), geopoints.get(i));
+					row = insertDatasamples(workoutID, calories.get(i), speeds.get(i), distances.get(i), paces.get(i), altitudes.get(i), gpList.get(i));
 				}
 				db.setTransactionSuccessful();
 				return workoutID;
@@ -186,7 +188,7 @@ public class DBAdapter {
 		}
     }
     
-	public long insertDatasamples(long workout_id, float kcals, float speed, float distance, float pace, float altitude, GeoPoint geopoint) throws Exception {
+	public long insertDatasamples(long workout_id, float kcals, float speed, float distance, float pace, float altitude, GeoPoint_Time geoPoint_Time) throws Exception {
 		ContentValues datasamplesValues = new ContentValues();
 
 		datasamplesValues.put("workout_id", workout_id);
@@ -195,8 +197,9 @@ public class DBAdapter {
 		datasamplesValues.put("distance", distance);
 		datasamplesValues.put("pace", pace);
 		datasamplesValues.put("altitude", altitude);
-		datasamplesValues.put("geopoint_lat", geopoint.getLatitudeE6());
-		datasamplesValues.put("geopoint_long", geopoint.getLongitudeE6());
+		datasamplesValues.put("geopoint_lat", geoPoint_Time.getGeopoint().getLatitudeE6());
+		datasamplesValues.put("geopoint_long", geoPoint_Time.getGeopoint().getLongitudeE6());
+		datasamplesValues.put("geopoint_date", geoPoint_Time.getDate());
 		
 		return db.insert(DATASAMPLES_TABLE, null, datasamplesValues);
 	}

@@ -61,15 +61,13 @@ import com.google.android.maps.MyLocationOverlay;
 import com.google.android.maps.Overlay;
 import com.google.android.maps.OverlayItem;
 
-import edu.berkeley.eecs.ruzenafit.DBAdapter;
 import edu.berkeley.eecs.ruzenafit.R;
 import edu.berkeley.eecs.ruzenafit.RouteItemizedOverlay;
 import edu.berkeley.eecs.ruzenafit.Utils;
 import edu.berkeley.eecs.ruzenafit.WAVE;
 import edu.berkeley.eecs.ruzenafit.WorkoutHelper;
-import edu.berkeley.eecs.ruzenafit.R.drawable;
-import edu.berkeley.eecs.ruzenafit.R.id;
-import edu.berkeley.eecs.ruzenafit.R.layout;
+import edu.berkeley.eecs.ruzenafit.access.CalFitDBAdapter;
+import edu.berkeley.eecs.ruzenafit.model.GeoPoint_Time;
 
 /* To Input Mock Locations to Emulator 5554 for testing:
  *     telnet localhost 5554
@@ -100,7 +98,7 @@ public class WorkoutActivity extends MapActivity {
 			.getInfinity();
 
 	public static Context workoutContext;
-	private DBAdapter dbHelper;
+	private CalFitDBAdapter dbHelper;
 	private GeoPoint prevGP, curGP;
 	private MapView mapView;
 	private MapController mapController;
@@ -109,10 +107,10 @@ public class WorkoutActivity extends MapActivity {
 	private static RouteItemizedOverlay itemizedOverlay;
 	private MyLocationOverlay myLocationOverlay;
 
-	// lists for saving all workout data
+	// lists for saving all workout data -- why isn't this data encapsulated in one class?
 	private List<Overlay> mapOverlays;
 	private ArrayList<GeoPoint> geoPoints = new ArrayList<GeoPoint>();
-	private ArrayList<GeoPoint> gpList = new ArrayList<GeoPoint>();
+	private ArrayList<GeoPoint_Time> gpList = new ArrayList<GeoPoint_Time>();
 	private ArrayList<Float> caloriesList = new ArrayList<Float>();
 	private ArrayList<Float> speedList = new ArrayList<Float>();
 	private ArrayList<Float> distanceList = new ArrayList<Float>();
@@ -163,7 +161,7 @@ public class WorkoutActivity extends MapActivity {
 	 * http://developer.android.com/guide/topics/fundamentals.html#actlife for
 	 * information on an Activity's lifecycle.
 	 */
-
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -205,18 +203,6 @@ public class WorkoutActivity extends MapActivity {
 			// start workout again with updated data
 			updateInfo();
 		}
-
-		// if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
-		// {
-		// gpsStatus.setText("GPS is disabled");
-		// gpsStatus.setTextColor(-65536);
-		// Toast.makeText(getApplicationContext(),
-		// "GPS is disabled. To enable all functions of the application, please toggle the GPS.",
-		// Toast.LENGTH_LONG).show();
-		// } else {
-		// gpsStatus.setText("GPS is enabled");
-		// gpsStatus.setTextColor(-8983040);
-		// }
 	}
 
 	@Override
@@ -257,7 +243,6 @@ public class WorkoutActivity extends MapActivity {
 	 * NON-REQUIRED ACTIVITY CLASS METHODS * * * * * * * * * * * * * * * * * * *
 	 * * * * *
 	 */
-
 	/**
 	 * Sets up the workout.
 	 */
@@ -417,38 +402,9 @@ public class WorkoutActivity extends MapActivity {
 		}
 		RouteItemizedOverlay.animateAndZoom(mapController, tempGPList, false);
 		// mapView.invalidate();
-
-		// Intentionally temporarily removed.
-		// button for live location map panning to current location
+		
 		final Button track = (Button) findViewById(R.id.centermap_button);
-		if (false) {
-			track.setOnClickListener(new Button.OnClickListener() {
-				public void onClick(View v) {
-					// determines whether to track or not
-					if (tracking) {
-						tracking = false;
-						track.setText("Enable Tracking");
-					} else {
-						tracking = true;
-						track.setText("Disable Tracking");
-
-						// center map about current geopoint
-						GeoPoint gp = WAVE.curGeoPoint;
-						if (gp != null) {
-							RouteItemizedOverlay.animateAndZoom(mapController,
-									geoPoints, true);
-						} else {
-							Toast.makeText(
-									getApplicationContext(),
-									"Location has not yet been determined. Check whether GPS has been enabled.",
-									Toast.LENGTH_LONG).show();
-						}
-					}
-				}
-			});
-		} else {
-			track.setVisibility(View.GONE);
-		}
+		track.setVisibility(View.GONE);
 
 		// button for live traffic
 		final Button traffic = (Button) findViewById(R.id.traffic);
@@ -581,9 +537,9 @@ public class WorkoutActivity extends MapActivity {
 											// running
 				// append data to lists
 				if (curGP != null) {
-					gpList.add(curGP);
+					gpList.add(new GeoPoint_Time(curGP));
 				} else {
-					gpList.add(new GeoPoint(-1, -1));
+					gpList.add(new GeoPoint_Time(new GeoPoint(-1, -1)));
 				}
 				caloriesList.add((Float) Utils.validateFloat(kCals));
 				speedList.add((Float) Utils.validateFloat(mySpeed));
@@ -809,7 +765,7 @@ public class WorkoutActivity extends MapActivity {
 	 */
 	private void saveData() {
 		// initialize new dbadatper
-		dbHelper = new DBAdapter(this);
+		dbHelper = new CalFitDBAdapter(this);
 
 		// calcuate average speed for database
 		averageSpeed = myDistance
@@ -885,7 +841,7 @@ public class WorkoutActivity extends MapActivity {
 			dbHelper.insertWorkout(1, Utils.getDate(), totalWorkoutRunTime,
 					UPDATEFREQUENCY, kCals, averageSpeed, myDistance,
 					altitude_gain, caloriesList, speedList, distanceList,
-					paceList, altitudeList, gpList, geoPoints);
+					paceList, altitudeList, gpList);
 			// mDbHelper.insertWorkout(1, Utils.getDate(), finalRunTime,
 			// finalUpdateFreq, finalKcals, finalAvgSpeed, finalDist,
 			// finalAltitudeGain,
@@ -1157,17 +1113,17 @@ public class WorkoutActivity extends MapActivity {
 	 * altitudes is stored as "0" in the altitude ArrayList.
 	 * 
 	 * @param altitudes
-	 * @param gpList
+	 * @param gpList2
 	 * @return
 	 */
 	public static float elevationChange(ArrayList<Float> altitudes,
-			ArrayList<GeoPoint> gpList) {
-		if (altitudes.size() == gpList.size()) {
+			ArrayList<GeoPoint_Time> gpList2) {
+		if (altitudes.size() == gpList2.size()) {
 			float elevationChange = 0;
 			boolean first = true;
 			float startAlt = altitudes.get(0);
 			for (int i = 0; i < altitudes.size(); i++) {
-				GeoPoint tempGP = gpList.get(i);
+				GeoPoint tempGP = gpList2.get(i).getGeopoint();
 				long GPlat = tempGP.getLatitudeE6();
 				long GPlong = tempGP.getLongitudeE6();
 				float curAlt = altitudes.get(i);

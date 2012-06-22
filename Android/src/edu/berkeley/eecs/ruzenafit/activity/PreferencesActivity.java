@@ -10,6 +10,7 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
+import edu.berkeley.eecs.ruzenafit.Constants;
 import edu.berkeley.eecs.ruzenafit.R;
 import edu.berkeley.eecs.ruzenafit.model.PrivacyPreference;
 
@@ -82,7 +83,7 @@ public class PreferencesActivity extends Activity {
 	 */
 	private void setPrivacySetting(PrivacyPreference privacyPreference) {
 		SharedPreferences.Editor preferences = getSharedPreferences(
-				"RuzenaFitPrefs", 0).edit();
+				Constants.SHARED_PREFS_NAMESPACE, 0).edit();
 		preferences.putString("privacySetting", privacyPreference.toString());
 		preferences.commit();
 
