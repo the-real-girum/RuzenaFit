@@ -164,7 +164,7 @@ public class HistoryActivity extends ListActivity {
 					return;
 				}
 				
-				// Access the SharedPreferences to get app-wide data.
+				// Use app-wide SharedPreferences to get information needed by server.
 				String facebookLoginEmail = getFacebookLoginEmail();
 				String privacySetting = getPrivacySetting();
 				

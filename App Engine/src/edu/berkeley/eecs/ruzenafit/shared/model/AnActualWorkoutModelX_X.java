@@ -18,6 +18,7 @@ public class AnActualWorkoutModelX_X {
 	private String totalCalories;
 	private String averageSpeed;
 	private String totalDistance;
+	private String coordinatesXMLString;
 	
 	public AnActualWorkoutModelX_X() {
 		super();
@@ -83,5 +84,11 @@ public class AnActualWorkoutModelX_X {
 	}
 	public void setTotalDistance(String totalDistance) {
 		this.totalDistance = totalDistance;
+	}
+	public String getCoordinatesXMLString() {
+		return coordinatesXMLString;
+	}
+	public void setCoordinatesXMLString(String coordinatesXMLString) {
+		this.coordinatesXMLString = coordinatesXMLString;
 	}
 }

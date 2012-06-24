@@ -94,6 +94,7 @@ public class WorkoutServlet {
 		workout.setDuration(duration);
 		workout.setTotalCalories(totalCalories);
 		workout.setTotalDistance(totalDistance);
+		workout.setCoordinatesXMLString(coordinatesXMLString);
 
 		try {
 			Builder parser = new Builder();
@@ -142,6 +143,7 @@ public class WorkoutServlet {
 			Key userKey = KeyFactory.createKey("Workout User", user);
 
 			Entity workoutEntity = new Entity("Workout", userKey);
+			workoutEntity.setProperty("privacySetting", workout.getPrivacySetting());
 			workoutEntity.setProperty("date", workout.getDate());
 			workoutEntity
 					.setProperty("averageSpeed", workout.getAverageSpeed());
@@ -150,6 +152,7 @@ public class WorkoutServlet {
 					workout.getTotalCalories());
 			workoutEntity.setProperty("totalDistance",
 					workout.getTotalDistance());
+			workoutEntity.setProperty("coordinatesXMLString", workout.getCoordinatesXMLString());
 
 			DatastoreService datastore = DatastoreServiceFactory
 					.getDatastoreService();
@@ -190,6 +193,7 @@ public class WorkoutServlet {
 		AnActualWorkoutModelX_X[] allWorkouts = new AnActualWorkoutModelX_X[3];
 
 		AnActualWorkoutModelX_X workout1 = new AnActualWorkoutModelX_X();
+		workout1.setPrivacySetting("lowPrivacy");
 		workout1.setDate("some date");
 		workout1.setAverageSpeed("some average speed");
 		workout1.setDuration("some average duration");
@@ -197,6 +201,7 @@ public class WorkoutServlet {
 		workout1.setTotalDistance("some total distance run");
 
 		AnActualWorkoutModelX_X workout2 = new AnActualWorkoutModelX_X();
+		workout2.setPrivacySetting("mediumPrivacy");
 		workout2.setDate("some date 2");
 		workout2.setAverageSpeed("some average speed 2");
 		workout2.setDuration("some average duration 2");
@@ -204,6 +209,7 @@ public class WorkoutServlet {
 		workout2.setTotalDistance("some total distance run 2");
 
 		AnActualWorkoutModelX_X workout3 = new AnActualWorkoutModelX_X();
+		workout3.setPrivacySetting("highPrivacy");
 		workout3.setDate("some date 3");
 		workout3.setAverageSpeed("some average speed 3");
 		workout3.setDuration("some average duration 3");

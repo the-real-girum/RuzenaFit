@@ -87,15 +87,9 @@ public class ExternalDBHelper {
 		nameValuePairs.add(new BasicNameValuePair("averageSpeed", 			workout.getAverageSpeed()));
 		nameValuePairs.add(new BasicNameValuePair("totalCalories", 			workout.getTotalCalories()));
 		nameValuePairs.add(new BasicNameValuePair("totalDistance", 			workout.getTotalDistance()));
-		nameValuePairs.add(new BasicNameValuePair("coordinatesXMLString", 	sampleCoordinatesXMLString()));
-		
-		for (GeoPoint_Time geopoint : workout.getGeopoints()) {
-			Log.d(TAG, "Workout latitude: " + 	geopoint.getGeopoint().getLatitudeE6());
-			Log.d(TAG, "Workout longitude: " + 	geopoint.getGeopoint().getLongitudeE6());
-			Log.d(TAG, "Workout date: " + 		geopoint.getDate());
-		}
-		
-//		nameValuePairs.add(new BasicNameValuePair("coordinates", 			workout.getGeopoints()));
+//		nameValuePairs.add(new BasicNameValuePair("coordinatesXMLString", 	sampleCoordinatesXMLString()));
+		nameValuePairs.add(new BasicNameValuePair("coordinatesXMLString", 
+													convertGeoPointsToXMLString(workout.getGeopoints())));
 		
 		// Setup the POST Request
 		HttpClient httpClient = new DefaultHttpClient();
@@ -114,6 +108,53 @@ public class ExternalDBHelper {
 			Log.e(TAG, "ERROR: " + e.getMessage());
 			return false;
 		}
+	}
+	
+	/**
+	 * Use the XML library "XOM" to setup the
+	 * <coordinates></coordinates> XML section.<br /><br />
+	 * 
+	 * See {@link sampleCoordiantesXMLString()} for an example
+	 * of what the output should look like.
+	 * 
+	 * @param geopoints
+	 * @return
+	 */
+	private static String convertGeoPointsToXMLString(GeoPoint_Time[] geopoints) {
+		
+		// Declare the root element of this XML array
+		Element coordinates = new Element("coordinates");
+		
+		// Fill up the coordinates XML element
+		for (GeoPoint_Time geopoint : geopoints) {
+			
+			// <coordinates> should have several <coordinate> elements in it. 
+			Element coordinate = new Element("coordinate");
+			
+			// Each <coordinate> needs a latitude
+			Element latitude = new Element("latitude");
+			latitude.appendChild("" + geopoint.getGeopoint().getLatitudeE6());
+			Log.d(TAG, "Workout latitude: " + 	geopoint.getGeopoint().getLatitudeE6());
+			coordinate.appendChild(latitude);
+			
+			// ... and a longitude
+			Element longitude = new Element("longitude");
+			longitude.appendChild("" + geopoint.getGeopoint().getLongitudeE6());
+			Log.d(TAG, "Workout longitude: " + 	geopoint.getGeopoint().getLongitudeE6());
+			coordinate.appendChild(longitude);
+			
+			// ... and a timestamp
+			Element timestamp = new Element("timestamp");
+			timestamp.appendChild(geopoint.getDate());
+			Log.d(TAG, "Workout date: " + 		geopoint.getDate());
+			coordinate.appendChild(timestamp);
+			
+			// Now add this particular <coordinate> to the <coordinates> root element
+			coordinates.appendChild(coordinate);
+		}
+		
+		// Return the string of the completed XML.
+		return coordinates.toXML();
 	}
 	
 	/**
