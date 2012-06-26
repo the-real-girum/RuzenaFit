@@ -1,4 +1,4 @@
-package edu.berkeley.eecs.ruzenafit;
+package edu.berkeley.eecs.ruzenafit.model;
 
 import java.util.Date;
 import java.util.List;
@@ -12,6 +12,7 @@ import org.achartengine.renderer.DefaultRenderer;
 import org.achartengine.renderer.SimpleSeriesRenderer;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
+
 
 /**
  * An abstract class for the demo charts to extend.

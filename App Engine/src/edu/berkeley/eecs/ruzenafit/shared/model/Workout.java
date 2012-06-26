@@ -1,54 +1,94 @@
 package edu.berkeley.eecs.ruzenafit.shared.model;
 
-import java.text.DateFormat;
-import java.util.Date;
+import javax.xml.bind.annotation.XmlRootElement;
 
 
 /**
- * Model class for what a timed "Workout" is.
- *  
+ * Gotta love the original code base  :)
+ * 
  * @author gibssa
  *
  */
+@XmlRootElement(name = "workout")
 public class Workout {
+
+	private String privacySetting;
+	private String date;
+	private String duration;
+	private String totalCalories;
+	private String averageSpeed;
+	private String totalDistance;
+	private String coordinatesXMLString;
 	
-	private Date date;
-	private long duration;
-	private float totalCalories;
-	private float averageSpeed;
-	private float totalDistance;
-	
-	public Date getDate() {
-		return date;
+	public Workout() {
+		super();
 	}
-	public void setDate(Date date) {
+	
+	public Workout(String privacySetting, String date, String duration,
+			String totalCalories, String averageSpeed, String totalDistance) {
+		super();
+		this.privacySetting = privacySetting;
 		this.date = date;
-	}
-	public long getDuration() {
-		return duration;
-	}
-	public void setDuration(long duration) {
 		this.duration = duration;
-	}
-	public float getTotalCalories() {
-		return totalCalories;
-	}
-	public void setTotalCalories(float totalCalories) {
 		this.totalCalories = totalCalories;
-	}
-	public float getAverageSpeed() {
-		return averageSpeed;
-	}
-	public void setAverageSpeed(float averageSpeed) {
 		this.averageSpeed = averageSpeed;
-	}
-	public float getTotalDistance() {
-		return totalDistance;
-	}
-	public void setTotalDistance(float totalDistance) {
 		this.totalDistance = totalDistance;
 	}
 	
+	@Override
+	public boolean equals(Object arg0) {
+		if (!(arg0 instanceof Workout))
+			return false;
+		Workout workout = (Workout)arg0;
+		
+		return (this.averageSpeed.equals(	workout.getAverageSpeed()) 	&&
+				this.date.equals(			workout.getDate()) 			&&
+				this.duration.equals(		workout.getDuration()) 		&&
+				this.totalCalories.equals(	workout.getTotalCalories()) &&
+				this.totalDistance.equals(	workout.getTotalDistance()));
+	}
+
 	
-	
+	public String getPrivacySetting() {
+		return privacySetting;
+	}
+	public void setPrivacySetting(String privacySetting) {
+		this.privacySetting = privacySetting;
+	}
+	public String getDate() {
+		return date;
+	}
+	public void setDate(String date) {
+		this.date = date;
+	}
+	public String getDuration() {
+		return duration;
+	}
+	public void setDuration(String duration) {
+		this.duration = duration;
+	}
+	public String getTotalCalories() {
+		return totalCalories;
+	}
+	public void setTotalCalories(String totalCalories) {
+		this.totalCalories = totalCalories;
+	}
+	public String getAverageSpeed() {
+		return averageSpeed;
+	}
+	public void setAverageSpeed(String averageSpeed) {
+		this.averageSpeed = averageSpeed;
+	}
+	public String getTotalDistance() {
+		return totalDistance;
+	}
+	public void setTotalDistance(String totalDistance) {
+		this.totalDistance = totalDistance;
+	}
+	public String getCoordinatesXMLString() {
+		return coordinatesXMLString;
+	}
+	public void setCoordinatesXMLString(String coordinatesXMLString) {
+		this.coordinatesXMLString = coordinatesXMLString;
+	}
 }

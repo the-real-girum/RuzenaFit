@@ -1,4 +1,4 @@
-package edu.berkeley.eecs.ruzenafit;
+package edu.berkeley.eecs.ruzenafit.service;
 
 import java.util.Vector;
 
@@ -10,6 +10,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.IBinder;
 import android.util.Log;
+import edu.berkeley.eecs.ruzenafit.util.SquareRoot;
 
 public class Kcal extends Service implements SensorEventListener {
 	private static final String TAG = "Kcal Activity";

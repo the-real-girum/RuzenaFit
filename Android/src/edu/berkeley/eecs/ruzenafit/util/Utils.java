@@ -8,7 +8,7 @@
  */
 
 
-package edu.berkeley.eecs.ruzenafit;
+package edu.berkeley.eecs.ruzenafit.util;
 
 import java.util.ArrayList;
 import java.util.Calendar;

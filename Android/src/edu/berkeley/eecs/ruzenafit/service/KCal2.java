@@ -5,7 +5,7 @@
  * @author: Irving Lin
  */
 
-package edu.berkeley.eecs.ruzenafit;
+package edu.berkeley.eecs.ruzenafit.service;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;

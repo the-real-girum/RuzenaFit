@@ -61,13 +61,14 @@ import com.google.android.maps.MyLocationOverlay;
 import com.google.android.maps.Overlay;
 import com.google.android.maps.OverlayItem;
 
+import edu.berkeley.eecs.ruzenafit.Constants;
 import edu.berkeley.eecs.ruzenafit.R;
-import edu.berkeley.eecs.ruzenafit.RouteItemizedOverlay;
-import edu.berkeley.eecs.ruzenafit.Utils;
-import edu.berkeley.eecs.ruzenafit.WAVE;
-import edu.berkeley.eecs.ruzenafit.WorkoutHelper;
 import edu.berkeley.eecs.ruzenafit.access.CalFitDBAdapter;
-import edu.berkeley.eecs.ruzenafit.model.GeoPoint_Time;
+import edu.berkeley.eecs.ruzenafit.model.CoordinateDataPoint;
+import edu.berkeley.eecs.ruzenafit.service.WAVE;
+import edu.berkeley.eecs.ruzenafit.service.WorkoutHelper;
+import edu.berkeley.eecs.ruzenafit.util.Utils;
+import edu.berkeley.eecs.ruzenafit.view.RouteItemizedOverlay;
 
 /* To Input Mock Locations to Emulator 5554 for testing:
  *     telnet localhost 5554
@@ -110,7 +111,7 @@ public class WorkoutActivity extends MapActivity {
 	// lists for saving all workout data -- why isn't this data encapsulated in one class?
 	private List<Overlay> mapOverlays;
 	private ArrayList<GeoPoint> geoPoints = new ArrayList<GeoPoint>();
-	private ArrayList<GeoPoint_Time> gpList = new ArrayList<GeoPoint_Time>();
+	private ArrayList<CoordinateDataPoint> gpList = new ArrayList<CoordinateDataPoint>();
 	private ArrayList<Float> caloriesList = new ArrayList<Float>();
 	private ArrayList<Float> speedList = new ArrayList<Float>();
 	private ArrayList<Float> distanceList = new ArrayList<Float>();
@@ -138,9 +139,9 @@ public class WorkoutActivity extends MapActivity {
 	public static long workoutPauseStartTime = 0;
 	public static long totalWorkoutPauseTime = 0;
 
-	// Frequency between updates (for kcal, distance, pace, etc.) after starting
+	// OLD -- Frequency between updates (for kcal, distance, pace, etc.) after starting
 	// the workout. Default is 1 second
-	private final int UPDATEFREQUENCY = 3000; // in milliseconds
+//	private final int UPDATEFREQUENCY = 5000; // in milliseconds
 
 	// For HTTP Post query
 	private String genformat = "####0.00";
@@ -537,11 +538,12 @@ public class WorkoutActivity extends MapActivity {
 											// running
 				// append data to lists
 				if (curGP != null) {
-					gpList.add(new GeoPoint_Time(curGP));
+					gpList.add(new CoordinateDataPoint(curGP));
 				} else {
-					gpList.add(new GeoPoint_Time(new GeoPoint(-1, -1)));
+					gpList.add(new CoordinateDataPoint(new GeoPoint(-1, -1)));
 				}
-				caloriesList.add((Float) Utils.validateFloat(kCals));
+//				caloriesList.add((Float) Utils.validateFloat(kCals));
+				caloriesList.add((Float) kCals);
 				speedList.add((Float) Utils.validateFloat(mySpeed));
 				distanceList.add((Float) Utils.validateFloat(myDistance));
 				paceList.add((Float) Utils.validateFloat(myPace));
@@ -553,7 +555,7 @@ public class WorkoutActivity extends MapActivity {
 				// TODO: eventually need to give user ability to choose between
 				// update frequencies.
 				// run this again in UPDATEFREQUENCY milliseconds.
-				mHandler.postDelayed(updateDataInfoAndLists, UPDATEFREQUENCY);
+				mHandler.postDelayed(updateDataInfoAndLists, Constants.getUPDATE_FREQUENCY());
 			}
 		}
 	};
@@ -788,23 +790,6 @@ public class WorkoutActivity extends MapActivity {
 			lastGeoPoint = null;
 		}
 
-		// finalize all data so that we can run database and http post
-		// operations in other threads
-		// final long finalRunTime = totalWorkoutRunTime, finalUpdateFreq =
-		// UPDATEFREQUENCY;
-		// final float finalAltitudeGain = altitude_gain, finalKcals = kCals,
-		// finalAvgSpeed = averageSpeed,
-		// finalDist = myDistance;
-		// final ArrayList<Float> finalCaloriesList = (ArrayList<Float>)
-		// caloriesList.clone(),
-		// finalSpeedList = (ArrayList<Float>) speedList.clone(),
-		// finalDistanceList = (ArrayList<Float>) distanceList.clone(),
-		// finalPaceList = (ArrayList<Float>) paceList.clone(),
-		// finalAltitudeList = (ArrayList<Float>) altitudeList.clone();
-		// final ArrayList<GeoPoint> finalGpList = (ArrayList<GeoPoint>)
-		// gpList.clone(),
-		// finalGeoPoints = (ArrayList<GeoPoint>) geoPoints.clone();
-
 		// get IMEI to uniquely identify users' posts to the server
 		TelephonyManager mTelephonyMgr = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
 		String imei = mTelephonyMgr.getDeviceId(); // Requires READ_PHONE_STATE
@@ -822,37 +807,17 @@ public class WorkoutActivity extends MapActivity {
 		writeToFile(imei, timestamp, totalWorkoutRunTime, lastGeoPoint,
 				averageSpeed, altitude_gain, kCals);
 
-		// postToHTTP(imei, timestamp, totalWorkoutRunTime, lastGeoPoint,
-		// averageSpeed, lastAltitude, kCals);
-
-		// save to database
-		// TODO: thread this? only problem that might be encountered is that if
-		// a person starts another workout and tries to save a new workout
-		// before the current one is completely saved. Thus, would need to
-		// handle that case as well.
-		// Toast.makeText(getApplicationContext(),
-		// "Saving data to database... Long workouts may take a few moments to appear in history.",
-		// Toast.LENGTH_LONG).show();
-		// new Thread() {
-		// public void run() {
 		// save to sqlite database on phone
 		try {
 			dbHelper.open();
 			dbHelper.insertWorkout(1, Utils.getDate(), totalWorkoutRunTime,
-					UPDATEFREQUENCY, kCals, averageSpeed, myDistance,
+					Constants.getUPDATE_FREQUENCY(), kCals, averageSpeed, myDistance,
 					altitude_gain, caloriesList, speedList, distanceList,
 					paceList, altitudeList, gpList);
-			// mDbHelper.insertWorkout(1, Utils.getDate(), finalRunTime,
-			// finalUpdateFreq, finalKcals, finalAvgSpeed, finalDist,
-			// finalAltitudeGain,
-			// finalCaloriesList, finalSpeedList, finalDistanceList,
-			// finalPaceList, finalAltitudeList, finalGpList, finalGeoPoints);
 			dbHelper.close();
 		} catch (Exception e) {
 			// TODO: tell user save to database fail.
 		}
-		// }
-		// }.start();
 	}
 
 	/**
@@ -1117,7 +1082,7 @@ public class WorkoutActivity extends MapActivity {
 	 * @return
 	 */
 	public static float elevationChange(ArrayList<Float> altitudes,
-			ArrayList<GeoPoint_Time> gpList2) {
+			ArrayList<CoordinateDataPoint> gpList2) {
 		if (altitudes.size() == gpList2.size()) {
 			float elevationChange = 0;
 			boolean first = true;

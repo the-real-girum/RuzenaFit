@@ -1,4 +1,4 @@
-package edu.berkeley.eecs.ruzenafit;
+package edu.berkeley.eecs.ruzenafit.service;
 
 import java.util.ArrayList;
 
@@ -13,6 +13,7 @@ import android.os.IBinder;
 import android.util.Log;
 
 import com.google.android.maps.GeoPoint;
+
 
 public class WAVE extends Service {
 	//*********************************************

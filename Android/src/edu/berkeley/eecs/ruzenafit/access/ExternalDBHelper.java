@@ -25,8 +25,9 @@ import org.w3c.dom.NodeList;
 import com.google.android.maps.GeoPoint;
 
 import android.util.Log;
+import android.widget.Toast;
 import edu.berkeley.eecs.ruzenafit.model.AnActualWorkoutModelX_X;
-import edu.berkeley.eecs.ruzenafit.model.GeoPoint_Time;
+import edu.berkeley.eecs.ruzenafit.model.CoordinateDataPoint;
 
 
 /**
@@ -87,9 +88,9 @@ public class ExternalDBHelper {
 		nameValuePairs.add(new BasicNameValuePair("averageSpeed", 			workout.getAverageSpeed()));
 		nameValuePairs.add(new BasicNameValuePair("totalCalories", 			workout.getTotalCalories()));
 		nameValuePairs.add(new BasicNameValuePair("totalDistance", 			workout.getTotalDistance()));
-//		nameValuePairs.add(new BasicNameValuePair("coordinatesXMLString", 	sampleCoordinatesXMLString()));
 		nameValuePairs.add(new BasicNameValuePair("coordinatesXMLString", 
 													convertGeoPointsToXMLString(workout.getGeopoints())));
+		Log.d(TAG, "coordinatesXMLString: " + convertGeoPointsToXMLString(workout.getGeopoints()));
 		
 		// Setup the POST Request
 		HttpClient httpClient = new DefaultHttpClient();
@@ -103,7 +104,7 @@ public class ExternalDBHelper {
 			HttpResponse response = httpClient.execute(request);
 			String responseString = EntityUtils.toString(response.getEntity());
 			Log.d(TAG, "HttpResponse: " + responseString);
-			return responseString.equals("success"); 
+			return responseString.equals("success");
 		} catch (Exception e) {
 			Log.e(TAG, "ERROR: " + e.getMessage());
 			return false;
@@ -120,13 +121,13 @@ public class ExternalDBHelper {
 	 * @param geopoints
 	 * @return
 	 */
-	private static String convertGeoPointsToXMLString(GeoPoint_Time[] geopoints) {
+	private static String convertGeoPointsToXMLString(CoordinateDataPoint[] geopoints) {
 		
 		// Declare the root element of this XML array
 		Element coordinates = new Element("coordinates");
 		
 		// Fill up the coordinates XML element
-		for (GeoPoint_Time geopoint : geopoints) {
+		for (CoordinateDataPoint geopoint : geopoints) {
 			
 			// <coordinates> should have several <coordinate> elements in it. 
 			Element coordinate = new Element("coordinate");
@@ -142,6 +143,12 @@ public class ExternalDBHelper {
 			longitude.appendChild("" + geopoint.getGeopoint().getLongitudeE6());
 			Log.d(TAG, "Workout longitude: " + 	geopoint.getGeopoint().getLongitudeE6());
 			coordinate.appendChild(longitude);
+			
+			// ... and the kcals burned for this particular point
+			Element kCals = new Element("kCals");
+			kCals.appendChild("" + geopoint.getkCals());
+			Log.d(TAG, "KCals burned at this point: " + geopoint.getkCals());
+			coordinate.appendChild(kCals);
 			
 			// ... and a timestamp
 			Element timestamp = new Element("timestamp");

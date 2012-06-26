@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import android.database.Cursor;
 import android.util.Log;
 import edu.berkeley.eecs.ruzenafit.model.AnActualWorkoutModelX_X;
-import edu.berkeley.eecs.ruzenafit.model.GeoPoint_Time;
+import edu.berkeley.eecs.ruzenafit.model.CoordinateDataPoint;
 
 public class InternalDBHelper {
 	private static final String TAG = "InternalDBHelper";
@@ -38,7 +38,7 @@ public class InternalDBHelper {
 			workout.setAverageSpeed(cursor.getString(cursor.getColumnIndex("average_speed")));
 			workout.setTotalDistance(cursor.getString(cursor.getColumnIndex("total_distance")));
 			
-			ArrayList<GeoPoint_Time> geopoints = new ArrayList<GeoPoint_Time>();
+			ArrayList<CoordinateDataPoint> geopoints = new ArrayList<CoordinateDataPoint>();
 			Cursor dataSampleCursor = mDbHelper.getWorkoutSampledata(workout.getWorkoutID());
 			dataSampleCursor.moveToFirst();
 			
@@ -47,14 +47,15 @@ public class InternalDBHelper {
 				String latitude = dataSampleCursor.getString(dataSampleCursor.getColumnIndex("geopoint_lat"));
 				String longitude = dataSampleCursor.getString(dataSampleCursor.getColumnIndex("geopoint_long"));
 				String geopointDate = dataSampleCursor.getString(dataSampleCursor.getColumnIndex("geopoint_date"));
+				float kCals = dataSampleCursor.getFloat(dataSampleCursor.getColumnIndex("kcals"));
 
-				geopoints.add(new GeoPoint_Time(latitude, longitude, geopointDate));
+				geopoints.add(new CoordinateDataPoint(latitude, longitude, geopointDate, kCals));
 				
 				dataSampleCursor.moveToNext();
 			}
 			dataSampleCursor.close();
 			
-			GeoPoint_Time[] geopointsArray = geopoints.toArray(new GeoPoint_Time[geopoints.size()]);
+			CoordinateDataPoint[] geopointsArray = geopoints.toArray(new CoordinateDataPoint[geopoints.size()]);
 			workout.setGeopoints(geopointsArray);
 			
 			allWorkouts[i++] = workout;

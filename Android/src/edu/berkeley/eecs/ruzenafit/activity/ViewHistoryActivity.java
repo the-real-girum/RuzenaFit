@@ -32,12 +32,12 @@ import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
 import com.google.android.maps.OverlayItem;
 
-import edu.berkeley.eecs.ruzenafit.LineChart;
-import edu.berkeley.eecs.ruzenafit.MyBarChart;
 import edu.berkeley.eecs.ruzenafit.R;
-import edu.berkeley.eecs.ruzenafit.RouteItemizedOverlay;
-import edu.berkeley.eecs.ruzenafit.Utils;
 import edu.berkeley.eecs.ruzenafit.access.CalFitDBAdapter;
+import edu.berkeley.eecs.ruzenafit.model.LineChart;
+import edu.berkeley.eecs.ruzenafit.model.MyBarChart;
+import edu.berkeley.eecs.ruzenafit.util.Utils;
+import edu.berkeley.eecs.ruzenafit.view.RouteItemizedOverlay;
 
 public class ViewHistoryActivity extends MapActivity{
 	public static final String TAG = "ViewHistory Activity";

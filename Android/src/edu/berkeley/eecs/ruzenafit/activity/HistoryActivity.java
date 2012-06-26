@@ -48,11 +48,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 import edu.berkeley.eecs.ruzenafit.Constants;
 import edu.berkeley.eecs.ruzenafit.R;
-import edu.berkeley.eecs.ruzenafit.Utils;
 import edu.berkeley.eecs.ruzenafit.access.CalFitDBAdapter;
 import edu.berkeley.eecs.ruzenafit.access.ExternalDBHelper;
 import edu.berkeley.eecs.ruzenafit.access.InternalDBHelper;
 import edu.berkeley.eecs.ruzenafit.model.AnActualWorkoutModelX_X;
+import edu.berkeley.eecs.ruzenafit.util.Utils;
  
 public class HistoryActivity extends ListActivity {
 	private static CalFitDBAdapter mDbHelper;

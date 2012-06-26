@@ -1,4 +1,4 @@
-package edu.berkeley.eecs.ruzenafit;
+package edu.berkeley.eecs.ruzenafit.view;
 
 import java.util.ArrayList;
 

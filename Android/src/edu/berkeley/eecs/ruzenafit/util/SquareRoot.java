@@ -1,4 +1,4 @@
-package edu.berkeley.eecs.ruzenafit;
+package edu.berkeley.eecs.ruzenafit.util;
 
 /*
  * Integer Square Root function
@@ -41,7 +41,7 @@ public class SquareRoot {
   /**
    * A faster replacement for (int)(java.lang.Math.sqrt(x)).  Completely accurate for x < 2147483648 (i.e. 2^31)...
    */
-  static int sqrt(int x) {
+  public static int sqrt(int x) {
     int xn;
 
     if (x >= 0x10000) {

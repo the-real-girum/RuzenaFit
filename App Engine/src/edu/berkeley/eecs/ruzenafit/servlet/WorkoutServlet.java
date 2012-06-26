@@ -1,4 +1,4 @@
-package edu.berkeley.eecs.ruzenafit.server;
+package edu.berkeley.eecs.ruzenafit.servlet;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,7 +25,7 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Query;
 
-import edu.berkeley.eecs.ruzenafit.shared.model.AnActualWorkoutModelX_X;
+import edu.berkeley.eecs.ruzenafit.shared.model.Workout;
 import edu.berkeley.eecs.ruzenafit.shared.model.CoordinateTime;
 
 // TODO: Optimize the uniqueness sanity check to ensure that you only load in all
@@ -39,7 +39,7 @@ public class WorkoutServlet {
 	@GET
 	@Produces(MediaType.TEXT_XML)
 	@Path("/getAllWorkouts")
-	public AnActualWorkoutModelX_X[] getAllWorkouts(
+	public Workout[] getAllWorkouts(
 			@QueryParam("userName") String userName) {
 
 		DatastoreService datastore = DatastoreServiceFactory
@@ -50,11 +50,11 @@ public class WorkoutServlet {
 		List<Entity> workoutEntities = datastore.prepare(query).asList(
 				FetchOptions.Builder.withDefaults());
 
-		AnActualWorkoutModelX_X[] workouts = new AnActualWorkoutModelX_X[workoutEntities
+		Workout[] workouts = new Workout[workoutEntities
 				.size()];
 		int i = 0;
 		for (Entity workoutEntity : workoutEntities) {
-			AnActualWorkoutModelX_X workout = new AnActualWorkoutModelX_X();
+			Workout workout = new Workout();
 			workout.setAverageSpeed((String) workoutEntity
 					.getProperty("averageSpeed"));
 			workout.setDate((String) workoutEntity.getProperty("date"));
@@ -87,7 +87,7 @@ public class WorkoutServlet {
 			@FormParam("totalDistance") String totalDistance,
 			@FormParam("coordinatesXMLString") String coordinatesXMLString) {
 
-		AnActualWorkoutModelX_X workout = new AnActualWorkoutModelX_X();
+		Workout workout = new Workout();
 		workout.setPrivacySetting(privacySetting);
 		workout.setDate(date);
 		workout.setAverageSpeed(averageSpeed);
@@ -96,29 +96,29 @@ public class WorkoutServlet {
 		workout.setTotalDistance(totalDistance);
 		workout.setCoordinatesXMLString(coordinatesXMLString);
 
-		try {
-			Builder parser = new Builder();
-			Document doc = parser.build(coordinatesXMLString, null);
-			
-			ArrayList<CoordinateTime> coordinates = new ArrayList<CoordinateTime>();
-			
-			for (int i = 0; i < doc.getChildCount(); i++) {
-//				long latitude = doc.getChild(i).
-			}
-			
-		} catch (ParsingException ex) {
-			System.err
-					.println("coordinatesXMLString is malformed.");
-		} catch (IOException ex) {
-			System.err
-					.println("Could not open coordinatesXMLString");
-		}
+//		try {
+//			Builder parser = new Builder();
+//			Document doc = parser.build(coordinatesXMLString, null);
+//			
+//			ArrayList<CoordinateTime> coordinates = new ArrayList<CoordinateTime>();
+//			
+//			for (int i = 0; i < doc.getChildCount(); i++) {
+////				long latitude = doc.getChild(i).
+//			}
+//			
+//		} catch (ParsingException ex) {
+//			System.err
+//					.println("coordinatesXMLString is malformed.");
+//		} catch (IOException ex) {
+//			System.err
+//					.println("Could not open coordinatesXMLString");
+//		}
 		
 
 		// Save this particular workout to the GAE datastore.
 		boolean result = saveWorkoutToDatastore(user, workout);
 
-		return (result ? "success" : "failure");
+		return (result ? "success" : "workout already exists");
 	}
 
 	/**
@@ -128,12 +128,12 @@ public class WorkoutServlet {
 	 * @param workout
 	 */
 	private boolean saveWorkoutToDatastore(String user,
-			AnActualWorkoutModelX_X workout) {
+			Workout workout) {
 
-		AnActualWorkoutModelX_X[] currentWorkouts = getAllWorkouts(user);
+		Workout[] currentWorkouts = getAllWorkouts(user);
 		boolean isUnique = true;
 
-		for (AnActualWorkoutModelX_X iteratedWorkout : currentWorkouts) {
+		for (Workout iteratedWorkout : currentWorkouts) {
 			if (iteratedWorkout.equals(workout)) {
 				isUnique = false;
 			}
@@ -188,11 +188,11 @@ public class WorkoutServlet {
 	@GET
 	@Produces(MediaType.TEXT_XML)
 	@Path("/test")
-	public AnActualWorkoutModelX_X[] returnTestData() {
+	public Workout[] returnTestData() {
 
-		AnActualWorkoutModelX_X[] allWorkouts = new AnActualWorkoutModelX_X[3];
+		Workout[] allWorkouts = new Workout[3];
 
-		AnActualWorkoutModelX_X workout1 = new AnActualWorkoutModelX_X();
+		Workout workout1 = new Workout();
 		workout1.setPrivacySetting("lowPrivacy");
 		workout1.setDate("some date");
 		workout1.setAverageSpeed("some average speed");
@@ -200,7 +200,7 @@ public class WorkoutServlet {
 		workout1.setTotalCalories("some total number of calories");
 		workout1.setTotalDistance("some total distance run");
 
-		AnActualWorkoutModelX_X workout2 = new AnActualWorkoutModelX_X();
+		Workout workout2 = new Workout();
 		workout2.setPrivacySetting("mediumPrivacy");
 		workout2.setDate("some date 2");
 		workout2.setAverageSpeed("some average speed 2");
@@ -208,7 +208,7 @@ public class WorkoutServlet {
 		workout2.setTotalCalories("some total number of calories 2");
 		workout2.setTotalDistance("some total distance run 2");
 
-		AnActualWorkoutModelX_X workout3 = new AnActualWorkoutModelX_X();
+		Workout workout3 = new Workout();
 		workout3.setPrivacySetting("highPrivacy");
 		workout3.setDate("some date 3");
 		workout3.setAverageSpeed("some average speed 3");

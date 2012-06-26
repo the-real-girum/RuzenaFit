@@ -21,7 +21,7 @@ import android.util.Log;
 
 import com.google.android.maps.GeoPoint;
 
-import edu.berkeley.eecs.ruzenafit.model.GeoPoint_Time;
+import edu.berkeley.eecs.ruzenafit.model.CoordinateDataPoint;
 
 public class CalFitDBAdapter {
 	public static final String TAG = "DBAdapter";
@@ -142,7 +142,7 @@ public class CalFitDBAdapter {
 	public long insertWorkout(long user_id, String date, long duration, long time_interval, 
 			float total_calories, float average_speed, float total_distance, float altitude_gain,
 			ArrayList<Float> calories, ArrayList<Float> speeds, ArrayList<Float> distances,
-			ArrayList<Float> paces, ArrayList<Float> altitudes, ArrayList<GeoPoint_Time> gpList) {
+			ArrayList<Float> paces, ArrayList<Float> altitudes, ArrayList<CoordinateDataPoint> gpList) {
 		long row = 0;
 		
 		// insert basic workout data into workouts table
@@ -171,6 +171,9 @@ public class CalFitDBAdapter {
 				long workoutID = row;
 				for (int i = 0; i < size; i++) {
 					row = insertDatasamples(workoutID, calories.get(i), speeds.get(i), distances.get(i), paces.get(i), altitudes.get(i), gpList.get(i));
+					Log.d(TAG, "Inserted datasample:" +
+							" workoutID: " + workoutID +
+							", kCals burned: " + calories.get(i));
 				}
 				db.setTransactionSuccessful();
 				return workoutID;
@@ -188,7 +191,7 @@ public class CalFitDBAdapter {
 		}
     }
     
-	public long insertDatasamples(long workout_id, float kcals, float speed, float distance, float pace, float altitude, GeoPoint_Time geoPoint_Time) throws Exception {
+	public long insertDatasamples(long workout_id, float kcals, float speed, float distance, float pace, float altitude, CoordinateDataPoint geoPoint_Time) throws Exception {
 		ContentValues datasamplesValues = new ContentValues();
 
 		datasamplesValues.put("workout_id", workout_id);

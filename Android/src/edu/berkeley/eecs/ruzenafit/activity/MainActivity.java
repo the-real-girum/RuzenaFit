@@ -24,8 +24,8 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.TabHost;
 import edu.berkeley.eecs.ruzenafit.R;
-import edu.berkeley.eecs.ruzenafit.WorkoutHelper;
 import edu.berkeley.eecs.ruzenafit.access.CalFitDBAdapter;
+import edu.berkeley.eecs.ruzenafit.service.WorkoutHelper;
 
 public class MainActivity extends Activity {
 	public static Context myContext;

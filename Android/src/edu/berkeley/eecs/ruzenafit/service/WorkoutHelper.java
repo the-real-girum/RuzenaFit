@@ -1,9 +1,11 @@
-package edu.berkeley.eecs.ruzenafit;
+package edu.berkeley.eecs.ruzenafit.service;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 
+import edu.berkeley.eecs.ruzenafit.R;
+import edu.berkeley.eecs.ruzenafit.R.drawable;
 import edu.berkeley.eecs.ruzenafit.activity.MainActivity;
 import edu.berkeley.eecs.ruzenafit.activity.WorkoutActivity;
 

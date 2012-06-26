@@ -18,7 +18,7 @@ public class AnActualWorkoutModelX_X {
 	private String totalCalories;
 	private String averageSpeed;
 	private String totalDistance;
-	private GeoPoint_Time[] geopoints;
+	private CoordinateDataPoint[] geopoints;
 	
 	public AnActualWorkoutModelX_X() {
 		super();
@@ -60,10 +60,10 @@ public class AnActualWorkoutModelX_X {
 	public void setTotalDistance(String totalDistance) {
 		this.totalDistance = totalDistance;
 	}
-	public GeoPoint_Time[] getGeopoints() {
+	public CoordinateDataPoint[] getGeopoints() {
 		return geopoints;
 	}
-	public void setGeopoints(GeoPoint_Time[] geopoints) {
+	public void setGeopoints(CoordinateDataPoint[] geopoints) {
 		this.geopoints = geopoints;
 	}
 

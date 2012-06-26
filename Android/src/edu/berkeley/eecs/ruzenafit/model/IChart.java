@@ -1,4 +1,4 @@
-package edu.berkeley.eecs.ruzenafit;
+package edu.berkeley.eecs.ruzenafit.model;
 
 import android.content.Context;
 import android.content.Intent;
