@@ -1,4 +1,4 @@
-package edu.berkeley.eecs.ruzenafit;
+package edu.berkeley.eecs.ruzenafit.util;
 
 public class Constants {
 	public static final String SHARED_PREFS_NAMESPACE = "RuzenaFitPrefs";

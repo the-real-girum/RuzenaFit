@@ -10,9 +10,9 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
-import edu.berkeley.eecs.ruzenafit.Constants;
 import edu.berkeley.eecs.ruzenafit.R;
 import edu.berkeley.eecs.ruzenafit.model.PrivacyPreference;
+import edu.berkeley.eecs.ruzenafit.util.Constants;
 
 public class PreferencesActivity extends Activity {
 	// Initializing variables

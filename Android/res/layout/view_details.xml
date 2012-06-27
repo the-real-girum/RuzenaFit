@@ -297,7 +297,7 @@
 			android:layout_height="fill_parent"
 			android:enabled="true"
 			android:clickable="true"
-			android:apiKey="0dhSzsycBGkjiFdnxz40AtjPR4ZHCvn3LTo7YZw" />
+			android:apiKey="0KfUhl-NVrWAgaHoNefHGAd2yikc8KURqDqjkmg" />
         <Button
             android:id="@+id/view2"
             android:layout_width="wrap_content"

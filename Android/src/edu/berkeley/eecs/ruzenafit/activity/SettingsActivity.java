@@ -23,8 +23,8 @@ import com.facebook.android.Facebook;
 import com.facebook.android.Facebook.DialogListener;
 import com.facebook.android.FacebookError;
 
-import edu.berkeley.eecs.ruzenafit.Constants;
 import edu.berkeley.eecs.ruzenafit.R;
+import edu.berkeley.eecs.ruzenafit.util.Constants;
 
 public class SettingsActivity extends Activity {
 

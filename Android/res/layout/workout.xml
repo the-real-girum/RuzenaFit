@@ -1,7 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE doc [
-	<!ENTITY key SYSTEM "key.file">
-]>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+layout/workoutLayout"
     android:layout_width="fill_parent"

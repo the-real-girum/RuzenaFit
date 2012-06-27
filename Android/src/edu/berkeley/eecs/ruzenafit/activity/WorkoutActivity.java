@@ -61,12 +61,12 @@ import com.google.android.maps.MyLocationOverlay;
 import com.google.android.maps.Overlay;
 import com.google.android.maps.OverlayItem;
 
-import edu.berkeley.eecs.ruzenafit.Constants;
 import edu.berkeley.eecs.ruzenafit.R;
 import edu.berkeley.eecs.ruzenafit.access.CalFitDBAdapter;
 import edu.berkeley.eecs.ruzenafit.model.CoordinateDataPoint;
 import edu.berkeley.eecs.ruzenafit.service.WAVE;
 import edu.berkeley.eecs.ruzenafit.service.WorkoutHelper;
+import edu.berkeley.eecs.ruzenafit.util.Constants;
 import edu.berkeley.eecs.ruzenafit.util.Utils;
 import edu.berkeley.eecs.ruzenafit.view.RouteItemizedOverlay;
 
@@ -536,6 +536,10 @@ public class WorkoutActivity extends MapActivity {
 		public void run() {
 			if (workoutState == STARTED) { // this will only post if workout
 											// running
+
+				// Moved up to here
+				updateWorkoutInfo();
+				
 				// append data to lists
 				if (curGP != null) {
 					gpList.add(new CoordinateDataPoint(curGP));
@@ -550,8 +554,8 @@ public class WorkoutActivity extends MapActivity {
 				altitudeList.add((Float) Utils.validateFloat(myAltitude));
 				timeList.add((Long) totalWorkoutRunTime / 1000);
 
-				updateWorkoutInfo();
-
+//				updateWorkoutInfo();
+				
 				// TODO: eventually need to give user ability to choose between
 				// update frequencies.
 				// run this again in UPDATEFREQUENCY milliseconds.
