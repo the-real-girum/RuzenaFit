@@ -55,6 +55,9 @@ public class WorkoutTrackerActivity extends Activity {
 //	private static int okoff = 0;
 	
 	
+	// TODO: This button should do some basic sanity-checking
+	// to make sure that your facebook email is set, and that your
+	// privacy setting is set.
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -83,7 +86,7 @@ public class WorkoutTrackerActivity extends Activity {
                 // Perform action on clicks
                 if (togglebutton.isChecked() && (WorkoutTrackerService.getStatus()==0)) {			// turn on logging, don't need to do this if service status is already running
 	            	Toast.makeText(getApplicationContext(), "Starting datalog...", Toast.LENGTH_SHORT).show();
-	            	WorkoutTrackerService.startlog();
+	            	WorkoutTrackerService.startLog();
 	    	        Log.i(getClass().getSimpleName(), "startlog!!!");                	
 //                	NotificationOn();
                 } else if ((togglebutton.isChecked() == false) && (WorkoutTrackerService.getStatus()==1)) {	// turn off logging, don't need to do this if service status is not running

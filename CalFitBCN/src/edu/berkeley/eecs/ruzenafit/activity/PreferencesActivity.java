@@ -14,6 +14,8 @@ import edu.berkeley.eecs.ruzenafit.R;
 import edu.berkeley.eecs.ruzenafit.model.PrivacyPreferenceEnum;
 import edu.berkeley.eecs.ruzenafit.util.Constants;
 
+// TODO: Change Preferences so that you cannot change them
+// while mid-workout.
 public class PreferencesActivity extends Activity {
 	// Initializing variables
 	RadioButton rbLow, rbMedium, rbHigh;
