@@ -35,7 +35,7 @@
         </activity>
         <activity android:name=".activity.RankingActivity" >
         </activity>
-        <activity android:name=".activity.SettingsActivity" >
+        <activity android:name=".activity.FacebookSettingsActivity" >
         </activity>
         <activity android:name=".activity.TwitterActivity" >
         </activity>

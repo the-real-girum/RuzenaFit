@@ -94,7 +94,7 @@ public class MainActivity extends Activity {
 	        settings.setOnClickListener(new Button.OnClickListener() {
 				public void onClick(View v) {
 	           		// start the About view
-	    			startActivity(new Intent(myContext, SettingsActivity.class));
+	    			startActivity(new Intent(myContext, FacebookSettingsActivity.class));
 				}
 			});
 	        

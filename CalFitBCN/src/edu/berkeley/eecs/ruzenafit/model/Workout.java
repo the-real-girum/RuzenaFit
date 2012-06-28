@@ -9,7 +9,7 @@ package edu.berkeley.eecs.ruzenafit.model;
  * @author gibssa
  *
  */
-public class AnActualWorkoutModelX_X {
+public class Workout {
 
 	private long workoutID;
 	private String date;
@@ -18,10 +18,6 @@ public class AnActualWorkoutModelX_X {
 	private String averageSpeed;
 	private String totalDistance;
 	private CoordinateDataPoint[] geopoints;
-	
-	public AnActualWorkoutModelX_X() {
-		super();
-	}
 
 	public long getWorkoutID() {
 		return workoutID;

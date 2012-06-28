@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:scrollbars="vertical">
+	<TextView        
+		android:id="@+id/title"
+        android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="10dip"		
+        android:text="@string/dataexplain"/>
+	<TextView        
+		android:id="@+id/kcallabel"
+        android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+    	android:layout_below="@id/title"
+		android:layout_marginTop="15dip"
+		android:layout_marginRight="20dip"		
+		android:textSize="25sp"		
+		android:text="@string/kcallabel"/>
+	<TextView        
+		android:id="@+id/kcalvalue"
+        android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+    	android:layout_below="@id/title"
+		android:layout_toRightOf="@id/kcallabel"
+		android:layout_marginTop="15dip"
+		android:textSize="25sp"		
+        android:text="@string/kcalvalue"/>
+	<TextView        
+		android:id="@+id/smsdetail"
+        android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="25dip"	
+		android:layout_below="@id/kcalvalue"
+        android:text="@string/smsdetail"/>
+	<Button
+		android:id="@+id/sms"	
+		android:text="@string/sms"
+		android:layout_width="100dip"
+		android:layout_height="wrap_content"
+		android:layout_centerHorizontal="true"
+    	android:layout_below="@id/smsdetail"
+		android:layout_marginTop="15dip"/>
+</RelativeLayout>	
+
+

@@ -26,7 +26,7 @@ import com.facebook.android.FacebookError;
 import edu.berkeley.eecs.ruzenafit.R;
 import edu.berkeley.eecs.ruzenafit.util.Constants;
 
-public class SettingsActivity extends Activity {
+public class FacebookSettingsActivity extends Activity {
 
 		// Your Facebook APP ID
 		private static String APP_ID = "187275568066559"; // Replace with your App
@@ -47,7 +47,7 @@ public class SettingsActivity extends Activity {
 		
 		public void onCreate(Bundle savedInstanceState) {
 			super.onCreate(savedInstanceState);
-			setContentView(R.layout.settings);
+			setContentView(R.layout.facebook_settings);
 
 			btnFbLogin = (Button) findViewById(R.id.btn_fblogin);
 			btnFbGetProfile = (Button) findViewById(R.id.btn_get_profile);

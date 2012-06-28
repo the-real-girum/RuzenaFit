@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+      package="edu.berkeley.sph.ehs.calfitd"
+      android:versionCode="1"
+      android:versionName="1.0">
+	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+	<uses-permission android:name="android.permission.INTERNET" />
+	<uses-permission android:name="android.permission.READ_PHONE_STATE" />	 
+	<uses-permission android:name="android.permission.WAKE_LOCK" />
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />	
+	
+    <application android:icon="@drawable/icon" android:label="@string/app_name" android:debuggable="false">
+		<uses-library
+			android:name="com.google.android.maps" />
+        <activity android:name=".CalFitd"
+                  android:label="@string/app_name"
+                  android:theme="@android:style/Theme.NoTitleBar"
+				  android:screenOrientation="portrait">                  
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+		<activity android:name=".MyMapActivity" 
+                  android:label="@string/app_name" 
+                  android:theme="@android:style/Theme.NoTitleBar"
+                  android:screenOrientation="portrait">
+        </activity> 
+  		<activity android:name=".ViewActivity" 
+                  android:label="@string/app_name" 
+                  android:theme="@android:style/Theme.NoTitleBar"
+                  android:screenOrientation="portrait">
+        </activity> 
+    	<activity android:name=".AboutActivity"
+                  android:theme="@android:style/Theme.NoTitleBar"
+				  android:screenOrientation="portrait">
+    	</activity>
+        <activity android:name="org.achartengine.GraphicalActivity" />
+		<service android:name=".CalFitdService" android:label="@string/service_name"
+				 android:exported="true">
+		</service>
+	</application>
+    <uses-sdk android:minSdkVersion="3" />
+</manifest> 
