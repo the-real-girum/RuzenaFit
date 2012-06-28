@@ -25,8 +25,9 @@ public class AboutActivity extends Activity {
 				Intent i = new Intent();
 				i.setAction(Intent.ACTION_VIEW);
 				i.addCategory(Intent.CATEGORY_BROWSABLE);
-				// TODO:  set to a meaningful website... /phast/CalFitdv1.htm
-				i.setData(Uri.parse("http://ehs.sph.berkeley.edu/edmund/calfit/"));
+				// TODO:  Set to a meaningful website -- also add Edmund to credits.
+//				i.setData(Uri.parse("http://ehs.sph.berkeley.edu/edmund/calfit/"));
+				i.setData(Uri.parse("http://girum.org"));
 				startActivity(i); 
         	}
         });

@@ -24,7 +24,6 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.PowerManager;
@@ -35,18 +34,26 @@ import android.util.Log;
 import edu.berkeley.eecs.ruzenafit.R;
 import edu.berkeley.eecs.ruzenafit.activity.WorkoutTrackerActivity;
 import edu.berkeley.eecs.ruzenafit.util.Constants;
+import edu.berkeley.eecs.ruzenafit.util.KCalUtils;
 
+// TODO: Decompose this monster.
 public class WorkoutTrackerService extends Service {
 	private static Context mContext;
 	protected static LocationManager mLocationManager = null;
 	protected Location mLocation = null;
 
-	// GPS updating...
+	/** The minimum distance that you need to be from your previous location
+	 * for it to register as a "new location."
+	 */
 	protected final static float MIN_DISTANCE = 0; // in Meters
-	protected final static long MIN_TIME = 20000; // in Milliseconds (at least
+	
+	// TODO: Make tick rate a variable tick_rate that's changed by preferences.
+	/** The "tick rate" of the LocationManager */
+	protected final static long TICK_RATE = 20000; // in Milliseconds (at least
 													// every 20 secs)
 	// note that kcal is only recorded once per minute.
 
+	// TODO: Change all of these private instance variables to be members of the Workout model class.
 	private static LocationListener locationListener;
 	protected static SensorManager mSensorManager = null;
 	private static SensorEventListener mSensorEventListener;
@@ -61,8 +68,10 @@ public class WorkoutTrackerService extends Service {
 	private static String mMostrecent_Provider = "-99";
 	private static long mMostrecent_System_Time = -99;
 
+	// TODO: When the other instance variables are fields of the Workout model class,
+	// change this to be derivable from the other fields (using the Utils method) as
+	// a "getKCals()" method.
 	private static float mMostrecent_kCal = 0;
-	private static long mMostrecent_Time = 0;
 	private static long lasttime = 0;
 	static long counter = 0;
 	private static double accum_minute_V = 0, accum_minute_H = 0;
@@ -70,33 +79,33 @@ public class WorkoutTrackerService extends Service {
 	private static int EEinterval = 10; // produce an EE estimate every 10
 										// seconds
 	private static int samplesPerWindow;
-	private static int windowtimemillisec = 2000; // 2 seconds
-	private static int manysamples = 128; // should be plenty for 2 seconds
+	private static int windowTimeMillisec = 2000; // 2 seconds
+	private static int manySamples = 128; // should be plenty for 2 seconds
 											// (DELAY_UI on G1 was ~10
 											// samples/sec)
-	private static double[][] data = new double[3][manysamples];
+	private static double[][] data = new double[3][manySamples];
 	private static PowerManager.WakeLock wl;
 	private static Kcal myKcal;
 	private static String imei = "0";
 
-	private static int filenum = 0;
-	private static int writen = 0;
-	private static int MAXWRITEN = 10000; // start a new file for every 10,000
+	private static int fileNum = 0;
+	private static int numTimesWritten = 0;
+	private static int MAX_WRITTEN = 10000; // start a new file for every 10,000
 											// entries writen to file
-	private static int MAXWRITEN2 = 1000; // start a new file for every 1,000
+	private static int MAX_WRITTEN2 = 1000; // start a new file for every 1,000
 											// entries writen to file (for the
 											// new accel detail writer that only
 											// writes chunks depending on
 											// windowtimemillisec)
-	private static int filenumgps = 0;
-	private static int writengps = 0;
+	private static int fileNumGPS = 0;
+	private static int writtenGPS = 0;
 
 	public static NotificationManager notificationManager;
 	public static final int NOTIFICATION_ID = 1;
 
-	public static long ntpdiff = 0;
+	public static long ntpDiff = 0;
 
-	public static String accum_acceldetail = "";
+	public static String accumAccelDetail = "";
 
 	@Override
 	public void onCreate() {
@@ -149,11 +158,11 @@ public class WorkoutTrackerService extends Service {
 
 		// Each time we start logging we start a new file regardless of
 		// numwriten
-		writen = 0;
-		writengps = 0;
+		numTimesWritten = 0;
+		writtenGPS = 0;
 
-		filenum = 0;
-		filenumgps = 0;
+		fileNum = 0;
+		fileNumGPS = 0;
 		FindNewFiles();
 
 		// this is needed to keep the service alive on Android 2.0+ systems
@@ -203,7 +212,7 @@ public class WorkoutTrackerService extends Service {
 
 	public static void stoplog() {
 		Log.i("CalFitService", "stoplog!!!");
-		myKcal.stopGPS();
+		myKcal.stopGPSTracking();
 		myKcal.stopSensor();
 		// stop thread
 		if (myKcal != null) {
@@ -235,9 +244,8 @@ public class WorkoutTrackerService extends Service {
 	/*************************************************************
 	 * Kcal stuff
 	 *************************************************************/
+	// TODO: Change this to a proper class
 	private static class Kcal extends Thread {
-		public Handler mHandler;
-
 		@Override
 		public void run() {
 
@@ -264,7 +272,7 @@ public class WorkoutTrackerService extends Service {
 			accum_minute_H = 0;
 			counter = 0;
 			startSensor();
-			startGPS();
+			setupAndStartGPSTracking();
 			mIsRunning = true;
 
 			Looper.loop();
@@ -276,7 +284,7 @@ public class WorkoutTrackerService extends Service {
 		 * Note the use of MIN_TIME and MIN_DISTANCE which are only "hints" to
 		 * the android system
 		 *********************************************/
-		private void startGPS() {
+		private void setupAndStartGPSTracking() {
 			Log.i("CalFitService", "startGPS!!!");
 
 			// create my locationListener
@@ -299,17 +307,18 @@ public class WorkoutTrackerService extends Service {
 				Log.d(getClass().getSimpleName(),
 						"GPS Provider has been enabled.");
 			}
+			
 			// register for location update events to be provided to my
 			// locationListener
 			mLocationManager.requestLocationUpdates(
-					LocationManager.GPS_PROVIDER, MIN_TIME, MIN_DISTANCE,
+					LocationManager.GPS_PROVIDER, TICK_RATE, MIN_DISTANCE,
 					locationListener);
 
 			// also ask for location updates from network location
 			// register for location update events to be provided to my
 			// locationListener
 			mLocationManager.requestLocationUpdates(
-					LocationManager.NETWORK_PROVIDER, MIN_TIME, MIN_DISTANCE,
+					LocationManager.NETWORK_PROVIDER, TICK_RATE, MIN_DISTANCE,
 					locationListener);
 
 			Location loc = mLocationManager
@@ -330,12 +339,12 @@ public class WorkoutTrackerService extends Service {
 			}
 		}
 
-		private void stopGPS() {
+		private void stopGPSTracking() {
 			Log.i("CalFitService", "stopGPS!!!");
 			// unregister for location update events
 			mLocationManager.removeUpdates(locationListener);
 		}
-
+		
 		private class MyLocationListener implements LocationListener {
 			@Override
 			public void onLocationChanged(Location loc) {
@@ -427,10 +436,10 @@ public class WorkoutTrackerService extends Service {
 			mSensorManager = (SensorManager) mContext
 					.getSystemService(Context.SENSOR_SERVICE);
 
-			// TODO: in production version consider using
-			// SensorManager.SENSOR_DELAY_FASTEST,
-			// SENSOR_DELAY_UI (was a good compromise)
-			// SENSOR_DELAY_NORMAL (probably best battery life)
+			/* in production version consider using
+			 * SensorManager.SENSOR_DELAY_FASTEST,
+			 * SENSOR_DELAY_UI (was a good compromise)
+			 * SENSOR_DELAY_NORMAL (probably best battery life) */
 			mSensorManager.registerListener(mSensorEventListener,
 					mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
 					SensorManager.SENSOR_DELAY_UI);
@@ -471,14 +480,14 @@ public class WorkoutTrackerService extends Service {
 					// write detail accelerometry to file
 					// writeFileDetailNew (System.currentTimeMillis(),
 					// event.values[0], event.values[1], event.values[2]);
-					accum_acceldetail = accum_acceldetail
+					accumAccelDetail = accumAccelDetail
 							+ System.currentTimeMillis() + ","
 							+ event.values[0] + "," + event.values[1] + ","
 							+ event.values[2] + "\n";
 
 					long now = SystemClock.elapsedRealtime();
 					// check if we have a window of data...
-					if (now >= (lasttime + windowtimemillisec)) {
+					if (now >= (lasttime + windowTimeMillisec)) {
 						Log.i(getClass().getSimpleName(), "Sensor : X: "
 								+ genfmt.format(event.values[0]) + " Y: "
 								+ genfmt.format(event.values[1]) + " Z: "
@@ -488,9 +497,9 @@ public class WorkoutTrackerService extends Service {
 						writeFileDetailNew2();
 
 						// calculate sample window part of kcal
-						double[] result = calculateKcal();
+						double[] result = KCalUtils.calculateKcal(data, samplesPerWindow);
 
-						FinalKcalResult(result);
+						finalKcalResult(result);
 
 						samplesPerWindow = 0;
 						lasttime = now;
@@ -500,84 +509,24 @@ public class WorkoutTrackerService extends Service {
 			}
 		}
 
-		// This is called on every sample window
-		private double[] calculateKcal() {
-			double res[] = new double[2]; // holds V and H result
-			double history[] = new double[3];
-			double d[] = new double[3];
-			double p[] = new double[3];
-			// double sdata[][] = new double[3][manysamples];
-
-			// smooth the data first
-			// 3-sample moving average
-			/*
-			 * for (int i=0; i<3; i++) { for (int j=0; j<samplesperwindow; j++)
-			 * { if (j==0) { sdata[i][j] = twoprevious[i] + oneprevious[i] +
-			 * data[i][j]; } else if (j==1) { sdata[i][j] = oneprevious[i] +
-			 * data[i][j-1] + data[i][j]; } else { sdata[i][j] = data[i][j-2] +
-			 * data[i][j-1] + data[i][j]; if (j==(samplesperwindow-2))
-			 * twoprevious[i]=data[i][j]; else if (j==(samplesperwindow-1))
-			 * oneprevious[i]=data[i][j]; } } }
-			 */
-
-			// this is historical average of the past samples
-			for (int i = 0; i < 3; i++) {
-				for (int j = 0; j < samplesPerWindow; j++) {
-					history[i] += data[i][j];
-				}
-				history[i] /= samplesPerWindow;
-			}
-
-			for (int j = 0; j < samplesPerWindow; j++) {
-
-				for (int i = 0; i < 3; i++) {
-					d[i] = history[i] - data[i][j];
-				}
-
-				double num = 0;
-				double den = 0;
-				double value = 0;
-				for (int i = 0; i < 3; i++) {
-					num = (d[0] * history[0] + d[1] * history[1] + d[2]
-							* history[2]);
-					den = (history[0] * history[0] + history[1] * history[1] + history[2]
-							* history[2]);
-
-					if (den == 0)
-						den = 0.01;
-					value = (num / den) * history[i];
-					p[i] = value;
-				}
-
-				double pMagn = p[0] * p[0] + p[1] * p[1] + p[2] * p[2];
-
-				res[0] += Math.sqrt(pMagn);
-
-				res[1] += Math.sqrt((d[0] - p[0]) * (d[0] - p[0])
-						+ (d[1] - p[1]) * (d[1] - p[1]) + (d[2] - p[2])
-						* (d[2] - p[2]));
-			}
-			return res;
-		}
-
 		// this is called after each sample window is processed; if we have a
 		// minute's
 		// worth of accumulated V and H results then generate the energy
 		// estimate
-		private void FinalKcalResult(double[] VH) {
+		private void finalKcalResult(double[] VH) {
 			double EE_minute;
 
 			// Note the (samplesperwindow/(windowtimemillisec/1000)) scales back
 			// down to 60 in a min
 			if (samplesPerWindow > 0) {
-				accum_minute_V += (VH[0] / (samplesPerWindow / ((float) windowtimemillisec / 1000)))
+				accum_minute_V += (VH[0] / (samplesPerWindow / ((float) windowTimeMillisec / 1000)))
 						/ GRAVITY;
-				accum_minute_H += (VH[1] / (samplesPerWindow / ((float) windowtimemillisec / 1000)))
+				accum_minute_H += (VH[1] / (samplesPerWindow / ((float) windowTimeMillisec / 1000)))
 						/ GRAVITY;
 			}
 			counter++;
 
-			if (counter >= (EEinterval / (windowtimemillisec / 1000))) {
+			if (counter >= (EEinterval / (windowTimeMillisec / 1000))) {
 				// EEact(k) = a*H^p1 + b*V^p2
 				//
 				// assume: mass(kg) = 80 kg
@@ -614,47 +563,8 @@ public class WorkoutTrackerService extends Service {
 
 				// write to file
 				writeFile();
-
-				/*
-				 * // post to server only on certain intervals if (postcounter >
-				 * POSTINTERVAL) { // write to website server with POST
-				 * request... // Create a new HttpClient and Post Header Thread
-				 * httpthread = new Thread() { public void run() {
-				 * 
-				 * HttpClient httpclient = new DefaultHttpClient(); HttpPost
-				 * httppost = new
-				 * HttpPost("http://calfitd.dyndns.org/PHAST/CalFitd/index.php"
-				 * );
-				 * 
-				 * try { // Add your data List<NameValuePair> nameValuePairs =
-				 * new ArrayList<NameValuePair>(2); nameValuePairs.add(new
-				 * BasicNameValuePair("imei", imei)); nameValuePairs.add(new
-				 * BasicNameValuePair("time",
-				 * ((Integer)(mMostrecent_Time)).toString()));
-				 * nameValuePairs.add(new BasicNameValuePair("lat",
-				 * geofmt.format(mMostrecent_GPS_Latitude)));
-				 * nameValuePairs.add(new BasicNameValuePair("lon",
-				 * geofmt.format(mMostrecent_GPS_Longitude)));
-				 * nameValuePairs.add(new BasicNameValuePair("speed",
-				 * genfmt.format(mMostrecent_GPS_Speed)));
-				 * nameValuePairs.add(new BasicNameValuePair("alt",
-				 * genfmt.format(mMostrecent_GPS_Altitude)));
-				 * nameValuePairs.add(new BasicNameValuePair("v",
-				 * genfmt.format(localV))); nameValuePairs.add(new
-				 * BasicNameValuePair("h", genfmt.format(localH)));
-				 * nameValuePairs.add(new BasicNameValuePair("kcal",
-				 * genfmt.format(mMostrecent_kCal))); httppost.setEntity(new
-				 * UrlEncodedFormEntity(nameValuePairs));
-				 * 
-				 * // Execute HTTP Post Request ResponseHandler<String>
-				 * responseHandler = new BasicResponseHandler(); String
-				 * responseBody = httpclient.execute(httppost, responseHandler);
-				 * // HttpResponse response = httpclient.execute(httppost);
-				 * 
-				 * } catch (Exception e) { Log.e(getClass().getSimpleName(),
-				 * "HTTP error: " + e.getMessage()); } } }; httpthread.start();
-				 * postcounter = 0; } else { postcounter++; }
-				 */
+				
+				// TODO: Change this "write to file" to write to server.
 
 				// reset the counters
 				accum_minute_V = 0;
@@ -693,9 +603,8 @@ public class WorkoutTrackerService extends Service {
 			try {
 				File root = new File(Environment.getExternalStorageDirectory()
 						+ "/CalFitD");
-				boolean success = false;
 				if (!root.exists()) {
-					success = root.mkdir();
+					root.mkdir();
 				}
 				if (root.canWrite()) {
 					File myfile = new File(root, "CalFitEE.txt");
@@ -724,20 +633,19 @@ public class WorkoutTrackerService extends Service {
 		try {
 			File root = new File(Environment.getExternalStorageDirectory()
 					+ "/CalFitD");
-			boolean success = false;
 			if (!root.exists()) {
-				success = root.mkdir();
+				root.mkdir();
 			}
 			if (root.canWrite()) {
-				myfile = new File(root, "CFdet" + filenum + ".txt");
+				myfile = new File(root, "CFdet" + fileNum + ".txt");
 				while (myfile.exists()) {
-					filenum++;
-					myfile = new File(root, "CFdet" + filenum + ".txt");
+					fileNum++;
+					myfile = new File(root, "CFdet" + fileNum + ".txt");
 				}
-				mygpsfile = new File(root, "CFgps" + filenumgps + ".txt");
+				mygpsfile = new File(root, "CFgps" + fileNumGPS + ".txt");
 				while (mygpsfile.exists()) {
-					filenumgps++;
-					mygpsfile = new File(root, "CFgps" + filenumgps + ".txt");
+					fileNumGPS++;
+					mygpsfile = new File(root, "CFgps" + fileNumGPS + ".txt");
 				}
 
 			}
@@ -758,29 +666,28 @@ public class WorkoutTrackerService extends Service {
 			try {
 				File root = new File(Environment.getExternalStorageDirectory()
 						+ "/CalFitD");
-				boolean success = false;
 				if (!root.exists()) {
-					success = root.mkdir();
+					root.mkdir();
 				}
 				if (root.canWrite()) {
-					writen++;
-					if (writen >= MAXWRITEN2) { // start a new file
-						writen = 0;
-						filenum++;
+					numTimesWritten++;
+					if (numTimesWritten >= MAX_WRITTEN2) { // start a new file
+						numTimesWritten = 0;
+						fileNum++;
 					}
 					// write the data to file on the device's SD card
-					myfile = new File(root, "CFdet" + filenum + ".txt");
+					myfile = new File(root, "CFdet" + fileNum + ".txt");
 					myfile.createNewFile();
 					FileWriter mywriter = new FileWriter(myfile, true);
 					BufferedWriter out = new BufferedWriter(mywriter);
 
 					// use out.write statements to write data...
-					out.write(accum_acceldetail);
+					out.write(accumAccelDetail);
 					out.close();
 					out = null;
 					mywriter = null;
 					myfile = null;
-					accum_acceldetail = "";
+					accumAccelDetail = "";
 				}
 			} catch (IOException e) {
 				Log.e("CalFitService", "Could not write file " + e.getMessage());
@@ -799,18 +706,17 @@ public class WorkoutTrackerService extends Service {
 			try {
 				File root = new File(Environment.getExternalStorageDirectory()
 						+ "/CalFitD");
-				boolean success = false;
 				if (!root.exists()) {
-					success = root.mkdir();
+					root.mkdir();
 				}
 				if (root.canWrite()) {
-					writengps++;
-					if (writengps >= MAXWRITEN) { // start a new file
-						writengps = 0;
-						filenumgps++;
+					writtenGPS++;
+					if (writtenGPS >= MAX_WRITTEN) { // start a new file
+						writtenGPS = 0;
+						fileNumGPS++;
 					}
 					// write the data to file on the device's SD card
-					myfile = new File(root, "CFgps" + filenumgps + ".txt");
+					myfile = new File(root, "CFgps" + fileNumGPS + ".txt");
 					myfile.createNewFile();
 					FileWriter mywriter = new FileWriter(myfile, true);
 					BufferedWriter out = new BufferedWriter(mywriter);
