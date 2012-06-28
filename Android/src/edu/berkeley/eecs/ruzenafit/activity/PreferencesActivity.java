@@ -11,9 +11,11 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 import edu.berkeley.eecs.ruzenafit.R;
-import edu.berkeley.eecs.ruzenafit.model.PrivacyPreference;
+import edu.berkeley.eecs.ruzenafit.model.PrivacyPreferenceEnum;
 import edu.berkeley.eecs.ruzenafit.util.Constants;
 
+// TODO: Change Preferences so that you cannot change them
+// while mid-workout.
 public class PreferencesActivity extends Activity {
 	// Initializing variables
 	RadioButton rbLow, rbMedium, rbHigh;
@@ -41,7 +43,7 @@ public class PreferencesActivity extends Activity {
 		rbLow.setOnClickListener(new OnClickListener() {
 
 			public void onClick(View v) {
-				setPrivacySetting(PrivacyPreference.lowPrivacy);
+				setPrivacySetting(PrivacyPreferenceEnum.lowPrivacy);
 				textOut.setText("    With this setting you will earn a 1.8x multiplier to your points. "
 						+ "You will also share the maximum amount of data about yourself possible. "
 						+ "For example anyone will be able to see exactly where you are working out "
@@ -54,7 +56,7 @@ public class PreferencesActivity extends Activity {
 		rbMedium.setOnClickListener(new OnClickListener() {
 
 			public void onClick(View v) {
-				setPrivacySetting(PrivacyPreference.mediumPrivacy);
+				setPrivacySetting(PrivacyPreferenceEnum.mediumPrivacy);
 				textOut.setText("    With this setting you will earn a 1.2x multiplier to "
 						+ "your points. "
 						+ "You will also share a moderate amount of data about yourself. "
@@ -69,7 +71,7 @@ public class PreferencesActivity extends Activity {
 		rbHigh.setOnClickListener(new OnClickListener() {
 
 			public void onClick(View v) {
-				setPrivacySetting(PrivacyPreference.highPrivacy);
+				setPrivacySetting(PrivacyPreferenceEnum.highPrivacy);
 				textOut.setText("    With this setting you will earn a 0.8x multiplier to your points. "
 						+ "You will also share a minimal amount of data about yourself." + "\n\n"
 						+ "With this preference, your data will update ONCE EVERY HOUR.");
@@ -84,7 +86,7 @@ public class PreferencesActivity extends Activity {
 	 * 
 	 * @param privacyPreference
 	 */
-	private void setPrivacySetting(PrivacyPreference privacyPreference) {
+	private void setPrivacySetting(PrivacyPreferenceEnum privacyPreference) {
 		SharedPreferences.Editor preferences = getSharedPreferences(
 				Constants.SHARED_PREFS_NAMESPACE, 0).edit();
 		preferences.putString("privacySetting", privacyPreference.toString());

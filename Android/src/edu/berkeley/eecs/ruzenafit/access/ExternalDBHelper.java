@@ -22,12 +22,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.google.android.maps.GeoPoint;
-
 import android.util.Log;
-import android.widget.Toast;
-import edu.berkeley.eecs.ruzenafit.model.AnActualWorkoutModelX_X;
 import edu.berkeley.eecs.ruzenafit.model.CoordinateDataPoint;
+import edu.berkeley.eecs.ruzenafit.model.Workout;
 
 
 /**
@@ -43,7 +40,7 @@ public class ExternalDBHelper {
 	private static final String TEST_URL = "http://ruzenafit.appspot.com/rest/workout/test";
 	private static final String RETRIEVE_WORKOUTS_URL = "http://ruzenafit.appspot.com/rest/workout/getAllWorkouts"; 
 	private static final String SAVE_WORKOUT_URL = "http://ruzenafit.appspot.com/rest/workout/saveWorkout";
-	private static final String SAVE_ALL_WORKOUTS_URL = "http://ruzenafit.appspot.com/rest/workout/saveAllWorkouts";
+//	private static final String SAVE_ALL_WORKOUTS_URL = "http://ruzenafit.appspot.com/rest/workout/saveAllWorkouts";
 	
 	
 	private static String deviceID = "";
@@ -52,10 +49,10 @@ public class ExternalDBHelper {
 	 * Submits data to Google App Engine (Girum's account, as set by URL).
 	 * Returns the number of successful GAE submissions.
 	 */
-	public static int submitDataToGAE(AnActualWorkoutModelX_X[] allWorkouts, String userEmail, String privacySetting) {
+	public static int submitDataToGAE(Workout[] allWorkouts, String userEmail, String privacySetting) {
 		
 		int successfulSubmissions = 0;
-		for (AnActualWorkoutModelX_X workout : allWorkouts) {
+		for (Workout workout : allWorkouts) {
 			if (submitOneWorkout(workout, userEmail, privacySetting))
 				successfulSubmissions++;
 		}
@@ -71,7 +68,7 @@ public class ExternalDBHelper {
 	 * @param privacySetting
 	 * @return
 	 */
-	private static boolean submitOneWorkout(AnActualWorkoutModelX_X workout, String userEmail, String privacySetting) {
+	private static boolean submitOneWorkout(Workout workout, String userEmail, String privacySetting) {
 		
 		if (workout == null)
 			return false;
@@ -115,8 +112,20 @@ public class ExternalDBHelper {
 	 * Use the XML library "XOM" to setup the
 	 * <coordinates></coordinates> XML section.<br /><br />
 	 * 
-	 * See {@link sampleCoordiantesXMLString()} for an example
-	 * of what the output should look like.
+	 * * It should look like the following:
+	 * 
+	 * <coordinates>
+	 *    <coordinate>
+	 *       <longitude>123</longitude>
+	 *       <latitude>123</latitude>
+	 *       <timestamp>sometimestamp</timestamp>
+	 *    </coordinate>
+	 *    <coordinate>
+	 *       <longitude>456</longitude>
+	 *       <latitude>456</latitude>
+	 *       <timestamp>sometimestamp2</timestamp>
+	 *    </coordinate>
+	 * </coordinates>
 	 * 
 	 * @param geopoints
 	 * @return
@@ -164,64 +173,14 @@ public class ExternalDBHelper {
 		return coordinates.toXML();
 	}
 	
-	/**
-	 * Use the library "XOM" to setup the 
-	 * <coordinates></coordinates> XML section.
-	 * It should look like the following:
-	 * 
-	 * <coordinates>
-	 *    <coordinate>
-	 *       <longitude>123</longitude>
-	 *       <latitude>123</latitude>
-	 *       <timestamp>sometimestamp</timestamp>
-	 *    </coordinate>
-	 *    <coordinate>
-	 *       <longitude>456</longitude>
-	 *       <latitude>456</latitude>
-	 *       <timestamp>sometimestamp2</timestamp>
-	 *    </coordinate>
-	 * </coordinates>
-	 */
-	private static String sampleCoordinatesXMLString() {
-		Element coordinates = new Element("coordinates");
-		
-		Element coordinate1 = new Element("coordinate");
-		Element latitude1 = new Element("latitude");
-		latitude1.appendChild("123");
-		Element longitude1 = new Element("longitude");
-		longitude1.appendChild("123");
-		Element timestamp1 = new Element("timestamp");
-		timestamp1.appendChild("some-timestamp");
-		
-		Element coordinate2 = new Element("coordinate");
-		Element latitude2 = new Element("latitude");
-		latitude2.appendChild("456");
-		Element longitude2 = new Element("longitude");
-		longitude2.appendChild("456");
-		Element timestamp2 = new Element("timestamp");
-		timestamp2.appendChild("some-other-timestamp");
-		
-		coordinate1.appendChild(latitude1);
-		coordinate1.appendChild(longitude1);
-		coordinate1.appendChild(timestamp1);
-		
-		coordinate2.appendChild(latitude2);
-		coordinate2.appendChild(longitude2);
-		coordinate2.appendChild(timestamp2);
-		
-		coordinates.appendChild(coordinate1);
-		coordinates.appendChild(coordinate2);
-		
-		return coordinates.toXML();
-	}
 	
 	/**
 	 * Retrieves data from Google App Engine (Girum's account, as set by URL).
 	 * Returns null if there is a error in the data retrieval.
 	 */
-	public static AnActualWorkoutModelX_X[] retrieveDataFromGAE(String userEmail){
+	public static Workout[] retrieveDataFromGAE(String userEmail){
 		Log.d(TAG, "retrieveDataFromGAE with userEmail: " + userEmail);
-		AnActualWorkoutModelX_X[] allWorkouts = null;
+		Workout[] allWorkouts = null;
 		
 		// Setup HTTP GET request.
 		HttpClient httpClient = new DefaultHttpClient();
@@ -239,14 +198,14 @@ public class ExternalDBHelper {
 			Document result = documentBuilder.parse(entity.getContent());
 			
 			NodeList workouts = result.getDocumentElement().getChildNodes();
-			allWorkouts = new AnActualWorkoutModelX_X[workouts.getLength()];
+			allWorkouts = new Workout[workouts.getLength()];
 			
 			// For each of the workouts...
 			for (int i = 0; i < workouts.getLength(); i++) {
 				
 				NodeList workout = workouts.item(i).getChildNodes();
 				Log.d(TAG, "WORKOUT: ");
-				allWorkouts[i] = new AnActualWorkoutModelX_X();
+				allWorkouts[i] = new Workout();
 				
 				// For each of this workout's XML children...
 				for (int j = 0; j < workout.getLength(); j++) {

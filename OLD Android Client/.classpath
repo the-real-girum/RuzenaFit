@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
+	<classpathentry kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
+	<classpathentry kind="src" path="gen"/>
+	<classpathentry kind="lib" path="jtwitter-yamba.jar" sourcepath="C:/Users/mgrant1/Desktop/Yamba"/>
+	<classpathentry kind="lib" path="libs/achartengine-0.4.0.jar"/>
+	<classpathentry kind="lib" path="libs/net.sourceforge.keytool.plugin_1.4.2.jar"/>
+	<classpathentry kind="lib" path="libs/xom-1.2.8.jar"/>
+	<classpathentry kind="output" path="bin/classes"/>
+</classpath>

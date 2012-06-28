@@ -43,7 +43,6 @@ public class FacebookSettingsActivity extends Activity {
 		Button btnFbGetProfile;
 		Button btnPostToWall;
 		Button btnShowAccessTokens;
-
 		
 		public void onCreate(Bundle savedInstanceState) {
 			super.onCreate(savedInstanceState);
