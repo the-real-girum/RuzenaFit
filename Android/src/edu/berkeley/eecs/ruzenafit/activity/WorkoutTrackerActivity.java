@@ -35,7 +35,8 @@ public class WorkoutTrackerActivity extends Activity {
 	public double mTotal_kCal = 0.0; 
 	static private int MENU_ABOUT = 1;
 
-
+	// TODO: Change this to be a list of two items: "Resume Data Logging",
+	// and "TURN OFF Data Logging".
 	private final CharSequence[] turnoffITEMS = {
 			"resume data logging0", 
 			"resume data logging1", 
@@ -81,6 +82,9 @@ public class WorkoutTrackerActivity extends Activity {
         else 
         	togglebutton.setChecked(false);
 
+        // TODO: Add a forewarning when clicking the main button:
+        // "WARNING:  kCal measurements WILL NOT BE ACCURATE if you do not have this phone
+        // strapped to your waist or in your pocket."
         togglebutton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 // Perform action on clicks

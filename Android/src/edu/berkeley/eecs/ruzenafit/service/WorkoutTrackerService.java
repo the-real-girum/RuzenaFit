@@ -31,6 +31,7 @@ import android.os.SystemClock;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Toast;
 import edu.berkeley.eecs.ruzenafit.R;
 import edu.berkeley.eecs.ruzenafit.activity.WorkoutTrackerActivity;
 import edu.berkeley.eecs.ruzenafit.util.Constants;
@@ -38,6 +39,7 @@ import edu.berkeley.eecs.ruzenafit.util.KCalUtils;
 
 // TODO: Decompose this monster.
 public class WorkoutTrackerService extends Service {
+	private static final String TAG = "WorkoutTrackerService";
 	private static Context mContext;
 	protected static LocationManager mLocationManager = null;
 	protected Location mLocation = null;
@@ -49,7 +51,7 @@ public class WorkoutTrackerService extends Service {
 	
 	// TODO: Make tick rate a variable tick_rate that's changed by preferences.
 	/** The "tick rate" of the LocationManager */
-	protected final static long TICK_RATE = 20000; // in Milliseconds (at least
+	protected final static long TICK_RATE = 5000; // in Milliseconds (at least
 													// every 20 secs)
 	// note that kcal is only recorded once per minute.
 
@@ -174,7 +176,7 @@ public class WorkoutTrackerService extends Service {
 		CharSequence contentTitle = "CalFit BCN";
 		CharSequence contentText = "Currently running";
 		Intent notificationIntent = new Intent(mContext,
-				WorkoutTrackerActivity.class); // must use CalFit.class because
+				WorkoutTrackerActivity.class); // must use WorkoutTrackerActivity.class because
 												// this notification loads a new
 												// activity onto the stack, and
 												// if you call CalFit.class, it
@@ -337,6 +339,11 @@ public class WorkoutTrackerService extends Service {
 					mMostrecent_GPS_HasAccuracy = 0;
 				mMostrecent_GPS_Accuracy = loc.getAccuracy();
 			}
+			else {
+				// FIXME: Change this to explicitly kill this service,
+				// if the location cannot be found.
+				Log.e(TAG, "ERROR: getLastKnownLocation() failed!");
+			}
 		}
 
 		private void stopGPSTracking() {
@@ -372,6 +379,9 @@ public class WorkoutTrackerService extends Service {
 					// mMostrecent_System_Time =
 					// java.lang.System.currentTimeMillis(); // done above the
 					// Log.i()
+					
+					// TODO: IF GPS IS DISABLED ON THE PHONE, then disable tracking
+					// and tell the user.
 					mMostrecent_GPS_Latitude = (float) loc.getLatitude();
 					mMostrecent_GPS_Longitude = (float) loc.getLongitude();
 					mMostrecent_GPS_Altitude = (float) loc.getAltitude();
@@ -384,7 +394,7 @@ public class WorkoutTrackerService extends Service {
 					mMostrecent_Provider = loc.getProvider();
 
 					// TODO: Replace with GAE code?
-//					writeFileGPS();
+					testWrite("Called from onLocationChanged()");
 				}
 			}
 
@@ -563,7 +573,7 @@ public class WorkoutTrackerService extends Service {
 				mMostrecent_System_Time = currenttime;
 
 				// TODO: Change this "write to file" to write to server.
-//				writeToFile();
+				testWrite("Called from onSensorChanged()");
 				
 				// reset the counters
 				accum_minute_V = 0;
@@ -571,6 +581,23 @@ public class WorkoutTrackerService extends Service {
 				counter = 0;
 			}
 		}
+	}
+	
+	private static void testWrite(String methodThisMethodWasCalledFrom) {
+		Log.d(TAG, "testWrite: " + methodThisMethodWasCalledFrom);
+		Log.d(TAG, "Current Workout State: ");
+		Log.d(TAG, "IMEI: " + imei);
+		Log.d(TAG, "Delta KCals burned: " + mMostrecent_kCal);
+		Log.d(TAG, "System Time: " + mMostrecent_System_Time);
+		Log.d(TAG, "GPS Latitude" + mMostrecent_GPS_Latitude);
+		Log.d(TAG, "GPS Longitude" + mMostrecent_GPS_Longitude);
+		Log.d(TAG, "Speed: " + mMostrecent_GPS_Speed);
+		Log.d(TAG, "Altitude: " + mMostrecent_GPS_Altitude);
+		Log.d(TAG, "HasAccuracy: " + mMostrecent_GPS_HasAccuracy);
+		Log.d(TAG, "Accuracy: " + mMostrecent_GPS_Accuracy);
+		Log.d(TAG, "Accum_Minute_V" + accum_minute_V);
+		Log.d(TAG, "Accum_Minute_H" + accum_minute_H);
+		Log.d(TAG, "Most Recent GPS Time: " + mMostrecent_GPS_Time);
 	}
 	
 	@Override
