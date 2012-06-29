@@ -88,8 +88,8 @@ public class PreferencesActivity extends Activity {
 	 */
 	private void setPrivacySetting(PrivacyPreferenceEnum privacyPreference) {
 		SharedPreferences.Editor preferences = getSharedPreferences(
-				Constants.SHARED_PREFS_NAMESPACE, 0).edit();
-		preferences.putString("privacySetting", privacyPreference.toString());
+				Constants.PREFS_NAMESPACE, 0).edit();
+		preferences.putString(Constants.PRIVACY_SETTING, privacyPreference.toString());
 		preferences.commit();
 
 		switch (privacyPreference) {

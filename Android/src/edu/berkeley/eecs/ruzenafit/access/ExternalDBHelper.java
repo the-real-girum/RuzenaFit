@@ -25,6 +25,7 @@ import org.w3c.dom.NodeList;
 import android.util.Log;
 import edu.berkeley.eecs.ruzenafit.model.CoordinateDataPoint;
 import edu.berkeley.eecs.ruzenafit.model.Workout;
+import edu.berkeley.eecs.ruzenafit.util.Constants;
 
 
 /**
@@ -78,13 +79,14 @@ public class ExternalDBHelper {
 		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 		Log.d(TAG, "Workout: " + workout);
 		
-		nameValuePairs.add(new BasicNameValuePair("user", 					userEmail));
-		nameValuePairs.add(new BasicNameValuePair("privacySetting", 		privacySetting));
-		nameValuePairs.add(new BasicNameValuePair("date", 					workout.getDate()));
-		nameValuePairs.add(new BasicNameValuePair("duration", 				workout.getDuration()));
-		nameValuePairs.add(new BasicNameValuePair("averageSpeed", 			workout.getAverageSpeed()));
-		nameValuePairs.add(new BasicNameValuePair("totalCalories", 			workout.getTotalCalories()));
-		nameValuePairs.add(new BasicNameValuePair("totalDistance", 			workout.getTotalDistance()));
+		// TODO: Change all of these to string literals.
+		nameValuePairs.add(new BasicNameValuePair("user", 						userEmail));
+		nameValuePairs.add(new BasicNameValuePair(Constants.PRIVACY_SETTING, 	privacySetting));
+		nameValuePairs.add(new BasicNameValuePair("date", 						workout.getDate()));
+		nameValuePairs.add(new BasicNameValuePair("duration", 					workout.getDuration()));
+		nameValuePairs.add(new BasicNameValuePair("averageSpeed", 				workout.getAverageSpeed()));
+		nameValuePairs.add(new BasicNameValuePair("totalCalories", 				workout.getTotalCalories()));
+		nameValuePairs.add(new BasicNameValuePair("totalDistance", 				workout.getTotalDistance()));
 		nameValuePairs.add(new BasicNameValuePair("coordinatesXMLString", 
 													convertGeoPointsToXMLString(workout.getGeopoints())));
 		Log.d(TAG, "coordinatesXMLString: " + convertGeoPointsToXMLString(workout.getGeopoints()));

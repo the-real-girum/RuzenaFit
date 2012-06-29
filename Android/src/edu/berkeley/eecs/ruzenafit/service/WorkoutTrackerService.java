@@ -120,7 +120,7 @@ public class WorkoutTrackerService extends Service {
 		// use shared pref to store the running state. this needs to persist in
 		// case the system kills the service and we get a restart
 		// Restore preferences
-		SharedPreferences settings = getSharedPreferences(Constants.PREFS_NAME, 0);
+		SharedPreferences settings = getSharedPreferences(Constants.PREFS_NAMESPACE, 0);
 		boolean isrunningstored = settings.getBoolean("isrunning", false);
 		if (isrunningstored)
 			startLog();
@@ -201,7 +201,7 @@ public class WorkoutTrackerService extends Service {
 		// make sure to save our state as a pref in case we get killed by
 		// system.
 		SharedPreferences settings = mContext.getSharedPreferences(
-				Constants.PREFS_NAME, 0);
+				Constants.PREFS_NAMESPACE, 0);
 		SharedPreferences.Editor editor = settings.edit();
 		editor.putBoolean("isrunning", true);
 		editor.commit();
@@ -226,7 +226,7 @@ public class WorkoutTrackerService extends Service {
 		// make sure to save our state as a pref in case we get killed by
 		// system.
 		SharedPreferences settings = mContext.getSharedPreferences(
-				Constants.PREFS_NAME, 0);
+				Constants.PREFS_NAMESPACE, 0);
 		SharedPreferences.Editor editor = settings.edit();
 		editor.putBoolean("isrunning", false);
 		editor.commit();

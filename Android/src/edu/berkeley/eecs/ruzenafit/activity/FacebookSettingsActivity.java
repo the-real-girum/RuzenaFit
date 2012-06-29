@@ -203,7 +203,7 @@ public class FacebookSettingsActivity extends Activity {
 						final String email = profile.getString("email");
 
 						// Save this FB info internally.
-						SharedPreferences sharedPreferences = getSharedPreferences(Constants.SHARED_PREFS_NAMESPACE, 0);
+						SharedPreferences sharedPreferences = getSharedPreferences(Constants.PREFS_NAMESPACE, 0);
 						SharedPreferences.Editor sharedPreferencesEditor = sharedPreferences.edit();
 						sharedPreferencesEditor.putString("userName", name);
 						sharedPreferencesEditor.putString("userEmail", email);
