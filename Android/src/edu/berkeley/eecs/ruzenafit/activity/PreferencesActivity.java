@@ -40,7 +40,27 @@ public class PreferencesActivity extends Activity {
 		
 		textOut = (TextView) findViewById(R.id.textView2);
 
-		//pSetting.setText not working.
+		// FIXME: pSetting.setText not working.
+		/*
+		 * Explanation:  You're getting a NullPointerException because line 39
+		 * can't find the actual TextView that corresponds to R.id.pset (when 
+		 * the method findViewById() can't find any views that correspond to
+		 * the argument you've given, it simply returns null).
+		 * 
+		 * The reason why this method won't work in this Activity is because the
+		 * R.id.pset view you're looking for actually exists in a different
+		 * Activity altogether -- *not* in the layout you specified on line 32.
+		 * 
+		 * The solution is to simply use Android's SharedPreferences to "save"
+		 * the currently selected privacy setting.  This already happens in
+		 * the private method setPrivacySetting().  So, you can just remove the
+		 * pSetting.setText() from this Activity. 
+		 * 
+		 * Instead, you want to put the call to pSetting.setText() in the Activity
+		 * that contains the R.id.pset you used to reference pSetting -- you want
+		 * to call pSetting.setText() from the WorkoutTrackerActivity.java class --
+		 * specifically, inside onResume().
+		 */
 		// Listening to button event
 		rbLow.setOnClickListener(new OnClickListener() {
 

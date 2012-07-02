@@ -353,7 +353,6 @@ public class WorkoutTrackerService extends Service {
 		}
 		
 		private class MyLocationListener implements LocationListener {
-			@Override
 			public void onLocationChanged(Location loc) {
 				if (loc != null) {
 
@@ -398,19 +397,16 @@ public class WorkoutTrackerService extends Service {
 				}
 			}
 
-			@Override
 			public void onProviderDisabled(String provider) {
 				Log.i(getClass().getSimpleName(), "GPS provider disabled");
 				// do nothing
 			}
 
-			@Override
 			public void onProviderEnabled(String provider) {
 				Log.i(getClass().getSimpleName(), "GPS provider enabled");
 				// do nothing
 			}
 
-			@Override
 			public void onStatusChanged(String provider, int status,
 					Bundle extras) {
 				Log.i(getClass().getSimpleName(), "GPS status changed");
@@ -465,12 +461,10 @@ public class WorkoutTrackerService extends Service {
 
 		private class MySensorEventListener implements SensorEventListener {
 
-			@Override
 			public void onAccuracyChanged(Sensor sensor, int accuracy) {
 				// do nothing
 			}
 
-			@Override
 			public void onSensorChanged(SensorEvent event) {
 				if (event != null) {
 					/*

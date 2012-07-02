@@ -34,25 +34,21 @@ public class MainActivity extends Activity {
 		
 		// Set each button to open up its respective Activity
 		tracking.setOnClickListener(new OnClickListener() {
-			@Override
 			public void onClick(View v) {
 				startActivity(new Intent(getApplicationContext(), WorkoutTrackerActivity.class));
 			}
 		});
 		ranking.setOnClickListener(new OnClickListener() {
-			@Override
 			public void onClick(View v) {
 				startActivity(new Intent(getApplicationContext(), RankingActivity.class));
 			}
 		});
 		privacyPreferences.setOnClickListener(new OnClickListener() {
-			@Override
 			public void onClick(View v) {
 				startActivity(new Intent(getApplicationContext(), PreferencesActivity.class));
 			}
 		});
 		facebookSettings.setOnClickListener(new OnClickListener() {
-			@Override
 			public void onClick(View v) {
 				startActivity(new Intent(getApplicationContext(), FacebookSettingsActivity.class));
 			}
