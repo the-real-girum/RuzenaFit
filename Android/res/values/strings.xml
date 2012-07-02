@@ -42,5 +42,7 @@
     <string name="submit_data">Submit Data</string>
     <string name="retrieve_data">Retrieve Data</string>
     <string name="settings">Facebook Settings</string>
+    <string name="username"></string>
+    <string name="pSettings">none</string>
 
 </resources>

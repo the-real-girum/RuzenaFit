@@ -1,5 +1,5 @@
 package edu.berkeley.eecs.ruzenafit.activity;
-import edu.berkeley.eecs.ruzenafit.R;
+
 
 import android.app.Activity;
 import android.content.SharedPreferences;
@@ -11,7 +11,7 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
-//import edu.berkeley.eecs.ruzenafit.R;
+import edu.berkeley.eecs.ruzenafit.R;
 import edu.berkeley.eecs.ruzenafit.model.PrivacyPreferenceEnum;
 import edu.berkeley.eecs.ruzenafit.util.Constants;
 
