@@ -1,4 +1,5 @@
 package edu.berkeley.eecs.ruzenafit.activity;
+import edu.berkeley.eecs.ruzenafit.R;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
@@ -10,7 +11,7 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
-import edu.berkeley.eecs.ruzenafit.R;
+//import edu.berkeley.eecs.ruzenafit.R;
 import edu.berkeley.eecs.ruzenafit.model.PrivacyPreferenceEnum;
 import edu.berkeley.eecs.ruzenafit.util.Constants;
 
@@ -19,7 +20,7 @@ import edu.berkeley.eecs.ruzenafit.util.Constants;
 public class PreferencesActivity extends Activity {
 	// Initializing variables
 	RadioButton rbLow, rbMedium, rbHigh;
-	TextView textOut;
+	TextView textOut, pSetting;
 	EditText getInput;
 
 	private static String t = "Message";
@@ -35,10 +36,11 @@ public class PreferencesActivity extends Activity {
 		rbLow = (RadioButton) findViewById(R.id.radioButton1);
 		rbMedium = (RadioButton) findViewById(R.id.radioButton2);
 		rbHigh = (RadioButton) findViewById(R.id.radioButton3);
-
+		pSetting = (TextView) findViewById(R.id.pset);
+		
 		textOut = (TextView) findViewById(R.id.textView2);
-		// getInput = (EditText) findViewById(R.id.editText1);
 
+		//pSetting.setText not working.
 		// Listening to button event
 		rbLow.setOnClickListener(new OnClickListener() {
 
@@ -49,6 +51,7 @@ public class PreferencesActivity extends Activity {
 						+ "For example anyone will be able to see exactly where you are working out "
 						+ "at whichever time your data is saved.  " + "\n\n"
 						+ "With this preference, your data will update ONCE EVERY 5 SECONDS.");
+				pSetting.setText("Low Privacy");
 			}
 		});
 
@@ -64,6 +67,7 @@ public class PreferencesActivity extends Activity {
 						+ "but not the exact street or location "
 						+ "at whichever time your data is saved." + "\n\n"
 						+ "With this preference, your data will update ONCE EVERY 5 MINUTES.");
+				pSetting.setText("Medium Privacy");
 			}
 		});
 
@@ -75,6 +79,7 @@ public class PreferencesActivity extends Activity {
 				textOut.setText("    With this setting you will earn a 0.8x multiplier to your points. "
 						+ "You will also share a minimal amount of data about yourself." + "\n\n"
 						+ "With this preference, your data will update ONCE EVERY HOUR.");
+				pSetting.setText("High Privacy");
 			}
 		});
 
