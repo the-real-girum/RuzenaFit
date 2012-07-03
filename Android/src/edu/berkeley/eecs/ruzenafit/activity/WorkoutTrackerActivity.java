@@ -34,7 +34,8 @@ public class WorkoutTrackerActivity extends Activity {
 	
 	public double mTotal_kCal = 0.0; 
 	static private int MENU_ABOUT = 1;
-
+	TextView pSetting;
+	
 	// TODO: Change this to be a list of two items: "Resume Data Logging",
 	// and "TURN OFF Data Logging".
 	private final CharSequence[] turnoffITEMS = {
@@ -206,7 +207,12 @@ public class WorkoutTrackerActivity extends Activity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-
+		
+		pSetting = (TextView) findViewById(R.id.pset);
+		
+		pSetting.setText("Low Privacy");
+		pSetting.setText("Medium Privacy");
+		pSetting.setText("High Privacy");
 		// set status of the toggle 
         final ToggleButton togglebutton = (ToggleButton) findViewById(R.id.togglebutton);
         tbutton = togglebutton;
