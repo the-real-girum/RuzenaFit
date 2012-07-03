@@ -272,7 +272,15 @@ public class FacebookSettingsActivity extends Activity {
 							}
 
 						});
+						
+						SharedPreferences.Editor editor = getSharedPreferences(
+								Constants.PREFS_NAMESPACE, 0).edit();
+						editor.putString(Constants.FB_NAME, name);
+						editor.commit();
 
+						//String f = fbName.getString(Constants.FB_NAME, "0");
+						//f = name;
+						
 					} catch (JSONException e) {
 						e.printStackTrace();
 					}

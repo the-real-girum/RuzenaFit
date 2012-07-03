@@ -140,7 +140,7 @@
         android:layout_alignBaseline="@+id/textView1"
         android:layout_alignBottom="@+id/textView1"
         android:layout_alignParentRight="true"
-        android:text="afsafdads"
+        android:text="blank"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
 </RelativeLayout>

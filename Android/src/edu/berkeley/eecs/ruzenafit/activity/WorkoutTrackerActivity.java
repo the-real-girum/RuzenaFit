@@ -36,7 +36,7 @@ public class WorkoutTrackerActivity extends Activity {
 	
 	public double mTotal_kCal = 0.0; 
 	static private int MENU_ABOUT = 1;
-	TextView pSetting;
+	TextView pSetting, userName;
 	
 	// TODO: Change this to be a list of two items: "Resume Data Logging",
 	// and "TURN OFF Data Logging".
@@ -211,10 +211,14 @@ public class WorkoutTrackerActivity extends Activity {
 		super.onResume();
 		
 		pSetting = (TextView) findViewById(R.id.pset);
+		userName = (TextView) findViewById(R.id.userValue);
 		
 		SharedPreferences preferences = getSharedPreferences(Constants.PREFS_NAMESPACE, 0);
-		String p = preferences.getString(Constants.PRIVACY_SETTING, "Privacy not set");
+		String facebookName = preferences.getString(Constants.FB_NAME, "Name not found.");
 		
+		String p = preferences.getString(Constants.PRIVACY_SETTING, "Privacy not set");
+
+		//string n = ;
 		if(p.equals("lowPrivacy"))
 		pSetting.setText("Low Privacy");
 		else
@@ -225,6 +229,8 @@ public class WorkoutTrackerActivity extends Activity {
 		pSetting.setText("High Privacy");
 		else
 			pSetting.setText("FIZZAILED");
+		
+		userName.setText(facebookName);
 		// set status of the toggle 
         final ToggleButton togglebutton = (ToggleButton) findViewById(R.id.togglebutton);
         tbutton = togglebutton;
