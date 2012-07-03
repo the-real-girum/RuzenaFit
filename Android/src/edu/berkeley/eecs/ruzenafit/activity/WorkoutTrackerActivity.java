@@ -8,6 +8,7 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
@@ -22,6 +23,7 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 import edu.berkeley.eecs.ruzenafit.R;
 import edu.berkeley.eecs.ruzenafit.service.WorkoutTrackerService;
+import edu.berkeley.eecs.ruzenafit.util.Constants;
 
 
 public class WorkoutTrackerActivity extends Activity {
@@ -210,9 +212,19 @@ public class WorkoutTrackerActivity extends Activity {
 		
 		pSetting = (TextView) findViewById(R.id.pset);
 		
+		SharedPreferences preferences = getSharedPreferences(Constants.PREFS_NAMESPACE, 0);
+		String p = preferences.getString(Constants.PRIVACY_SETTING, "Privacy not set");
+		
+		if(p.equals("lowPrivacy"))
 		pSetting.setText("Low Privacy");
+		else
+		if(p.equals("mediumPrivacy"))
 		pSetting.setText("Medium Privacy");
+		else
+		if(p.equals("highPrivacy"))
 		pSetting.setText("High Privacy");
+		else
+			pSetting.setText("FIZZAILED");
 		// set status of the toggle 
         final ToggleButton togglebutton = (ToggleButton) findViewById(R.id.togglebutton);
         tbutton = togglebutton;

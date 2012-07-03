@@ -110,8 +110,15 @@ public class PreferencesActivity extends Activity {
 	 * @param privacyPreference
 	 */
 	private void setPrivacySetting(PrivacyPreferenceEnum privacyPreference) {
+		
+		// Get the SharedPreferences.Editor object we need to modify our String->String preferences map.
 		SharedPreferences.Editor preferences = getSharedPreferences(
 				Constants.PREFS_NAMESPACE, 0).edit();
+		
+		// Now, for the string "privacySetting", we have mapped one of the following strings:
+		//  "highPrivacy"
+		//  "lowPrivacy"
+		//  "mediumPrivacy"
 		preferences.putString(Constants.PRIVACY_SETTING,
 				privacyPreference.toString());
 		preferences.commit();
