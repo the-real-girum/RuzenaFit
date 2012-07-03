@@ -26,6 +26,7 @@ import com.facebook.android.FacebookError;
 import edu.berkeley.eecs.ruzenafit.R;
 import edu.berkeley.eecs.ruzenafit.util.Constants;
 
+// TODO: Try and move the network logic out of here and into the network package.
 public class FacebookSettingsActivity extends Activity {
 
 	// Your Facebook APP ID
@@ -271,7 +272,8 @@ public class FacebookSettingsActivity extends Activity {
 
 					SharedPreferences.Editor editor = getSharedPreferences(
 							Constants.PREFS_NAMESPACE, 0).edit();
-					editor.putString(Constants.FB_NAME, name);
+					editor.putString(Constants.FACEBOOK_NAME, name);
+					editor.putString(Constants.FACEBOOK_EMAIL, email);
 					editor.commit();
 
 					// String f = fbName.getString(Constants.FB_NAME, "0");

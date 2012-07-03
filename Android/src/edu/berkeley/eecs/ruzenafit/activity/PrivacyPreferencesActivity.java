@@ -112,15 +112,12 @@ public class PrivacyPreferencesActivity extends Activity {
 		switch (privacyPreference) {
 		case highPrivacy:
 			Constants.setUPDATE_FREQUENCY(3600000); // one hour
-
 			break;
 		case mediumPrivacy:
 			Constants.setUPDATE_FREQUENCY(300000); // 5 minutes
-
 			break;
 		case lowPrivacy:
 			Constants.setUPDATE_FREQUENCY(5000); // 5 seconds
-
 			break;
 		default:
 			Constants.setUPDATE_FREQUENCY(3000); // 3 seconds if undefined.
@@ -136,10 +133,11 @@ public class PrivacyPreferencesActivity extends Activity {
 		super.onResume();
 		SharedPreferences preferences = getSharedPreferences(
 				Constants.PREFS_NAMESPACE, 0);
+
+		// TODO: Change this so that it doesn't use string literals
 		String p = preferences.getString(Constants.PRIVACY_SETTING,
 				"Privacy not set");
 
-		
 		if (p.equals("lowPrivacy"))
 		{
 			rbLow.setChecked(true);

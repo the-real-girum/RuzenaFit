@@ -7,9 +7,10 @@ public class Constants {
 	public static final String PREFS_NAMESPACE = "edu.berkeley.eecs.ruzenafit.Preferences";
 	public static final String UNDEFINED_USER_EMAIL = "__undefinedUserEmail";
 	public static final String UNDEFINED_PRIVACY_SETTING = "__undefinedPrivacySetting";
+	public static final String UNDEFINED_IMEI = "__undefinedImei";
 	public static final String PRIVACY_SETTING = "privacySetting";
-	public static final String FACEBOOK_NAME = "FB NAME";
-	public static final String FB_NAME = "";
+	public static final String FACEBOOK_NAME = "facebookName";
+	public static final String FACEBOOK_EMAIL = "facebookEmail";
 
 	// SQL constants
 	public static final String WORKOUT_TABLE = "workouts";

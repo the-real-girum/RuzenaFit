@@ -108,7 +108,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:text="Username: "
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:textAppearance="?android:attr/textAppearanceMedium" android:padding="10dp"/>
 
     <TextView
         android:id="@+id/textView1"
@@ -118,25 +118,25 @@
         android:layout_below="@+id/left_box"
         android:layout_marginTop="28dp"
         android:text="Privacy Setting: "
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:textAppearance="?android:attr/textAppearanceMedium" android:padding="10dp"/>
 
     <TextView
         android:id="@+id/userValue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/textView1"
-        android:layout_alignBottom="@+id/textView1"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:text="blank"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:textAppearance="?android:attr/textAppearanceMedium" android:padding="10dp"/>
 
     <TextView
         android:id="@+id/pset"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_alignBaseline="@+id/textView1"
+        android:layout_alignBottom="@+id/textView1"
         android:layout_alignParentRight="true"
         android:text="@string/pSettings"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:textAppearance="?android:attr/textAppearanceMedium" android:padding="10dp"/>
 
 </RelativeLayout>

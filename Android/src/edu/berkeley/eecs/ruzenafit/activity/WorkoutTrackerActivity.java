@@ -175,6 +175,11 @@ public class WorkoutTrackerActivity extends Activity {
 			imei = "0";
 		}
 		((TextView) findViewById(R.id.imei)).setText(imei);
+		
+		// save this IMEI to SharedPreferences to uniquely identify the phone
+		SharedPreferences.Editor editor = getSharedPreferences(Constants.PREFS_NAMESPACE, 0).edit();
+		editor.putString(Constants.KEY_IMEI, imei);
+		editor.commit();
 	}
 
 	@Override
@@ -234,7 +239,7 @@ public class WorkoutTrackerActivity extends Activity {
 
 		SharedPreferences preferences = getSharedPreferences(
 				Constants.PREFS_NAMESPACE, 0);
-		String facebookName = preferences.getString(Constants.FB_NAME,
+		String facebookName = preferences.getString(Constants.FACEBOOK_NAME,
 				"Name not found.");
 
 		String p = preferences.getString(Constants.PRIVACY_SETTING,

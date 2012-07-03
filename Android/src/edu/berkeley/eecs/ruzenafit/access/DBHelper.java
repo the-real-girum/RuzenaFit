@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
+import android.widget.Toast;
 import edu.berkeley.eecs.ruzenafit.model.WorkoutTick;
 import edu.berkeley.eecs.ruzenafit.util.Constants;
 
@@ -15,8 +16,8 @@ import edu.berkeley.eecs.ruzenafit.util.Constants;
  *  
  * @author gibssa
  */
-public class InternalDBHelper {
-	private static final String TAG = InternalDBHelper.class.getSimpleName();
+public class DBHelper {
+	private static final String TAG = DBHelper.class.getSimpleName();
 
 	/**
 	 * Inserts a single workout "tick" into Android's internal SQLite database
@@ -59,7 +60,7 @@ public class InternalDBHelper {
 	 * 
 	 * @param context Use getApplicationContext() for this parameter.
 	 */
-	public static void retrieveWorkouts(Context context) {
+	public static WorkoutTick[] retrieveWorkouts(Context context) {
 		
 		WorkoutTick[] workouts;
 		
@@ -118,5 +119,9 @@ public class InternalDBHelper {
 		// Don't forget to close cursors and databases!
 		cursor.close();
 		database.close();
+		
+		Toast.makeText(context, "Retrieved " + workouts.length + " workout \"ticks\" from internal SQLite", 3).show();
+		
+		return workouts;
 	}
 }

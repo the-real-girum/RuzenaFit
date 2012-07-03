@@ -25,6 +25,7 @@ public class DBConn extends SQLiteOpenHelper {
 					Constants.KEY_ACCUM_MINUTE_H	+ " TEXT, " +
 					Constants.KEY_GPS_TIME			+ " TEXT);";
 	
+	/** Required constructor */
 	public DBConn(Context context, String name,
 			CursorFactory factory, int version) {
 		super(context, name, factory, version);
@@ -32,12 +33,13 @@ public class DBConn extends SQLiteOpenHelper {
 
 	@Override
 	public void onCreate(SQLiteDatabase db) {
+		// Simply execute the SQL code used to create the table
 		db.execSQL(WORKOUT_TABLE_CREATE);
 	}
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		// do nothing
+		// do nothing -- onUpgrade is a SQL concept involving updates of the DB schema
 	}
 	
 }

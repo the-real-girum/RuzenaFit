@@ -28,7 +28,7 @@ import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Log;
 import edu.berkeley.eecs.ruzenafit.R;
-import edu.berkeley.eecs.ruzenafit.access.InternalDBHelper;
+import edu.berkeley.eecs.ruzenafit.access.DBHelper;
 import edu.berkeley.eecs.ruzenafit.activity.WorkoutTrackerActivity;
 import edu.berkeley.eecs.ruzenafit.model.WorkoutTick;
 import edu.berkeley.eecs.ruzenafit.util.Constants;
@@ -609,7 +609,7 @@ public class WorkoutTrackerService extends Service {
 				accum_minute_H);
 
 		// Go ahead and insert this "tick" into the internal SQLite database.
-		InternalDBHelper.insertWorkoutIntoDatabase(workout, mContext);
+		DBHelper.insertWorkoutIntoDatabase(workout, mContext);
 		
 		// TODO: Count up the number of "ticks" we've had so far.
 		

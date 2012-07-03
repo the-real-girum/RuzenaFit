@@ -1,7 +1,7 @@
 package edu.berkeley.eecs.ruzenafit.model;
 
 /**
- * A model for a particular save point of a Workout.  There is exactly
+ * A model for each particular save point of a Workout.  There is exactly
  * one of these for each "tick" of the app.  This also means that there is
  * exactly one of these for each row of the internal SQLite database.
  * 
