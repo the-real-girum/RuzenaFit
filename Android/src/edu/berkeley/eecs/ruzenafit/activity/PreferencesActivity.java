@@ -110,15 +110,17 @@ public class PreferencesActivity extends Activity {
 	 * @param privacyPreference
 	 */
 	private void setPrivacySetting(PrivacyPreferenceEnum privacyPreference) {
-		
-		// Get the SharedPreferences.Editor object we need to modify our String->String preferences map.
+
+		// Get the SharedPreferences.Editor object we need to modify our
+		// String->String preferences map.
 		SharedPreferences.Editor preferences = getSharedPreferences(
 				Constants.PREFS_NAMESPACE, 0).edit();
-		
-		// Now, for the string "privacySetting", we have mapped one of the following strings:
-		//  "highPrivacy"
-		//  "lowPrivacy"
-		//  "mediumPrivacy"
+
+		// Now, for the string "privacySetting", we have mapped one of the
+		// following strings:
+		// "highPrivacy"
+		// "lowPrivacy"
+		// "mediumPrivacy"
 		preferences.putString(Constants.PRIVACY_SETTING,
 				privacyPreference.toString());
 		preferences.commit();
@@ -126,12 +128,15 @@ public class PreferencesActivity extends Activity {
 		switch (privacyPreference) {
 		case highPrivacy:
 			Constants.setUPDATE_FREQUENCY(3600000); // one hour
+
 			break;
 		case mediumPrivacy:
 			Constants.setUPDATE_FREQUENCY(300000); // 5 minutes
+
 			break;
 		case lowPrivacy:
 			Constants.setUPDATE_FREQUENCY(5000); // 5 seconds
+
 			break;
 		default:
 			Constants.setUPDATE_FREQUENCY(3000); // 3 seconds if undefined.
@@ -142,4 +147,46 @@ public class PreferencesActivity extends Activity {
 				"Saved privacy setting: " + privacyPreference.toString(), 3)
 				.show();
 	}
+
+	protected void onResume() {
+		super.onResume();
+		SharedPreferences preferences = getSharedPreferences(
+				Constants.PREFS_NAMESPACE, 0);
+		String p = preferences.getString(Constants.PRIVACY_SETTING,
+				"Privacy not set");
+
+		if (p.equals("lowPrivacy"))
+		{
+			rbLow.setChecked(true);
+			textOut.setText("    With this setting you will earn a 1.8x multiplier to your points. "
+					+ "You will also share the maximum amount of data about yourself possible. "
+					+ "For example anyone will be able to see exactly where you are working out "
+					+ "at whichever time your data is saved.  "
+					+ "\n\n"
+					+ "With this preference, your data will update ONCE EVERY 5 SECONDS.");
+		}
+
+		else if (p.equals("mediumPrivacy"))
+		{
+			rbMedium.setChecked(true);
+			textOut.setText("    With this setting you will earn a 1.2x multiplier to "
+					+ "your points. "
+					+ "You will also share a moderate amount of data about yourself. "
+					+ "For example people will be able to see the area where you are working out "
+					+ "but not the exact street or location "
+					+ "at whichever time your data is saved."
+					+ "\n\n"
+					+ "With this preference, your data will update ONCE EVERY 5 MINUTES.");
+		}
+		else if (p.equals("highPrivacy"))
+		{
+			rbHigh.setChecked(true);
+			textOut.setText("    With this setting you will earn a 0.8x multiplier to your points. "
+					+ "You will also share a minimal amount of data about yourself."
+					+ "\n\n"
+					+ "With this preference, your data will update ONCE EVERY HOUR.");
+		}
+
+	}
+
 }
