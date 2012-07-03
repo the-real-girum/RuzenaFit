@@ -7,10 +7,8 @@ public class Constants {
 	public static final String UNDEFINED_USER_EMAIL = "__undefinedUserEmail";
 	public static final String UNDEFINED_PRIVACY_SETTING = "__undefinedPrivacySetting";
 	public static final String PRIVACY_SETTING = "privacySetting";
-<<<<<<< HEAD
 	public static final String FACEBOOK_NAME = "FB NAME";
 	public static final String FB_NAME = "";
-=======
 
 	// SQL constants
 	public static final String WORKOUT_TABLE = "workouts";
@@ -28,8 +26,6 @@ public class Constants {
 	public static final String KEY_ACCUM_MINUTE_V = "accum_minute_v";
 	public static final String KEY_ACCUM_MINUTE_H = "accum_minute_h";
 	public static final String KEY_GPS_TIME = "gps_time";
-	
->>>>>>> Added SQLite saving capabilities.  Works while currently tracking.
 	
 	// Pseudo-constant int.  This gets set based on the privacy setting.  This is the
 	// frequency between updates (for kcal, distance, pace, etc.) after starting
