@@ -45,7 +45,7 @@ public class MainActivity extends Activity {
 		});
 		privacyPreferences.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				startActivity(new Intent(getApplicationContext(), PreferencesActivity.class));
+				startActivity(new Intent(getApplicationContext(), PrivacyPreferencesActivity.class));
 			}
 		});
 		facebookSettings.setOnClickListener(new OnClickListener() {

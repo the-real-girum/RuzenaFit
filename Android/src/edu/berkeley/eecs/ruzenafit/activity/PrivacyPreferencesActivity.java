@@ -14,9 +14,32 @@ import edu.berkeley.eecs.ruzenafit.R;
 import edu.berkeley.eecs.ruzenafit.model.PrivacyPreferenceEnum;
 import edu.berkeley.eecs.ruzenafit.util.Constants;
 
-// TODO: Change Preferences so that you cannot change them
-// while mid-workout.
-public class PreferencesActivity extends Activity {
+public class PrivacyPreferencesActivity extends Activity {
+
+	// String descriptions of the privacy settings.
+	private final String HIGH_PRIVACY_DESCRIPTION = "    With this setting you will earn a " 
+			+ PrivacyPreferenceEnum.highPrivacy.getValue()
+			+ "x multiplier to your points. "
+			+ "You will also share the maximum amount of data about yourself possible. "
+			+ "For example anyone will be able to see exactly where you are working out "
+			+ "at whichever time your data is saved.  "
+			+ "\n\n"
+			+ "With this preference, your data will update ONCE EVERY 5 SECONDS.";
+	
+	private final String MEDIUM_PRIVACY_DESCRIPTION = "    With this setting you will earn a "
+			+ PrivacyPreferenceEnum.mediumPrivacy.getValue()
+			+ "x multiplier to your points. "
+			+ "You will also share a minimal amount of data about yourself."
+			+ "\n\n"
+			+ "With this preference, your data will update ONCE EVERY HOUR.";
+	
+	private final String LOW_PRIVACY_DESCRIPTION = "    With this setting you will earn a "
+			+ PrivacyPreferenceEnum.lowPrivacy.getValue()
+			+ "x multiplier to your points. "
+			+ "You will also share a minimal amount of data about yourself."
+			+ "\n\n"
+			+ "With this preference, your data will update ONCE EVERY HOUR.";
+	
 	// Initializing variables
 	RadioButton rbLow, rbMedium, rbHigh;
 	TextView textOut;
@@ -35,20 +58,13 @@ public class PreferencesActivity extends Activity {
 		rbLow = (RadioButton) findViewById(R.id.radioButton1);
 		rbMedium = (RadioButton) findViewById(R.id.radioButton2);
 		rbHigh = (RadioButton) findViewById(R.id.radioButton3);
-
 		textOut = (TextView) findViewById(R.id.textView2);
 
 		// Listening to button event
 		rbLow.setOnClickListener(new OnClickListener() {
-
 			public void onClick(View v) {
 				setPrivacySetting(PrivacyPreferenceEnum.lowPrivacy);
-				textOut.setText("    With this setting you will earn a 1.8x multiplier to your points. "
-						+ "You will also share the maximum amount of data about yourself possible. "
-						+ "For example anyone will be able to see exactly where you are working out "
-						+ "at whichever time your data is saved.  "
-						+ "\n\n"
-						+ "With this preference, your data will update ONCE EVERY 5 SECONDS.");
+				textOut.setText(HIGH_PRIVACY_DESCRIPTION);
 			}
 		});
 
@@ -57,26 +73,15 @@ public class PreferencesActivity extends Activity {
 
 			public void onClick(View v) {
 				setPrivacySetting(PrivacyPreferenceEnum.mediumPrivacy);
-				textOut.setText("    With this setting you will earn a 1.2x multiplier to "
-						+ "your points. "
-						+ "You will also share a moderate amount of data about yourself. "
-						+ "For example people will be able to see the area where you are working out "
-						+ "but not the exact street or location "
-						+ "at whichever time your data is saved."
-						+ "\n\n"
-						+ "With this preference, your data will update ONCE EVERY 5 MINUTES.");
+				textOut.setText(MEDIUM_PRIVACY_DESCRIPTION);
 			}
 		});
 
 		// Listening to button event
 		rbHigh.setOnClickListener(new OnClickListener() {
-
 			public void onClick(View v) {
 				setPrivacySetting(PrivacyPreferenceEnum.highPrivacy);
-				textOut.setText("    With this setting you will earn a 0.8x multiplier to your points. "
-						+ "You will also share a minimal amount of data about yourself."
-						+ "\n\n"
-						+ "With this preference, your data will update ONCE EVERY HOUR.");
+				textOut.setText(LOW_PRIVACY_DESCRIPTION);
 			}
 		});
 
@@ -134,36 +139,22 @@ public class PreferencesActivity extends Activity {
 		String p = preferences.getString(Constants.PRIVACY_SETTING,
 				"Privacy not set");
 
+		
 		if (p.equals("lowPrivacy"))
 		{
 			rbLow.setChecked(true);
-			textOut.setText("    With this setting you will earn a 1.8x multiplier to your points. "
-					+ "You will also share the maximum amount of data about yourself possible. "
-					+ "For example anyone will be able to see exactly where you are working out "
-					+ "at whichever time your data is saved.  "
-					+ "\n\n"
-					+ "With this preference, your data will update ONCE EVERY 5 SECONDS.");
+			textOut.setText(LOW_PRIVACY_DESCRIPTION);
 		}
 
 		else if (p.equals("mediumPrivacy"))
 		{
 			rbMedium.setChecked(true);
-			textOut.setText("    With this setting you will earn a 1.2x multiplier to "
-					+ "your points. "
-					+ "You will also share a moderate amount of data about yourself. "
-					+ "For example people will be able to see the area where you are working out "
-					+ "but not the exact street or location "
-					+ "at whichever time your data is saved."
-					+ "\n\n"
-					+ "With this preference, your data will update ONCE EVERY 5 MINUTES.");
+			textOut.setText(MEDIUM_PRIVACY_DESCRIPTION);
 		}
 		else if (p.equals("highPrivacy"))
 		{
 			rbHigh.setChecked(true);
-			textOut.setText("    With this setting you will earn a 0.8x multiplier to your points. "
-					+ "You will also share a minimal amount of data about yourself."
-					+ "\n\n"
-					+ "With this preference, your data will update ONCE EVERY HOUR.");
+			textOut.setText(HIGH_PRIVACY_DESCRIPTION);
 		}
 
 	}

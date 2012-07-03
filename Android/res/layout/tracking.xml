@@ -28,13 +28,13 @@
             android:layout_centerHorizontal="true"
             android:textOff="Datalogging is currently off"
             android:textOn="Datalogging is currently on" />
-
     </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/left_box"
         android:layout_width="160dip"
         android:layout_height="170dip"
+        android:layout_alignBottom="@+id/line"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/mid_layout" >
 
@@ -62,6 +62,7 @@
         android:id="@+id/line"
         android:layout_width="2dip"
         android:layout_height="170dip"
+        android:layout_alignBottom="@+id/row1buttons_layout"
         android:layout_below="@+id/mid_layout"
         android:layout_toRightOf="@+id/left_box"
         android:background="#aaaaaa" >
@@ -104,9 +105,8 @@
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/left_box"
-        android:layout_marginTop="86dp"
         android:text="Username: "
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -114,24 +114,11 @@
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:layout_marginBottom="38dp"
+        android:layout_below="@+id/left_box"
+        android:layout_marginTop="28dp"
         android:text="Privacy Setting: "
         android:textAppearance="?android:attr/textAppearanceMedium" />
-
-
-
-    <TextView
-        android:id="@+id/pset"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/textView1"
-        android:layout_alignBottom="@+id/textView1"
-        android:layout_toRightOf="@+id/textView1"
-        android:text="@string/pSettings"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-
 
     <TextView
         android:id="@+id/userValue"
@@ -141,6 +128,15 @@
         android:layout_alignBottom="@+id/textView1"
         android:layout_alignParentRight="true"
         android:text="blank"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <TextView
+        android:id="@+id/pset"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:text="@string/pSettings"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
 </RelativeLayout>

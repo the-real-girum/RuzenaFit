@@ -1,10 +1,5 @@
 package edu.berkeley.eecs.ruzenafit.service;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.sql.SQLData;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Date;
@@ -14,11 +9,9 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.sqlite.SQLiteDatabase;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -27,7 +20,6 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.PowerManager;
@@ -35,10 +27,10 @@ import android.os.SystemClock;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Log;
-import android.widget.Toast;
 import edu.berkeley.eecs.ruzenafit.R;
 import edu.berkeley.eecs.ruzenafit.access.InternalDBHelper;
 import edu.berkeley.eecs.ruzenafit.activity.WorkoutTrackerActivity;
+import edu.berkeley.eecs.ruzenafit.model.WorkoutTick;
 import edu.berkeley.eecs.ruzenafit.util.Constants;
 import edu.berkeley.eecs.ruzenafit.util.KCalUtils;
 
@@ -49,11 +41,12 @@ public class WorkoutTrackerService extends Service {
 	protected static LocationManager mLocationManager = null;
 	protected Location mLocation = null;
 
-	/** The minimum distance that you need to be from your previous location
-	 * for it to register as a "new location."
+	/**
+	 * The minimum distance that you need to be from your previous location for
+	 * it to register as a "new location."
 	 */
 	protected final static float MIN_DISTANCE = 0; // in Meters
-	
+
 	// TODO: Make tick rate a variable tick_rate that's changed by preferences.
 	/** The "tick rate" of the LocationManager */
 	protected final static long TICK_RATE = 5000; // in Milliseconds (at least
@@ -63,7 +56,9 @@ public class WorkoutTrackerService extends Service {
 	private static LocationListener locationListener;
 	protected static SensorManager mSensorManager = null;
 	private static SensorEventListener mSensorEventListener;
+	private static String mMostrecent_Provider = "-99";
 	private static boolean mIsRunning = false;
+
 	private static long mMostrecent_GPS_Time = -99;
 	private static float mMostrecent_GPS_Latitude = -99;
 	private static float mMostrecent_GPS_Longitude = -99;
@@ -71,13 +66,14 @@ public class WorkoutTrackerService extends Service {
 	private static float mMostrecent_GPS_Speed = -99;
 	private static float mMostrecent_GPS_HasAccuracy = -99;
 	private static float mMostrecent_GPS_Accuracy = -99;
-	private static String mMostrecent_Provider = "-99";
 	private static String mMostrecent_System_Time = "unknown time";
-
-	// TODO: When the other instance variables are fields of the Workout model class,
-	// change this variable to be derivable from the other fields (using the Utils method) as
+	// TODO: When the other instance variables are fields of the Workout model
+	// class,
+	// change this variable to be derivable from the other fields (using the
+	// Utils method) as
 	// a "getKCals()" method.
 	private static float mMostrecent_kCal = 0;
+
 	private static long lasttime = 0;
 	static long counter = 0;
 	private static double accum_minute_V = 0, accum_minute_H = 0;
@@ -100,7 +96,7 @@ public class WorkoutTrackerService extends Service {
 	public static long ntpDiff = 0;
 
 	public static String accumAccelDetail = "";
-	
+
 	static private String genformat = "####0.00";
 	static private String geoformat = "####0.000000";
 
@@ -126,7 +122,8 @@ public class WorkoutTrackerService extends Service {
 		// use shared pref to store the running state. this needs to persist in
 		// case the system kills the service and we get a restart
 		// Restore preferences
-		SharedPreferences settings = getSharedPreferences(Constants.PREFS_NAMESPACE, 0);
+		SharedPreferences settings = getSharedPreferences(
+				Constants.PREFS_NAMESPACE, 0);
 		boolean isrunningstored = settings.getBoolean("isrunning", false);
 		if (isrunningstored)
 			startLog();
@@ -160,16 +157,16 @@ public class WorkoutTrackerService extends Service {
 		Log.i("CalFitService", "startlog!!!");
 
 		/** Legacy code */
-//		// Each time we start logging we start a new file regardless of
-//		// numwriten
-//		numTimesWritten = 0;
-//		writtenGPS = 0;
-//
-//		fileNum = 0;
-//		fileNumGPS = 0;
-		
+		// // Each time we start logging we start a new file regardless of
+		// // numwriten
+		// numTimesWritten = 0;
+		// writtenGPS = 0;
+		//
+		// fileNum = 0;
+		// fileNumGPS = 0;
+
 		// TODO: Replace with GAE code?
-//		FindNewFiles();
+		// FindNewFiles();
 
 		// this is needed to keep the service alive on Android 2.0+ systems
 		// setForeground(true); // this is ignored on the new systems!
@@ -180,7 +177,9 @@ public class WorkoutTrackerService extends Service {
 		CharSequence contentTitle = "CalFit BCN";
 		CharSequence contentText = "Currently running";
 		Intent notificationIntent = new Intent(mContext,
-				WorkoutTrackerActivity.class); // must use WorkoutTrackerActivity.class because
+				WorkoutTrackerActivity.class); // must use
+												// WorkoutTrackerActivity.class
+												// because
 												// this notification loads a new
 												// activity onto the stack, and
 												// if you call CalFit.class, it
@@ -313,7 +312,7 @@ public class WorkoutTrackerService extends Service {
 				Log.d(getClass().getSimpleName(),
 						"GPS Provider has been enabled.");
 			}
-			
+
 			// register for location update events to be provided to my
 			// locationListener
 			mLocationManager.requestLocationUpdates(
@@ -342,8 +341,7 @@ public class WorkoutTrackerService extends Service {
 				else
 					mMostrecent_GPS_HasAccuracy = 0;
 				mMostrecent_GPS_Accuracy = loc.getAccuracy();
-			}
-			else {
+			} else {
 				// TODO: Change this to explicitly kill this service,
 				// if the location cannot be found.
 				Log.e(TAG, "ERROR: getLastKnownLocation() failed!");
@@ -355,13 +353,13 @@ public class WorkoutTrackerService extends Service {
 			// unregister for location update events
 			mLocationManager.removeUpdates(locationListener);
 		}
-		
+
 		private class MyLocationListener implements LocationListener {
 			public void onLocationChanged(Location loc) {
 				if (loc != null) {
 
-					mMostrecent_System_Time = new Date().toGMTString(); 
-							
+					mMostrecent_System_Time = new Date().toGMTString();
+
 					Log.i(getClass().getSimpleName(),
 							"Location : Time: " + loc.getTime() + " systime: "
 									+ mMostrecent_System_Time + " Lat: "
@@ -381,8 +379,9 @@ public class WorkoutTrackerService extends Service {
 					// mMostrecent_System_Time =
 					// java.lang.System.currentTimeMillis(); // done above the
 					// Log.i()
-					
-					// TODO: IF GPS IS DISABLED ON THE PHONE, then disable tracking
+
+					// TODO: IF GPS IS DISABLED ON THE PHONE, then disable
+					// tracking
 					// and tell the user.
 					mMostrecent_GPS_Latitude = (float) loc.getLatitude();
 					mMostrecent_GPS_Longitude = (float) loc.getLongitude();
@@ -396,7 +395,7 @@ public class WorkoutTrackerService extends Service {
 					mMostrecent_Provider = loc.getProvider();
 
 					// TODO: Replace with GAE code?
-					testWrite("Called from onLocationChanged()");
+					saveData("Called from onLocationChanged()");
 				}
 			}
 
@@ -446,10 +445,11 @@ public class WorkoutTrackerService extends Service {
 			mSensorManager = (SensorManager) mContext
 					.getSystemService(Context.SENSOR_SERVICE);
 
-			/* in production version consider using
-			 * SensorManager.SENSOR_DELAY_FASTEST,
-			 * SENSOR_DELAY_UI (was a good compromise)
-			 * SENSOR_DELAY_NORMAL (probably best battery life) */
+			/*
+			 * in production version consider using
+			 * SensorManager.SENSOR_DELAY_FASTEST, SENSOR_DELAY_UI (was a good
+			 * compromise) SENSOR_DELAY_NORMAL (probably best battery life)
+			 */
 			mSensorManager.registerListener(mSensorEventListener,
 					mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
 					SensorManager.SENSOR_DELAY_UI);
@@ -485,7 +485,8 @@ public class WorkoutTrackerService extends Service {
 					data[2][samplesPerWindow] = event.values[2];
 					samplesPerWindow++;
 
-					// write detail accelerometry to file TODO: Replace with GAE code?
+					// write detail accelerometry to file TODO: Replace with GAE
+					// code?
 					// writeFileDetailNew (System.currentTimeMillis(),
 					// event.values[0], event.values[1], event.values[2]);
 					accumAccelDetail = accumAccelDetail
@@ -501,11 +502,13 @@ public class WorkoutTrackerService extends Service {
 								+ genfmt.format(event.values[1]) + " Z: "
 								+ genfmt.format(event.values[2]));
 
-						// write detail accelerometry to file.  TODO: Replace with GAE code?
-//						writeFileDetailNew2();
+						// write detail accelerometry to file. TODO: Replace
+						// with GAE code?
+						// writeFileDetailNew2();
 
 						// calculate sample window part of kcal
-						double[] result = KCalUtils.calculateKcal(data, samplesPerWindow);
+						double[] result = KCalUtils.calculateKcal(data,
+								samplesPerWindow);
 
 						finalKcalResult(result);
 
@@ -569,8 +572,8 @@ public class WorkoutTrackerService extends Service {
 				mMostrecent_System_Time = new Date().toGMTString();
 
 				// TODO: Change this "write to file" to write to server.
-				testWrite("Called from onSensorChanged()");
-				
+				saveData("Called from onSensorChanged()");
+
 				// reset the counters
 				accum_minute_V = 0;
 				accum_minute_H = 0;
@@ -578,8 +581,10 @@ public class WorkoutTrackerService extends Service {
 			}
 		}
 	}
-	
-	private static void testWrite(String methodThisMethodWasCalledFrom) {
+
+	private static void saveData(String methodThisMethodWasCalledFrom) {
+		
+		// Debugging output
 		Log.i(TAG, "testWrite: " + methodThisMethodWasCalledFrom);
 		Log.i(TAG, "Current Workout State: ");
 		Log.i(TAG, "IMEI: " + imei);
@@ -595,33 +600,27 @@ public class WorkoutTrackerService extends Service {
 		Log.i(TAG, "Accum_Minute_H" + accum_minute_H);
 		Log.i(TAG, "Most Recent GPS Time: " + mMostrecent_GPS_Time);
 
-		// Prep for DB insertion
-		InternalDBHelper dbHelper = new InternalDBHelper(mContext, "dbName", null, 1);
-		SQLiteDatabase database = dbHelper.getWritableDatabase();
+		// Instantiate a new workout model to pass data around easier.
+		WorkoutTick workout = new WorkoutTick(imei, mMostrecent_GPS_Time,
+				mMostrecent_GPS_Latitude, mMostrecent_GPS_Longitude,
+				mMostrecent_GPS_Altitude, mMostrecent_GPS_Speed,
+				mMostrecent_GPS_HasAccuracy, mMostrecent_GPS_Accuracy,
+				mMostrecent_System_Time, mMostrecent_kCal, accum_minute_V,
+				accum_minute_H);
+
+		// Go ahead and insert this "tick" into the internal SQLite database.
+		InternalDBHelper.insertWorkoutIntoDatabase(workout, mContext);
 		
-		// Throw each of this particular workout's values into the row
-		ContentValues contentValues = new ContentValues();
-		contentValues.put(Constants.KEY_IMEI, imei);
-		contentValues.put(Constants.KEY_DELTA_KCALS, mMostrecent_kCal);
-		contentValues.put(Constants.KEY_SYSTEM_TIME, mMostrecent_System_Time);
-		contentValues.put(Constants.KEY_LATITUDE, mMostrecent_GPS_Latitude);
-		contentValues.put(Constants.KEY_LONGITUDE, mMostrecent_GPS_Longitude);
-		contentValues.put(Constants.KEY_SPEED, mMostrecent_GPS_Speed);
-		contentValues.put(Constants.KEY_ALTITUDE, mMostrecent_GPS_Altitude);
-		contentValues.put(Constants.KEY_HAS_ACCURACY, mMostrecent_GPS_HasAccuracy);
-		contentValues.put(Constants.KEY_HAS_ACCURACY, mMostrecent_GPS_Accuracy);
-		contentValues.put(Constants.KEY_ACCUM_MINUTE_V, accum_minute_V);
-		contentValues.put(Constants.KEY_ACCUM_MINUTE_H, accum_minute_H);
-		contentValues.put(Constants.KEY_GPS_TIME, mMostrecent_GPS_Time);
+		// TODO: Count up the number of "ticks" we've had so far.
 		
-		// Perform the actual insertion.
-		database.insert(Constants.WORKOUT_TABLE, null, contentValues);
 		
-		database.close();
+		// TODO: If we have enough unsent "ticks" to batch up, then batch up 
+		// the unsent "ticks" and send it over to the server.
 	}
-	
+
 	@Override
 	public IBinder onBind(Intent arg0) {
+		// do nothing.
 		return null;
 	}
 

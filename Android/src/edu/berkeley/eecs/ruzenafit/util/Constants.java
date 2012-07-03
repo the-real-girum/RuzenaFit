@@ -1,8 +1,9 @@
 package edu.berkeley.eecs.ruzenafit.util;
 
-import android.util.Log;
 
 public class Constants {
+	
+	// SharedPreferences constants
 	public static final String PREFS_NAMESPACE = "edu.berkeley.eecs.ruzenafit.Preferences";
 	public static final String UNDEFINED_USER_EMAIL = "__undefinedUserEmail";
 	public static final String UNDEFINED_PRIVACY_SETTING = "__undefinedPrivacySetting";
@@ -15,7 +16,7 @@ public class Constants {
 	
 	// SQL column keys
 	public static final String KEY_IMEI = "imei";
-	public static final String KEY_DELTA_KCALS = "delta_kcals";
+	public static final String KEY_KCALS = "delta_kcals";
 	public static final String KEY_SYSTEM_TIME = "system_time";
 	public static final String KEY_LATITUDE = "latitude";
 	public static final String KEY_LONGITUDE = "longitude";

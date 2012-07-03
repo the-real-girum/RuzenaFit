@@ -44,7 +44,7 @@
         </receiver>
         <activity android:name=".activity.FacebookSettingsActivity"></activity>
         <activity android:name=".activity.RankingActivity"></activity>
-        <activity android:name=".activity.PreferencesActivity"></activity> 	
+        <activity android:name=".activity.PrivacyPreferencesActivity"></activity> 	
 				
 	</application>
 </manifest> 
