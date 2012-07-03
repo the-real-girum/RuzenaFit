@@ -58,10 +58,6 @@ public class WorkoutTrackerActivity extends Activity {
 	
 //	private static int okoff = 0;
 	
-	
-	// TODO: This button should do some basic sanity-checking
-	// to make sure that your facebook email is set, and that your
-	// privacy setting is set.
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -85,7 +81,10 @@ public class WorkoutTrackerActivity extends Activity {
         else 
         	togglebutton.setChecked(false);
 
-        // TODO: Add a forewarning when clicking the main button:
+        // FIXME: This button should do some basic sanity-checking
+    	// to make sure that your facebook email is set, and that your
+    	// privacy setting is set.
+        // FIXME: Add a forewarning when clicking the main button:
         // "WARNING:  kCal measurements WILL NOT BE ACCURATE if you do not have this phone
         // strapped to your waist or in your pocket."
         togglebutton.setOnClickListener(new OnClickListener() {

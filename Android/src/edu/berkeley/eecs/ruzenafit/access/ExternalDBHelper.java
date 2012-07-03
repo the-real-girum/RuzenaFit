@@ -24,7 +24,7 @@ import org.w3c.dom.NodeList;
 
 import android.util.Log;
 import edu.berkeley.eecs.ruzenafit.model.CoordinateDataPoint;
-import edu.berkeley.eecs.ruzenafit.model.Workout;
+import edu.berkeley.eecs.ruzenafit.model.WorkoutPoint;
 import edu.berkeley.eecs.ruzenafit.util.Constants;
 
 
@@ -50,10 +50,10 @@ public class ExternalDBHelper {
 	 * Submits data to Google App Engine (Girum's account, as set by URL).
 	 * Returns the number of successful GAE submissions.
 	 */
-	public static int submitDataToGAE(Workout[] allWorkouts, String userEmail, String privacySetting) {
+	public static int submitDataToGAE(WorkoutPoint[] allWorkouts, String userEmail, String privacySetting) {
 		
 		int successfulSubmissions = 0;
-		for (Workout workout : allWorkouts) {
+		for (WorkoutPoint workout : allWorkouts) {
 			if (submitOneWorkout(workout, userEmail, privacySetting))
 				successfulSubmissions++;
 		}
@@ -69,7 +69,7 @@ public class ExternalDBHelper {
 	 * @param privacySetting
 	 * @return
 	 */
-	private static boolean submitOneWorkout(Workout workout, String userEmail, String privacySetting) {
+	private static boolean submitOneWorkout(WorkoutPoint workout, String userEmail, String privacySetting) {
 		
 		if (workout == null)
 			return false;
@@ -180,9 +180,9 @@ public class ExternalDBHelper {
 	 * Retrieves data from Google App Engine (Girum's account, as set by URL).
 	 * Returns null if there is a error in the data retrieval.
 	 */
-	public static Workout[] retrieveDataFromGAE(String userEmail){
+	public static WorkoutPoint[] retrieveDataFromGAE(String userEmail){
 		Log.d(TAG, "retrieveDataFromGAE with userEmail: " + userEmail);
-		Workout[] allWorkouts = null;
+		WorkoutPoint[] allWorkouts = null;
 		
 		// Setup HTTP GET request.
 		HttpClient httpClient = new DefaultHttpClient();
@@ -200,14 +200,14 @@ public class ExternalDBHelper {
 			Document result = documentBuilder.parse(entity.getContent());
 			
 			NodeList workouts = result.getDocumentElement().getChildNodes();
-			allWorkouts = new Workout[workouts.getLength()];
+			allWorkouts = new WorkoutPoint[workouts.getLength()];
 			
 			// For each of the workouts...
 			for (int i = 0; i < workouts.getLength(); i++) {
 				
 				NodeList workout = workouts.item(i).getChildNodes();
 				Log.d(TAG, "WORKOUT: ");
-				allWorkouts[i] = new Workout();
+				allWorkouts[i] = new WorkoutPoint();
 				
 				// For each of this workout's XML children...
 				for (int j = 0; j < workout.getLength(); j++) {

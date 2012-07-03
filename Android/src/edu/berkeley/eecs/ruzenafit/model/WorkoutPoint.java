@@ -9,7 +9,7 @@ package edu.berkeley.eecs.ruzenafit.model;
  * @author gibssa
  *
  */
-public class Workout {
+public class WorkoutPoint {
 
 	private long workoutID;
 	private String date;

@@ -1,72 +1,53 @@
-//package edu.berkeley.eecs.ruzenafit.access;
-//
-//import java.util.ArrayList;
-//
-//import android.database.Cursor;
-//import android.util.Log;
-//import edu.berkeley.eecs.ruzenafit.model.Workout;
-//import edu.berkeley.eecs.ruzenafit.model.CoordinateDataPoint;
-//
-//public class InternalDBHelper {
-//	private static final String TAG = "InternalDBHelper";
-//	
-//	/**
-//	 * We need to save the data for each of the workouts *before* we just throw it into the ListView,
-//	 * but I don't really feel like unhacking the fillData() method.  So, I'll just iterate
-//	 * over the total workouts twice.
-//	 */
-//	public static Workout[] loadSQLiteWorkoutDataIntoMemory(CalFitDBAdapter mDbHelper) {
-//		Log.d(TAG, "saveCurrentDataInMemory, with DBAdapter: " + mDbHelper);
-//		
-//		
-//		
-//		// Grab a cursor that can iterate over the internal SQLite database
-//		Cursor cursor = mDbHelper.getAllUserWorkouts(1);
-//		cursor.moveToFirst();
-//		
-//		// (re)instantiate this {model+view+controller}'s array representation
-//		// of said workouts
-//		Workout[] allWorkouts = new Workout[cursor.getColumnCount()];
-//		
-//		// Now step through the SQLite table and save the data in memory
-//		for (int i = 0; !cursor.isAfterLast(); i++) {
-//			Workout workout = new Workout();
-//			workout.setWorkoutID(Long.parseLong(cursor.getString(cursor.getColumnIndex("_id"))));
-//			workout.setDate(cursor.getString(cursor.getColumnIndex("date")));
-//			workout.setDuration(cursor.getString(cursor.getColumnIndex("duration")));
-//			workout.setTotalCalories(cursor.getString(cursor.getColumnIndex("total_calories")));
-//			workout.setAverageSpeed(cursor.getString(cursor.getColumnIndex("average_speed")));
-//			workout.setTotalDistance(cursor.getString(cursor.getColumnIndex("total_distance")));
-//			
-//			ArrayList<CoordinateDataPoint> geopoints = new ArrayList<CoordinateDataPoint>();
-//			Cursor dataSampleCursor = mDbHelper.getWorkoutSampledata(workout.getWorkoutID());
-//			dataSampleCursor.moveToFirst();
-//			
-//			while (!dataSampleCursor.isAfterLast()) {
-////				Log.d(TAG, "geopoint_lat column index )
-//				String latitude = dataSampleCursor.getString(dataSampleCursor.getColumnIndex("geopoint_lat"));
-//				String longitude = dataSampleCursor.getString(dataSampleCursor.getColumnIndex("geopoint_long"));
-//				String geopointDate = dataSampleCursor.getString(dataSampleCursor.getColumnIndex("geopoint_date"));
-//				float kCals = dataSampleCursor.getFloat(dataSampleCursor.getColumnIndex("kcals"));
-//
-//				geopoints.add(new CoordinateDataPoint(latitude, longitude, geopointDate, kCals));
-//				
-//				dataSampleCursor.moveToNext();
-//			}
-//			dataSampleCursor.close();
-//			
-//			CoordinateDataPoint[] geopointsArray = geopoints.toArray(new CoordinateDataPoint[geopoints.size()]);
-//			workout.setGeopoints(geopointsArray);
-//			
-//			allWorkouts[i++] = workout;
-//			cursor.moveToNext();
-//		}
-//		
-//		// Disconnect the cursor
-//		cursor.close();
-//		
-//		Log.d(TAG, "saveCurrentDataInMemory: " + allWorkouts.toString());
-//		
-//		return allWorkouts;
-//	}
-//}
+package edu.berkeley.eecs.ruzenafit.access;
+
+
+import edu.berkeley.eecs.ruzenafit.util.Constants;
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteDatabase.CursorFactory;
+import android.database.sqlite.SQLiteOpenHelper;
+
+public class InternalDBHelper extends SQLiteOpenHelper {
+
+	// SQL code needed to create the "workouts" table.
+	private static final String WORKOUT_TABLE_CREATE = 
+			"CREATE TABLE " + Constants.WORKOUT_TABLE + " (" +
+					Constants.KEY_IMEI 				+ " TEXT, " +
+					Constants.KEY_DELTA_KCALS 		+ " TEXT, " +
+					Constants.KEY_SYSTEM_TIME 		+ " TEXT, " +
+					Constants.KEY_LATITUDE 			+ " TEXT, " +
+					Constants.KEY_LONGITUDE			+ " TEXT, " +
+					Constants.KEY_SPEED 			+ " TEXT, " +
+					Constants.KEY_ALTITUDE 			+ " TEXT, " +
+					Constants.KEY_HAS_ACCURACY		+ " TEXT, " +
+					Constants.KEY_ACCURACY 			+ " TEXT, " +
+					Constants.KEY_ACCUM_MINUTE_V	+ " TEXT, " +
+					Constants.KEY_ACCUM_MINUTE_H	+ " TEXT, " +
+					Constants.KEY_GPS_TIME			+ " TEXT);";
+	
+	public InternalDBHelper(Context context, String name,
+			CursorFactory factory, int version) {
+		super(context, name, factory, version);
+	}
+
+	@Override
+	public void onCreate(SQLiteDatabase db) {
+		db.execSQL(WORKOUT_TABLE_CREATE);
+	}
+
+	@Override
+	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+		// do nothing
+	}
+	
+}
+
+
+
+
+
+
+
+
+
+

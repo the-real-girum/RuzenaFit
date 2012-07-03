@@ -4,17 +4,21 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.sql.SQLData;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.Date;
 import java.util.Locale;
 
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -33,6 +37,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 import edu.berkeley.eecs.ruzenafit.R;
+import edu.berkeley.eecs.ruzenafit.access.InternalDBHelper;
 import edu.berkeley.eecs.ruzenafit.activity.WorkoutTrackerActivity;
 import edu.berkeley.eecs.ruzenafit.util.Constants;
 import edu.berkeley.eecs.ruzenafit.util.KCalUtils;
@@ -55,7 +60,6 @@ public class WorkoutTrackerService extends Service {
 													// every 20 secs)
 	// note that kcal is only recorded once per minute.
 
-	// TODO: Change all of these private instance variables to be members of the Workout model class.
 	private static LocationListener locationListener;
 	protected static SensorManager mSensorManager = null;
 	private static SensorEventListener mSensorEventListener;
@@ -68,7 +72,7 @@ public class WorkoutTrackerService extends Service {
 	private static float mMostrecent_GPS_HasAccuracy = -99;
 	private static float mMostrecent_GPS_Accuracy = -99;
 	private static String mMostrecent_Provider = "-99";
-	private static long mMostrecent_System_Time = -99;
+	private static String mMostrecent_System_Time = "unknown time";
 
 	// TODO: When the other instance variables are fields of the Workout model class,
 	// change this variable to be derivable from the other fields (using the Utils method) as
@@ -327,7 +331,7 @@ public class WorkoutTrackerService extends Service {
 					.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 			if (loc != null) {
 				mMostrecent_GPS_Time = loc.getTime();
-				mMostrecent_System_Time = java.lang.System.currentTimeMillis();
+				mMostrecent_System_Time = new Date().toGMTString();
 				mMostrecent_GPS_Time = java.lang.System.currentTimeMillis();
 				mMostrecent_GPS_Latitude = (float) loc.getLatitude();
 				mMostrecent_GPS_Longitude = (float) loc.getLongitude();
@@ -340,7 +344,7 @@ public class WorkoutTrackerService extends Service {
 				mMostrecent_GPS_Accuracy = loc.getAccuracy();
 			}
 			else {
-				// FIXME: Change this to explicitly kill this service,
+				// TODO: Change this to explicitly kill this service,
 				// if the location cannot be found.
 				Log.e(TAG, "ERROR: getLastKnownLocation() failed!");
 			}
@@ -356,9 +360,8 @@ public class WorkoutTrackerService extends Service {
 			public void onLocationChanged(Location loc) {
 				if (loc != null) {
 
-					mMostrecent_System_Time = java.lang.System
-							.currentTimeMillis();
-
+					mMostrecent_System_Time = new Date().toGMTString(); 
+							
 					Log.i(getClass().getSimpleName(),
 							"Location : Time: " + loc.getTime() + " systime: "
 									+ mMostrecent_System_Time + " Lat: "
@@ -563,8 +566,7 @@ public class WorkoutTrackerService extends Service {
 				// Returns the current system time in milliseconds since January
 				// 1, 1970 00:00:00 UTC.
 				// this is the clock on the device as set by user/network.
-				long currenttime = System.currentTimeMillis();
-				mMostrecent_System_Time = currenttime;
+				mMostrecent_System_Time = new Date().toGMTString();
 
 				// TODO: Change this "write to file" to write to server.
 				testWrite("Called from onSensorChanged()");
@@ -578,20 +580,44 @@ public class WorkoutTrackerService extends Service {
 	}
 	
 	private static void testWrite(String methodThisMethodWasCalledFrom) {
-		Log.d(TAG, "testWrite: " + methodThisMethodWasCalledFrom);
-		Log.d(TAG, "Current Workout State: ");
-		Log.d(TAG, "IMEI: " + imei);
-		Log.d(TAG, "Delta KCals burned: " + mMostrecent_kCal);
-		Log.d(TAG, "System Time: " + mMostrecent_System_Time);
-		Log.d(TAG, "GPS Latitude" + mMostrecent_GPS_Latitude);
-		Log.d(TAG, "GPS Longitude" + mMostrecent_GPS_Longitude);
-		Log.d(TAG, "Speed: " + mMostrecent_GPS_Speed);
-		Log.d(TAG, "Altitude: " + mMostrecent_GPS_Altitude);
-		Log.d(TAG, "HasAccuracy: " + mMostrecent_GPS_HasAccuracy);
-		Log.d(TAG, "Accuracy: " + mMostrecent_GPS_Accuracy);
-		Log.d(TAG, "Accum_Minute_V" + accum_minute_V);
-		Log.d(TAG, "Accum_Minute_H" + accum_minute_H);
-		Log.d(TAG, "Most Recent GPS Time: " + mMostrecent_GPS_Time);
+		Log.i(TAG, "testWrite: " + methodThisMethodWasCalledFrom);
+		Log.i(TAG, "Current Workout State: ");
+		Log.i(TAG, "IMEI: " + imei);
+		Log.i(TAG, "Delta KCals burned: " + mMostrecent_kCal);
+		Log.i(TAG, "System Time: " + mMostrecent_System_Time);
+		Log.i(TAG, "GPS Latitude" + mMostrecent_GPS_Latitude);
+		Log.i(TAG, "GPS Longitude" + mMostrecent_GPS_Longitude);
+		Log.i(TAG, "Speed: " + mMostrecent_GPS_Speed);
+		Log.i(TAG, "Altitude: " + mMostrecent_GPS_Altitude);
+		Log.i(TAG, "HasAccuracy: " + mMostrecent_GPS_HasAccuracy);
+		Log.i(TAG, "Accuracy: " + mMostrecent_GPS_Accuracy);
+		Log.i(TAG, "Accum_Minute_V" + accum_minute_V);
+		Log.i(TAG, "Accum_Minute_H" + accum_minute_H);
+		Log.i(TAG, "Most Recent GPS Time: " + mMostrecent_GPS_Time);
+
+		// Prep for DB insertion
+		InternalDBHelper dbHelper = new InternalDBHelper(mContext, "dbName", null, 1);
+		SQLiteDatabase database = dbHelper.getWritableDatabase();
+		
+		// Throw each of this particular workout's values into the row
+		ContentValues contentValues = new ContentValues();
+		contentValues.put(Constants.KEY_IMEI, imei);
+		contentValues.put(Constants.KEY_DELTA_KCALS, mMostrecent_kCal);
+		contentValues.put(Constants.KEY_SYSTEM_TIME, mMostrecent_System_Time);
+		contentValues.put(Constants.KEY_LATITUDE, mMostrecent_GPS_Latitude);
+		contentValues.put(Constants.KEY_LONGITUDE, mMostrecent_GPS_Longitude);
+		contentValues.put(Constants.KEY_SPEED, mMostrecent_GPS_Speed);
+		contentValues.put(Constants.KEY_ALTITUDE, mMostrecent_GPS_Altitude);
+		contentValues.put(Constants.KEY_HAS_ACCURACY, mMostrecent_GPS_HasAccuracy);
+		contentValues.put(Constants.KEY_HAS_ACCURACY, mMostrecent_GPS_Accuracy);
+		contentValues.put(Constants.KEY_ACCUM_MINUTE_V, accum_minute_V);
+		contentValues.put(Constants.KEY_ACCUM_MINUTE_H, accum_minute_H);
+		contentValues.put(Constants.KEY_GPS_TIME, mMostrecent_GPS_Time);
+		
+		// Perform the actual insertion.
+		database.insert(Constants.WORKOUT_TABLE, null, contentValues);
+		
+		database.close();
 	}
 	
 	@Override
