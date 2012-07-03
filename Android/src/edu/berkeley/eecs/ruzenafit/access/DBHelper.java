@@ -11,8 +11,9 @@ import edu.berkeley.eecs.ruzenafit.util.Constants;
 
 /**
  * A class of static helper methods to access Android's SQLite database.
- * Use this class to save and retrieve workout "ticks" from the phone's
- * persistent storage.
+ * 
+ * This is the class you want to use outside of /access to save and retrieve 
+ * workout "ticks" from the phone's persistent internal storage.
  *  
  * @author gibssa
  */
@@ -50,6 +51,10 @@ public class DBHelper {
 
 		// Don't forget to close your databases and cursors!
 		database.close();
+		
+		// TODO: Check for batch level, and if it's time to upload to GAE, then do it.
+		// TODO: If network access fails, consider bringing up a notification saying
+		// that you can't connect to the network.
 	}
 	
 
@@ -120,6 +125,7 @@ public class DBHelper {
 		cursor.close();
 		database.close();
 		
+		// Let the user know what's up.
 		Toast.makeText(context, "Retrieved " + workouts.length + " workout \"ticks\" from internal SQLite", 3).show();
 		
 		return workouts;

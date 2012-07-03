@@ -81,7 +81,7 @@ public class GoogleAppEngineHelper {
 		Log.d(TAG, "Workout: " + workout);
 		
 		// TODO: Fix the REST API so that it reflects our new "tick" model.
-		// TODO: Change all of these to string literals.
+		// TODO: Change all of these to NOT use string literals.
 		nameValuePairs.add(new BasicNameValuePair("user", 						userEmail));
 		nameValuePairs.add(new BasicNameValuePair(Constants.PRIVACY_SETTING, 	privacySetting));
 		nameValuePairs.add(new BasicNameValuePair("date", 						workout.getSystemTime()));

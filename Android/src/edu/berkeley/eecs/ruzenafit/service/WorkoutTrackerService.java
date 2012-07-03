@@ -394,7 +394,7 @@ public class WorkoutTrackerService extends Service {
 					mMostrecent_GPS_Accuracy = loc.getAccuracy();
 					mMostrecent_Provider = loc.getProvider();
 
-					// TODO: Replace with GAE code?
+					// Saves the data internally.  This method checks for batches.
 					saveData("Called from onLocationChanged()");
 				}
 			}
@@ -485,7 +485,7 @@ public class WorkoutTrackerService extends Service {
 					data[2][samplesPerWindow] = event.values[2];
 					samplesPerWindow++;
 
-					// write detail accelerometry to file TODO: Replace with GAE
+					// write detail accelerometry to file
 					// code?
 					// writeFileDetailNew (System.currentTimeMillis(),
 					// event.values[0], event.values[1], event.values[2]);
@@ -502,8 +502,8 @@ public class WorkoutTrackerService extends Service {
 								+ genfmt.format(event.values[1]) + " Z: "
 								+ genfmt.format(event.values[2]));
 
-						// write detail accelerometry to file. TODO: Replace
-						// with GAE code?
+						// write detail accelerometry to file. 
+						// TODO: Replace with GAE code?
 						// writeFileDetailNew2();
 
 						// calculate sample window part of kcal
@@ -571,7 +571,8 @@ public class WorkoutTrackerService extends Service {
 				// this is the clock on the device as set by user/network.
 				mMostrecent_System_Time = new Date().toGMTString();
 
-				// TODO: Change this "write to file" to write to server.
+				// Save data to the phone (this method will check for batch size, and
+				// upload to server if the batch is large enough).
 				saveData("Called from onSensorChanged()");
 
 				// reset the counters
@@ -582,6 +583,13 @@ public class WorkoutTrackerService extends Service {
 		}
 	}
 
+	/**
+	 * Fundamental saveData() method.  This method will check if we have enough new
+	 * workout "ticks" to justify batching them up and sending the new ones to the
+	 * server for update.
+	 * 
+	 * @param methodThisMethodWasCalledFrom
+	 */
 	private static void saveData(String methodThisMethodWasCalledFrom) {
 		
 		// Debugging output

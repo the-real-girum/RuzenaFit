@@ -7,13 +7,21 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
 
+/**
+ * Our custom extension of {@link SQLiteOpenHelper} to read/write to our
+ * SQLite database internally on the phone.
+ * 
+ * Don't use this class outside of the /access package.
+ * 
+ * @author gibssa
+ */
 public class DBConn extends SQLiteOpenHelper {
 
 	// SQL code needed to create the "workouts" table.
 	private static final String WORKOUT_TABLE_CREATE = 
 			"CREATE TABLE " + Constants.WORKOUT_TABLE + " (" +
 					Constants.KEY_IMEI 				+ " TEXT, " +
-					Constants.KEY_KCALS 		+ " TEXT, " +
+					Constants.KEY_KCALS 			+ " TEXT, " +
 					Constants.KEY_SYSTEM_TIME 		+ " TEXT, " +
 					Constants.KEY_LATITUDE 			+ " TEXT, " +
 					Constants.KEY_LONGITUDE			+ " TEXT, " +
