@@ -5,6 +5,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import edu.berkeley.eecs.ruzenafit.shared.model.WorkoutTick;
+
 /**
  * Sample code for "Hello, world".  We're using Jersey as a REST middleman API.
  * @author gibssa
@@ -14,8 +16,8 @@ public class HelloWorldSample {
 
 	// This method is called if XML is request
 	@GET
-	@Produces(MediaType.TEXT_XML)
-	public String sayXMLHello() {
-		return "<?xml version=\"1.0\"?>" + "<hello> Hello Jersey" + "</hello>";
+	@Produces(MediaType.APPLICATION_JSON)
+	public WorkoutTick sayXMLHello() {
+		return new WorkoutTick("test imei", 0, 0, 0, 0, 0, 0, 0, "test system time", 0, 0, 0);
 	}
 }

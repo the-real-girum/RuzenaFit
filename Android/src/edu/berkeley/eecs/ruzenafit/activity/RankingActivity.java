@@ -10,8 +10,9 @@ import android.widget.Button;
 import android.widget.Toast;
 import edu.berkeley.eecs.ruzenafit.R;
 import edu.berkeley.eecs.ruzenafit.access.DBHelper;
+import edu.berkeley.eecs.ruzenafit.access.GoogleAppEngineHelper;
+import edu.berkeley.eecs.ruzenafit.access.SharedPreferencesHelper;
 import edu.berkeley.eecs.ruzenafit.model.WorkoutTick;
-import edu.berkeley.eecs.ruzenafit.network.GoogleAppEngineHelper;
 import edu.berkeley.eecs.ruzenafit.util.Constants;
 
 public class RankingActivity extends Activity {
@@ -52,43 +53,26 @@ public class RankingActivity extends Activity {
 	};
 	
 	private void explicitSend() {
-		// TODO: Make this method a little more DRY with the method below it.
-		// Grab the currently set IMEI and privacy setting
-		SharedPreferences preferences = getSharedPreferences(Constants.PREFS_NAMESPACE, 0);
-		String imei = preferences.getString(Constants.KEY_IMEI, Constants.UNDEFINED_IMEI);
-		String privacySetting = preferences.getString(Constants.PRIVACY_SETTING, Constants.UNDEFINED_PRIVACY_SETTING);
 		
-		// Sanity checks on the strings we grabbed above
-		if (imei.equals(Constants.UNDEFINED_IMEI)) {
-			Toast.makeText(getApplicationContext(), "Phone's IMEI not set.", 3).show();
-			return;
-		}
-		if (privacySetting.equals(Constants.UNDEFINED_PRIVACY_SETTING)) {
-			Toast.makeText(getApplicationContext(), "Privacy setting not set.", 3).show();
-			return;
-		}
+		// Grab the currently set imei and privacySetting
+		SharedPreferencesHelper sharedPreferencesHelper = new SharedPreferencesHelper(this);
+		String imei = sharedPreferencesHelper.retrieveValueForString(WorkoutTick.KEY_IMEI);
+		String privacySetting = sharedPreferencesHelper.retrieveValueForString(Constants.PRIVACY_SETTING);
 		
 		// Network layer
 		GoogleAppEngineHelper.submitDataToGAE(
 				DBHelper.retrieveWorkouts(getApplicationContext()), 
 				imei, 
 				privacySetting,
-				getApplicationContext());
+				this);
 	}
 
 	private void explicitRetrieve() {
 		// Grab the currently set IMEI and privacy setting
-		SharedPreferences preferences = getSharedPreferences(Constants.PREFS_NAMESPACE, 0);
-		String imei = preferences.getString(Constants.KEY_IMEI, Constants.UNDEFINED_IMEI);
+		SharedPreferencesHelper sharedPreferencesHelper = new SharedPreferencesHelper(this);
+		String imei = sharedPreferencesHelper.retrieveValueForString(WorkoutTick.KEY_IMEI);
 		
-		// Sanity checks on the strings we grabbed above
-		if (imei.equals(Constants.UNDEFINED_IMEI)) {
-			Toast.makeText(getApplicationContext(), "Phone's IMEI not set.", 3).show();
-			return;
-		}
-		
-		GoogleAppEngineHelper.retrieveDataFromGAE(imei, getApplicationContext());
-		
+//		GoogleAppEngineHelper.retrieveDataFromGAE(imei, getApplicationContext());
 	}
 	
 

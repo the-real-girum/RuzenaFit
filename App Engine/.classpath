@@ -18,5 +18,8 @@
 	<classpathentry kind="lib" path="war/WEB-INF/lib/jettison-1.1.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/jsr311-api-1.1.1.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/xom-1.2.8.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/gson-2.2.2-javadoc.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/gson-2.2.2-sources.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/gson-2.2.2.jar"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>

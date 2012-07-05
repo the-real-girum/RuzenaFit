@@ -1,8 +1,9 @@
 package edu.berkeley.eecs.ruzenafit;
 
+import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+
 import edu.berkeley.eecs.ruzenafit.client.GreetingService;
 import edu.berkeley.eecs.ruzenafit.shared.FieldVerifier;
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 /**
  * The server side implementation of the RPC service.

@@ -32,19 +32,19 @@ public class DBHelper {
 
 		// Throw each of this particular workout's values into the row
 		ContentValues contentValues = new ContentValues();
-		contentValues.put(Constants.KEY_IMEI, workout.getImei());
-		contentValues.put(Constants.KEY_KCALS, workout.getkCal());
-		contentValues.put(Constants.KEY_SYSTEM_TIME, workout.getSystemTime());
-		contentValues.put(Constants.KEY_LATITUDE, workout.getLatitude());
-		contentValues.put(Constants.KEY_LONGITUDE, workout.getLongitude());
-		contentValues.put(Constants.KEY_SPEED, workout.getSpeed());
-		contentValues.put(Constants.KEY_ALTITUDE, workout.getAltitude());
-		contentValues.put(Constants.KEY_HAS_ACCURACY,
+		contentValues.put(WorkoutTick.KEY_IMEI, workout.getImei());
+		contentValues.put(WorkoutTick.KEY_KCALS, workout.getkCal());
+		contentValues.put(WorkoutTick.KEY_SYSTEM_TIME, workout.getSystemTime());
+		contentValues.put(WorkoutTick.KEY_LATITUDE, workout.getLatitude());
+		contentValues.put(WorkoutTick.KEY_LONGITUDE, workout.getLongitude());
+		contentValues.put(WorkoutTick.KEY_SPEED, workout.getSpeed());
+		contentValues.put(WorkoutTick.KEY_ALTITUDE, workout.getAltitude());
+		contentValues.put(WorkoutTick.KEY_HAS_ACCURACY,
 				workout.getHasAccuracy());
-		contentValues.put(Constants.KEY_ACCURACY, workout.getAccuracy());
-		contentValues.put(Constants.KEY_ACCUM_MINUTE_V, workout.getAccumMinuteV());
-		contentValues.put(Constants.KEY_ACCUM_MINUTE_H, workout.getAccumMinuteH());
-		contentValues.put(Constants.KEY_GPS_TIME, workout.getTime());
+		contentValues.put(WorkoutTick.KEY_ACCURACY, workout.getAccuracy());
+		contentValues.put(WorkoutTick.KEY_ACCUM_MINUTE_V, workout.getAccumMinuteV());
+		contentValues.put(WorkoutTick.KEY_ACCUM_MINUTE_H, workout.getAccumMinuteH());
+		contentValues.put(WorkoutTick.KEY_GPS_TIME, workout.getTime());
 
 		// Perform the actual insertion.
 		database.insert(Constants.WORKOUT_TABLE, null, contentValues);
@@ -75,18 +75,18 @@ public class DBHelper {
 
 		// Perform the actual query
 		Cursor cursor = database.query(Constants.WORKOUT_TABLE, new String[] {
-					Constants.KEY_IMEI,
-					Constants.KEY_KCALS,
-					Constants.KEY_SYSTEM_TIME,
-					Constants.KEY_LATITUDE,
-					Constants.KEY_LONGITUDE,
-					Constants.KEY_SPEED,
-					Constants.KEY_ALTITUDE,
-					Constants.KEY_HAS_ACCURACY,
-					Constants.KEY_ACCURACY,
-					Constants.KEY_ACCUM_MINUTE_V,
-					Constants.KEY_ACCUM_MINUTE_H,
-					Constants.KEY_GPS_TIME}, 
+					WorkoutTick.KEY_IMEI,
+					WorkoutTick.KEY_KCALS,
+					WorkoutTick.KEY_SYSTEM_TIME,
+					WorkoutTick.KEY_LATITUDE,
+					WorkoutTick.KEY_LONGITUDE,
+					WorkoutTick.KEY_SPEED,
+					WorkoutTick.KEY_ALTITUDE,
+					WorkoutTick.KEY_HAS_ACCURACY,
+					WorkoutTick.KEY_ACCURACY,
+					WorkoutTick.KEY_ACCUM_MINUTE_V,
+					WorkoutTick.KEY_ACCUM_MINUTE_H,
+					WorkoutTick.KEY_GPS_TIME}, 
 				null, null, null, null, null);
 
 		// Instantiate the array that we're going to return, now that we know the length
@@ -98,23 +98,23 @@ public class DBHelper {
 		while (!cursor.isAfterLast()) {
 			
 			// Debug output.
-			Log.d(TAG, "["+i+"] Delta kCals:  " + cursor.getFloat(cursor.getColumnIndex(Constants.KEY_KCALS)));
-			Log.d(TAG, "["+i+"] System time: " + cursor.getString(cursor.getColumnIndex(Constants.KEY_SYSTEM_TIME)));
+			Log.d(TAG, "["+i+"] Delta kCals:  " + cursor.getFloat(cursor.getColumnIndex(WorkoutTick.KEY_KCALS)));
+			Log.d(TAG, "["+i+"] System time: " + cursor.getString(cursor.getColumnIndex(WorkoutTick.KEY_SYSTEM_TIME)));
 			
 			// Instantiate a new workout object using the data from the query. 
 			WorkoutTick workout = new WorkoutTick(
-					cursor.getString(cursor.getColumnIndex(Constants.KEY_IMEI)), 
-					cursor.getLong(cursor.getColumnIndex(Constants.KEY_GPS_TIME)), 
-					cursor.getFloat(cursor.getColumnIndex(Constants.KEY_LATITUDE)), 
-					cursor.getFloat(cursor.getColumnIndex(Constants.KEY_LONGITUDE)), 
-					cursor.getFloat(cursor.getColumnIndex(Constants.KEY_ALTITUDE)), 
-					cursor.getFloat(cursor.getColumnIndex(Constants.KEY_SPEED)), 
-					cursor.getFloat(cursor.getColumnIndex(Constants.KEY_HAS_ACCURACY)), 
-					cursor.getFloat(cursor.getColumnIndex(Constants.KEY_ACCURACY)), 
-					cursor.getString(cursor.getColumnIndex(Constants.KEY_SYSTEM_TIME)), 
-					cursor.getFloat(cursor.getColumnIndex(Constants.KEY_KCALS)), 
-					cursor.getDouble(cursor.getColumnIndex(Constants.KEY_ACCUM_MINUTE_V)), 
-					cursor.getDouble(cursor.getColumnIndex(Constants.KEY_ACCUM_MINUTE_H)));
+					cursor.getString(cursor.getColumnIndex(WorkoutTick.KEY_IMEI)), 
+					cursor.getLong(cursor.getColumnIndex(WorkoutTick.KEY_GPS_TIME)), 
+					cursor.getFloat(cursor.getColumnIndex(WorkoutTick.KEY_LATITUDE)), 
+					cursor.getFloat(cursor.getColumnIndex(WorkoutTick.KEY_LONGITUDE)), 
+					cursor.getFloat(cursor.getColumnIndex(WorkoutTick.KEY_ALTITUDE)), 
+					cursor.getFloat(cursor.getColumnIndex(WorkoutTick.KEY_SPEED)), 
+					cursor.getFloat(cursor.getColumnIndex(WorkoutTick.KEY_HAS_ACCURACY)), 
+					cursor.getFloat(cursor.getColumnIndex(WorkoutTick.KEY_ACCURACY)), 
+					cursor.getString(cursor.getColumnIndex(WorkoutTick.KEY_SYSTEM_TIME)), 
+					cursor.getFloat(cursor.getColumnIndex(WorkoutTick.KEY_KCALS)), 
+					cursor.getDouble(cursor.getColumnIndex(WorkoutTick.KEY_ACCUM_MINUTE_V)), 
+					cursor.getDouble(cursor.getColumnIndex(WorkoutTick.KEY_ACCUM_MINUTE_H)));
 
 			// Throw the new object into the array and move on
 			workouts[i++] = workout;

@@ -21,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 import edu.berkeley.eecs.ruzenafit.R;
+import edu.berkeley.eecs.ruzenafit.model.WorkoutTick;
 import edu.berkeley.eecs.ruzenafit.service.WorkoutTrackerService;
 import edu.berkeley.eecs.ruzenafit.util.Constants;
 

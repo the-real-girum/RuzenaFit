@@ -1,11 +1,12 @@
 package edu.berkeley.eecs.ruzenafit.access;
 
 
-import edu.berkeley.eecs.ruzenafit.util.Constants;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
+import edu.berkeley.eecs.ruzenafit.model.WorkoutTick;
+import edu.berkeley.eecs.ruzenafit.util.Constants;
 
 /**
  * Our custom extension of {@link SQLiteOpenHelper} to read/write to our
@@ -20,18 +21,18 @@ public class DBConn extends SQLiteOpenHelper {
 	// SQL code needed to create the "workouts" table.
 	private static final String WORKOUT_TABLE_CREATE = 
 			"CREATE TABLE " + Constants.WORKOUT_TABLE + " (" +
-					Constants.KEY_IMEI 				+ " TEXT, " +
-					Constants.KEY_KCALS 			+ " TEXT, " +
-					Constants.KEY_SYSTEM_TIME 		+ " TEXT, " +
-					Constants.KEY_LATITUDE 			+ " TEXT, " +
-					Constants.KEY_LONGITUDE			+ " TEXT, " +
-					Constants.KEY_SPEED 			+ " TEXT, " +
-					Constants.KEY_ALTITUDE 			+ " TEXT, " +
-					Constants.KEY_HAS_ACCURACY		+ " TEXT, " +
-					Constants.KEY_ACCURACY 			+ " TEXT, " +
-					Constants.KEY_ACCUM_MINUTE_V	+ " TEXT, " +
-					Constants.KEY_ACCUM_MINUTE_H	+ " TEXT, " +
-					Constants.KEY_GPS_TIME			+ " TEXT);";
+					WorkoutTick.KEY_IMEI 				+ " TEXT, " +
+					WorkoutTick.KEY_KCALS 			+ " TEXT, " +
+					WorkoutTick.KEY_SYSTEM_TIME 		+ " TEXT, " +
+					WorkoutTick.KEY_LATITUDE 			+ " TEXT, " +
+					WorkoutTick.KEY_LONGITUDE			+ " TEXT, " +
+					WorkoutTick.KEY_SPEED 			+ " TEXT, " +
+					WorkoutTick.KEY_ALTITUDE 			+ " TEXT, " +
+					WorkoutTick.KEY_HAS_ACCURACY		+ " TEXT, " +
+					WorkoutTick.KEY_ACCURACY 			+ " TEXT, " +
+					WorkoutTick.KEY_ACCUM_MINUTE_V	+ " TEXT, " +
+					WorkoutTick.KEY_ACCUM_MINUTE_H	+ " TEXT, " +
+					WorkoutTick.KEY_GPS_TIME			+ " TEXT);";
 	
 	/** Required constructor */
 	public DBConn(Context context, String name,
