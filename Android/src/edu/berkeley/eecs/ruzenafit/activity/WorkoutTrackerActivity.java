@@ -78,10 +78,6 @@ public class WorkoutTrackerActivity extends Activity {
 		// FIXME: This button should do some basic sanity-checking
 		// to make sure that your facebook email is set, and that your
 		// privacy setting is set.
-		// FIXME: Add a forewarning when clicking the main button:
-		// "WARNING: kCal measurements WILL NOT BE ACCURATE if you do not have
-		// this phone
-		// strapped to your waist or in your pocket."
 		togglebutton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				// Perform action on clicks
@@ -101,6 +97,10 @@ public class WorkoutTrackerActivity extends Activity {
 																		// running
 					Toast.makeText(getApplicationContext(),
 							"Starting datalog...", Toast.LENGTH_SHORT).show();
+					Toast.makeText(
+							getApplicationContext(),
+							"WARNING: kCal measurements WILL NOT BE ACCURATE if you do not have this phone strapped to your waist or in your pocket.",
+							Toast.LENGTH_LONG).show();
 					WorkoutTrackerService.startLog();
 					Log.i(getClass().getSimpleName(), "startlog!!!");
 					// NotificationOn();
@@ -145,6 +145,7 @@ public class WorkoutTrackerActivity extends Activity {
 										tbutton.setChecked(false);
 									}
 								}
+
 							});
 
 					AlertDialog alert = builder.create();
@@ -175,9 +176,10 @@ public class WorkoutTrackerActivity extends Activity {
 			imei = "0";
 		}
 		((TextView) findViewById(R.id.imei)).setText(imei);
-		
+
 		// save this IMEI to SharedPreferences to uniquely identify the phone
-		SharedPreferences.Editor editor = getSharedPreferences(Constants.PREFS_NAMESPACE, 0).edit();
+		SharedPreferences.Editor editor = getSharedPreferences(
+				Constants.PREFS_NAMESPACE, 0).edit();
 		editor.putString(Constants.KEY_IMEI, imei);
 		editor.commit();
 	}
