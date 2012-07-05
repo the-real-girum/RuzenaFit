@@ -134,7 +134,7 @@ public class PrivacyPreferencesActivity extends Activity {
 		SharedPreferences preferences = getSharedPreferences(
 				Constants.PREFS_NAMESPACE, 0);
 
-		// TODO: Change this so that it doesn't use string literals
+		// FIXME: Change this so that it doesn't use string literals
 		String p = preferences.getString(Constants.PRIVACY_SETTING,
 				"Privacy not set");
 

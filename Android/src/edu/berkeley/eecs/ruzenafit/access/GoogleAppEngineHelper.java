@@ -148,7 +148,7 @@ public class GoogleAppEngineHelper {
 //		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 //		Log.d(TAG, "Workout: " + workout);
 //		
-//		// FIXME: DON'T do this the terrible way of using a regular POST request.  Instead, serialize it
+//		// TODO: DON'T do this the terrible way of using a regular POST request.  Instead, serialize it
 //		// as JSON and send ALL of the workouts at once to the server.  Do serverside JSON logic as well.
 //		nameValuePairs.add(new BasicNameValuePair(Constants.KEY_IMEI, 			workout.getImei()));
 //		nameValuePairs.add(new BasicNameValuePair(Constants.KEY_KCALS, 			"" + workout.getkCal()));

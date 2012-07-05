@@ -1,13 +1,11 @@
 package edu.berkeley.eecs.ruzenafit.activity;
 
 import android.app.Activity;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.Toast;
 import edu.berkeley.eecs.ruzenafit.R;
 import edu.berkeley.eecs.ruzenafit.access.DBHelper;
 import edu.berkeley.eecs.ruzenafit.access.GoogleAppEngineHelper;

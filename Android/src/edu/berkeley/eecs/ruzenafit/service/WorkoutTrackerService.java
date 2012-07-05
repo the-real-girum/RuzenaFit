@@ -47,9 +47,9 @@ public class WorkoutTrackerService extends Service {
 	 */
 	protected final static float MIN_DISTANCE = 0; // in Meters
 
-	// TODO: Make tick rate a variable tick_rate that's changed by preferences.
+	// FIXME: Make tick rate a variable tick_rate that's changed by preferences.
 	/** The "tick rate" of the LocationManager */
-	protected final static long TICK_RATE = 5000; // in Milliseconds (at least
+	protected static long TICK_RATE = 5000; // in Milliseconds (at least
 													// every 20 secs)
 	// note that kcal is only recorded once per minute.
 
@@ -165,7 +165,7 @@ public class WorkoutTrackerService extends Service {
 		// fileNum = 0;
 		// fileNumGPS = 0;
 
-		// TODO: Replace with GAE code?
+		// TODO: Replace with code to write to disk?
 		// FindNewFiles();
 
 		// this is needed to keep the service alive on Android 2.0+ systems
@@ -342,8 +342,8 @@ public class WorkoutTrackerService extends Service {
 					mMostrecent_GPS_HasAccuracy = 0;
 				mMostrecent_GPS_Accuracy = loc.getAccuracy();
 			} else {
-				// TODO: Change this to explicitly kill this service,
-				// if the location cannot be found.
+				// FIXME: Change this to explicitly kill this service and modularly 
+				// tell the user about it, if the location cannot be found.
 				Log.e(TAG, "ERROR: getLastKnownLocation() failed!");
 			}
 		}
@@ -503,7 +503,7 @@ public class WorkoutTrackerService extends Service {
 								+ genfmt.format(event.values[2]));
 
 						// write detail accelerometry to file. 
-						// TODO: Replace with GAE code?
+						// TODO: Replace with code to write to disk?
 						// writeFileDetailNew2();
 
 						// calculate sample window part of kcal

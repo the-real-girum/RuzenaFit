@@ -38,7 +38,7 @@ public class WorkoutTrackerActivity extends Activity {
 	static private int MENU_ABOUT = 1;
 	TextView pSetting, userName;
 
-	// TODO: Change this to be a list of two items: "Resume Data Logging",
+	// FIXME: Change this to be a list of two items: "Resume Data Logging",
 	// and "TURN OFF Data Logging".
 	private final CharSequence[] turnoffITEMS = { "resume data logging0",
 			"resume data logging1", "resume data logging2",
@@ -201,7 +201,7 @@ public class WorkoutTrackerActivity extends Activity {
 		// save this IMEI to SharedPreferences to uniquely identify the phone
 		SharedPreferences.Editor editor = getSharedPreferences(
 				Constants.PREFS_NAMESPACE, 0).edit();
-		editor.putString(Constants.KEY_IMEI, imei);
+		editor.putString(WorkoutTick.KEY_IMEI, imei);
 		editor.commit();
 	}
 
