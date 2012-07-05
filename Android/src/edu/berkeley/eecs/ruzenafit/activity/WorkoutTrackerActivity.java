@@ -25,6 +25,7 @@ import edu.berkeley.eecs.ruzenafit.service.WorkoutTrackerService;
 import edu.berkeley.eecs.ruzenafit.util.Constants;
 
 public class WorkoutTrackerActivity extends Activity {
+	private static final String TAG = WorkoutTrackerActivity.class.getSimpleName();
 	private static Context mContext;
 	// The primary interface we will be calling on the service.
 	// ICalFitdService mService = null;
@@ -74,10 +75,28 @@ public class WorkoutTrackerActivity extends Activity {
 			togglebutton.setChecked(true);
 		else
 			togglebutton.setChecked(false);
+		
+		pSetting = (TextView) findViewById(R.id.pset);
+		userName = (TextView) findViewById(R.id.userValue);
 
-		// FIXME: This button should do some basic sanity-checking
-		// to make sure that your facebook email is set, and that your
-		// privacy setting is set.
+		SharedPreferences preferences = getSharedPreferences(
+				Constants.PREFS_NAMESPACE, 0);
+		String facebookName = preferences.getString(Constants.FACEBOOK_NAME,
+				"Name not found.");
+
+		String p = preferences.getString(Constants.PRIVACY_SETTING,
+				"Privacy not set");
+		
+		//Checks if FB Name and/or privacy setting is set.
+		Log.d(TAG, "p = " + p);
+		Log.d(TAG, "facebookName = " + facebookName);
+		if(facebookName.equals("Name not found.") || p.equals("Privacy not set"))
+		{
+			Toast.makeText(getApplicationContext(),
+					"SORRY! You haven't logged into facebook or your privacy isn't set.", Toast.LENGTH_SHORT).show();
+		}
+		else
+		{
 		togglebutton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				// Perform action on clicks
@@ -97,6 +116,7 @@ public class WorkoutTrackerActivity extends Activity {
 																		// running
 					Toast.makeText(getApplicationContext(),
 							"Starting datalog...", Toast.LENGTH_SHORT).show();
+					//Warns user about how to effectively use the application
 					Toast.makeText(
 							getApplicationContext(),
 							"WARNING: kCal measurements WILL NOT BE ACCURATE if you do not have this phone strapped to your waist or in your pocket.",
@@ -159,7 +179,7 @@ public class WorkoutTrackerActivity extends Activity {
 					 */
 				}
 			}
-		});
+		});}
 
 		final Button button4 = (Button) findViewById(R.id.helpbutton);
 		button4.setOnClickListener(new OnClickListener() {
