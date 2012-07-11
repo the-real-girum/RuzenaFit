@@ -1,6 +1,9 @@
 package edu.berkeley.eecs.ruzenafit.activity;
 
 //import edu.berkeley.sph.ehs.calfitd.ICalFitdService;
+import java.util.ArrayList;
+import java.util.List;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.NotificationManager;
@@ -40,12 +43,15 @@ public class WorkoutTrackerActivity extends Activity {
 
 	// FIXME: Change this to be a list of two items: "Resume Data Logging",
 	// and "TURN OFF Data Logging".
+	//List<CharSequence> turnoffITEMS = new ArrayList<CharSequence>();
+	
 	private final CharSequence[] turnoffITEMS = { "resume data logging0",
 			"resume data logging1", "resume data logging2",
 			"resume data logging3", "resume data logging4",
 			"resume data logging5", "resume data logging6",
 			"resume data logging7", "resume data logging8",
 			"resume data logging9", "TURN OFF data logging" };
+	
 	private static int whichitem = 0;
 	private static int turnoff_log = 10;
 	private ToggleButton tbutton;
@@ -59,6 +65,8 @@ public class WorkoutTrackerActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.tracking);
 
+		//		turnoffITEMS.add("resume data logging", "TURN OFF data logging");
+	
 		mContext = this;
 		// notificationManager = (NotificationManager)
 		// getSystemService(Context.NOTIFICATION_SERVICE);

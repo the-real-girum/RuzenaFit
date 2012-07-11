@@ -134,22 +134,26 @@ public class PrivacyPreferencesActivity extends Activity {
 		SharedPreferences preferences = getSharedPreferences(
 				Constants.PREFS_NAMESPACE, 0);
 
-		// FIXME: Change this so that it doesn't use string literals
+		String notSet = "Privacy not set";
+		String lSet = "lowPrivacy";
+		String mSet = "mediumPrivacy";
+		String hSet = "highPrivacy";
+		
 		String p = preferences.getString(Constants.PRIVACY_SETTING,
-				"Privacy not set");
+				notSet);
 
-		if (p.equals("lowPrivacy"))
+		if (p.equals(lSet))
 		{
 			rbLow.setChecked(true);
 			textOut.setText(LOW_PRIVACY_DESCRIPTION);
 		}
 
-		else if (p.equals("mediumPrivacy"))
+		else if (p.equals(mSet))
 		{
 			rbMedium.setChecked(true);
 			textOut.setText(MEDIUM_PRIVACY_DESCRIPTION);
 		}
-		else if (p.equals("highPrivacy"))
+		else if (p.equals(hSet))
 		{
 			rbHigh.setChecked(true);
 			textOut.setText(HIGH_PRIVACY_DESCRIPTION);

@@ -106,6 +106,36 @@ public class WorkoutTrackerService extends Service {
 	static DecimalFormat geofmt = new DecimalFormat(geoformat,
 			new DecimalFormatSymbols(Locale.US));
 
+	
+	protected void onResume() {
+		//super.onResume();
+		SharedPreferences preferences = getSharedPreferences(
+				Constants.PREFS_NAMESPACE, 0);
+
+		String notSet = "Privacy not set";
+		String lSet = "lowPrivacy";
+		String mSet = "mediumPrivacy";
+		String hSet = "highPrivacy";
+		
+		String p = preferences.getString(Constants.PRIVACY_SETTING,
+				notSet);
+
+		if (p.equals(lSet))
+		{
+			TICK_RATE = 0;
+		}
+
+		else if (p.equals(mSet))
+		{
+			TICK_RATE = 0;
+		}
+		else if (p.equals(hSet))
+		{
+			TICK_RATE = 0;
+		}
+
+	}
+	
 	@Override
 	public void onCreate() {
 		super.onCreate();
@@ -344,6 +374,8 @@ public class WorkoutTrackerService extends Service {
 			} else {
 				// FIXME: Change this to explicitly kill this service and modularly 
 				// tell the user about it, if the location cannot be found.
+				super.stop();
+				super.destroy();
 				Log.e(TAG, "ERROR: getLastKnownLocation() failed!");
 			}
 		}
