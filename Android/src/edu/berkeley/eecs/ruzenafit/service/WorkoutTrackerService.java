@@ -49,7 +49,7 @@ public class WorkoutTrackerService extends Service {
 
 	// FIXME: Make tick rate a variable tick_rate that's changed by preferences.
 	/** The "tick rate" of the LocationManager */
-	protected static long TICK_RATE = 5000; // in Milliseconds (at least
+	protected static long TICK_RATE = 500; // in Milliseconds (at least
 													// every 20 secs)
 	// note that kcal is only recorded once per minute.
 
@@ -106,7 +106,7 @@ public class WorkoutTrackerService extends Service {
 	static DecimalFormat geofmt = new DecimalFormat(geoformat,
 			new DecimalFormatSymbols(Locale.US));
 
-	
+	// TODO: What's this?
 	protected void onResume() {
 		//super.onResume();
 		SharedPreferences preferences = getSharedPreferences(
@@ -372,10 +372,10 @@ public class WorkoutTrackerService extends Service {
 					mMostrecent_GPS_HasAccuracy = 0;
 				mMostrecent_GPS_Accuracy = loc.getAccuracy();
 			} else {
-				// FIXME: Change this to explicitly kill this service and modularly 
-				// tell the user about it, if the location cannot be found.
-				super.stop();
-				super.destroy();
+				// TODO: Change this whole service to NOT EVEN START if 
+				// location services won't work.  That is, check to make 
+				// sure that location is not null before you start this
+				// service.
 				Log.e(TAG, "ERROR: getLastKnownLocation() failed!");
 			}
 		}

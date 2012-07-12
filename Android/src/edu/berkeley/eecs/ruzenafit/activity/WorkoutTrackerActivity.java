@@ -1,9 +1,6 @@
 package edu.berkeley.eecs.ruzenafit.activity;
 
 //import edu.berkeley.sph.ehs.calfitd.ICalFitdService;
-import java.util.ArrayList;
-import java.util.List;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.NotificationManager;
@@ -41,7 +38,7 @@ public class WorkoutTrackerActivity extends Activity {
 	static private int MENU_ABOUT = 1;
 	TextView pSetting, userName;
 
-	// FIXME: Change this to be a list of two items: "Resume Data Logging",
+	// TODO: Change this to be a list of two items: "Resume Data Logging",
 	// and "TURN OFF Data Logging".
 	//List<CharSequence> turnoffITEMS = new ArrayList<CharSequence>();
 	
@@ -87,25 +84,7 @@ public class WorkoutTrackerActivity extends Activity {
 		
 		pSetting = (TextView) findViewById(R.id.pset);
 		userName = (TextView) findViewById(R.id.userValue);
-
-		SharedPreferences preferences = getSharedPreferences(
-				Constants.PREFS_NAMESPACE, 0);
-		String facebookName = preferences.getString(Constants.FACEBOOK_NAME,
-				"Name not found.");
-
-		String p = preferences.getString(Constants.PRIVACY_SETTING,
-				"Privacy not set");
 		
-		//Checks if FB Name and/or privacy setting is set.
-		Log.d(TAG, "p = " + p);
-		Log.d(TAG, "facebookName = " + facebookName);
-		if(facebookName.equals("Name not found.") || p.equals("Privacy not set"))
-		{
-			Toast.makeText(getApplicationContext(),
-					"SORRY! You haven't logged into facebook or your privacy isn't set.", Toast.LENGTH_SHORT).show();
-		}
-		else
-		{
 		togglebutton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				// Perform action on clicks
@@ -188,7 +167,7 @@ public class WorkoutTrackerActivity extends Activity {
 					 */
 				}
 			}
-		});}
+		});
 
 		final Button button4 = (Button) findViewById(R.id.helpbutton);
 		button4.setOnClickListener(new OnClickListener() {
@@ -267,7 +246,7 @@ public class WorkoutTrackerActivity extends Activity {
 
 		pSetting = (TextView) findViewById(R.id.pset);
 		userName = (TextView) findViewById(R.id.userValue);
-
+		
 		SharedPreferences preferences = getSharedPreferences(
 				Constants.PREFS_NAMESPACE, 0);
 		String facebookName = preferences.getString(Constants.FACEBOOK_NAME,
@@ -275,8 +254,21 @@ public class WorkoutTrackerActivity extends Activity {
 
 		String p = preferences.getString(Constants.PRIVACY_SETTING,
 				"Privacy not set");
+		
+		//Checks if FB Name and/or privacy setting is set.
+		Log.d(TAG, "p = " + p);
+		Log.d(TAG, "facebookName = " + facebookName);
+		
+		
+		if(facebookName.equals("Name not found.") || p.equals("Privacy not set")) {
+			Toast.makeText(getApplicationContext(),
+					"SORRY! You haven't logged into facebook or your privacy isn't set.", Toast.LENGTH_SHORT).show();
+			tbutton.setEnabled(false);
+		}
+		else {
+			tbutton.setEnabled(true);
+		}
 
-		// TODO: Do this programmatically, without string literals.
 		if (p.equals("lowPrivacy"))
 			pSetting.setText("Low Privacy");
 		else if (p.equals("mediumPrivacy"))
