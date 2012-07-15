@@ -146,7 +146,7 @@ public class WorkoutTrackerActivity extends Activity {
 										Toast.makeText(getApplicationContext(),
 												"Stopping datalog...",
 												Toast.LENGTH_SHORT).show();
-										WorkoutTrackerService.stoplog();
+										WorkoutTrackerService.stopLog();
 										Log.i(getClass().getSimpleName(),
 												"stoplog!!!");
 										// NotificationOff();
@@ -269,6 +269,7 @@ public class WorkoutTrackerActivity extends Activity {
 			tbutton.setEnabled(true);
 		}
 
+		// TODO: String literals.
 		if (p.equals("lowPrivacy"))
 			pSetting.setText("Low Privacy");
 		else if (p.equals("mediumPrivacy"))
