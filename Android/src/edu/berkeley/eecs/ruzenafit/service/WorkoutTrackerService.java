@@ -36,16 +36,20 @@ import edu.berkeley.eecs.ruzenafit.R;
 import edu.berkeley.eecs.ruzenafit.activity.WorkoutTrackerActivity;
 import edu.berkeley.eecs.ruzenafit.util.Constants;
 
-// TODO: God class.
 public class WorkoutTrackerService extends Service {
-	private static final String TAG = WorkoutTrackerService.class.getSimpleName();
-	
+	private static final String TAG = WorkoutTrackerService.class
+			.getSimpleName();
+
 	private static Context mContext;
 	protected static LocationManager mLocationManager = null;
 	protected Location mLocation = null;
 
 	// GPS updating...
+	// TODO: Change this to be variable by privacy preference?
 	protected final static float MIN_DISTANCE = 0; // in Meters
+
+	// TODO: Change this tick rate to be changed by privacy preferences.
+	/** The "tick rate" of each workout tick. */
 	protected final static long MIN_TIME = 20000; // in Milliseconds (at least
 													// every 20 secs)
 	// note that kcal is only recorded once per minute.
@@ -73,7 +77,7 @@ public class WorkoutTrackerService extends Service {
 	private static int EEinterval = 10; // produce an EE estimate every 10
 										// seconds
 	private static int samplesperwindow;
-	private static int windowtimemillisec = 500; // 2 seconds
+	private static int windowtimemillisec = 2000; // 2 seconds
 	private static int manysamples = 128; // should be plenty for 2 seconds
 											// (DELAY_UI on G1 was ~10
 											// samples/sec)
@@ -82,17 +86,28 @@ public class WorkoutTrackerService extends Service {
 	private static Kcal myKcal;
 	private static String imei = "0";
 
-	private static int filenum = 0;
-	private static int written = 0;
-	private static int MAX_WRITTEN = 10000; // start a new file for every 10,000
-											// entries writen to file
-	private static int MAX_WRITTEN_2 = 1000; // start a new file for every 1,000
-											// entries writen to file (for the
-											// new accel detail writer that only
-											// writes chunks depending on
-											// windowtimemillisec)
+	/** The number of files we've written so far. Updated by findFileNums(). */
+	private static int fileNum = 0;
+	/** Same as above, but for GPS data. */
 	private static int fileNumGPS = 0;
+
+	/** The number of lines we're written for this particular file. */
+	private static int written = 0;
+	/** Same as above, but for GPS data. */
 	private static int writtenGPS = 0;
+
+	/**
+	 * Threshold constant for when we should start writing to a new file.
+	 * "Start a new file for every 10,000 entries writen to file."
+	 */
+	private static int MAX_WRITTEN = 10000;
+
+	/**
+	 * Threshold constant for when we should start writing to a new file. "start
+	 * a new file for every 1,000 entries writen to file (for the new accel
+	 * detail writer that only writes chunks depending on windowtimemillisec"
+	 */
+	private static int MAX_WRITTEN_2 = 1000;
 
 	public static NotificationManager notificationManager;
 	public static final int NOTIFICATION_ID = 1;
@@ -131,7 +146,8 @@ public class WorkoutTrackerService extends Service {
 		// use shared pref to store the running state. this needs to persist in
 		// case the system kills the service and we get a restart
 		// Restore preferences
-		SharedPreferences settings = getSharedPreferences(Constants.PREFS_NAMESPACE, 0);
+		SharedPreferences settings = getSharedPreferences(
+				Constants.PREFS_NAMESPACE, 0);
 		boolean isRunningStored = settings.getBoolean("isrunning", false);
 		if (isRunningStored)
 			startLog();
@@ -154,7 +170,9 @@ public class WorkoutTrackerService extends Service {
 			stopLog();
 	}
 
-	public static int getStatus() {	return mIsRunning ? 1 : 0; }
+	public static int getStatus() {
+		return mIsRunning ? 1 : 0;
+	}
 
 	public static void startLog() {
 		Log.i(TAG, "startlog!!!");
@@ -164,9 +182,9 @@ public class WorkoutTrackerService extends Service {
 		written = 0;
 		writtenGPS = 0;
 
-		filenum = 0;
+		fileNum = 0;
 		fileNumGPS = 0;
-		findNewFiles();
+		findFileNums();
 
 		// this is needed to keep the service alive on Android 2.0+ systems
 		// setForeground(true); // this is ignored on the new systems!
@@ -177,10 +195,10 @@ public class WorkoutTrackerService extends Service {
 		CharSequence contentTitle = "CalFit BCN";
 		CharSequence contentText = "Currently running";
 		Intent notificationIntent = new Intent(mContext,
-				WorkoutTrackerActivity.class); // must use CalFit.class because
+				WorkoutTrackerActivity.class); // must use WorkoutTrackerActivity.class because
 												// this notification loads a new
 												// activity onto the stack, and
-												// if you call CalFit.class, it
+												// if you call WorkoutTrackerActivity.class, it
 												// is hacked to auto kill it and
 												// brings about the previous
 												// activity layer, which in the
@@ -201,11 +219,12 @@ public class WorkoutTrackerService extends Service {
 
 		((Service) mContext).startForeground(NOTIFICATION_ID, notification);
 
-		// make sure to save our state as a pref in case we get killed by
+		// make sure to save our state as a preference in case we get killed by
 		// system.
-		SharedPreferences settings = mContext.getSharedPreferences(Constants.PREFS_NAMESPACE,
-				0);
+		SharedPreferences settings = mContext.getSharedPreferences(
+				Constants.PREFS_NAMESPACE, 0);
 		SharedPreferences.Editor editor = settings.edit();
+		// TODO: String literal.
 		editor.putBoolean("isrunning", true);
 		editor.commit();
 
@@ -228,9 +247,10 @@ public class WorkoutTrackerService extends Service {
 
 		// make sure to save our state as a pref in case we get killed by
 		// system.
-		SharedPreferences settings = mContext.getSharedPreferences(Constants.PREFS_NAMESPACE,
-				0);
+		SharedPreferences settings = mContext.getSharedPreferences(
+				Constants.PREFS_NAMESPACE, 0);
 		SharedPreferences.Editor editor = settings.edit();
+		// TODO: String literal.
 		editor.putBoolean("isrunning", false);
 		editor.commit();
 
@@ -332,10 +352,7 @@ public class WorkoutTrackerService extends Service {
 				mMostrecent_GPS_Longitude = (float) loc.getLongitude();
 				mMostrecent_GPS_Altitude = (float) loc.getAltitude();
 				mMostrecent_GPS_Speed = loc.getSpeed();
-				if (loc.hasAccuracy())
-					mMostrecent_GPS_HasAccuracy = 1;
-				else
-					mMostrecent_GPS_HasAccuracy = 0;
+				mMostrecent_GPS_HasAccuracy = loc.hasAccuracy() ? 1 : 0;
 				mMostrecent_GPS_Accuracy = loc.getAccuracy();
 			}
 		}
@@ -485,10 +502,12 @@ public class WorkoutTrackerService extends Service {
 					long now = SystemClock.elapsedRealtime();
 					// check if we have a window of data...
 					if (now >= (lasttime + windowtimemillisec)) {
-						Log.i(TAG, "Sensor : X: "
-								+ genfmt.format(event.values[0]) + " Y: "
-								+ genfmt.format(event.values[1]) + " Z: "
-								+ genfmt.format(event.values[2]));
+						Log.i(TAG,
+								"Sensor : X: " + genfmt.format(event.values[0])
+										+ " Y: "
+										+ genfmt.format(event.values[1])
+										+ " Z: "
+										+ genfmt.format(event.values[2]));
 
 						// write detail accelerometry to file
 						writeFileDetailNew2();
@@ -620,7 +639,7 @@ public class WorkoutTrackerService extends Service {
 
 				// write to file
 				writeFile();
-				
+
 				// FIXME: This is where I add server code.
 
 				/*
@@ -672,10 +691,8 @@ public class WorkoutTrackerService extends Service {
 		}
 	}
 
-	
 	/**
-	 * This method simply writes all current data to file. FIXME: If this method
-	 * does that, then what does writeFileGPS() do?
+	 * This method writes true kCal data to "/CalfitD/CalFitEE.txt" 
 	 */
 	private static void writeFile() {
 		File myfile;
@@ -722,9 +739,9 @@ public class WorkoutTrackerService extends Service {
 			}
 		}
 	}
-	
+
 	/**
-	 * FIXME: This method does what?
+	 * This method writes strictly GPS data to "/CalfitD/CFgps<n>.txt"
 	 */
 	public static void writeFileGPS() {
 		File myfile;
@@ -778,13 +795,13 @@ public class WorkoutTrackerService extends Service {
 	}
 
 	/**
-	 * Since this service writes to multiple files, we need a helper method to
-	 * figure out which file we're actually in. This method does that.
+	 * This is a helper method that simply sets the variables "fileNum" and
+	 * "fileNumGPS" to their correct values.
 	 * 
-	 * However, "Each time we start logging we start a new file regardless of
-	 * numwriten
+	 * It walks through the contents of what's currently on storage to figure
+	 * this out.
 	 */
-	public static void findNewFiles() {
+	public static void findFileNums() {
 		File myfile, mygpsfile;
 
 		// figure out which file we're up to on the SD card
@@ -796,10 +813,10 @@ public class WorkoutTrackerService extends Service {
 				success = root.mkdir();
 			}
 			if (root.canWrite()) {
-				myfile = new File(root, "CFdet" + filenum + ".txt");
+				myfile = new File(root, "CFdet" + fileNum + ".txt");
 				while (myfile.exists()) {
-					filenum++;
-					myfile = new File(root, "CFdet" + filenum + ".txt");
+					fileNum++;
+					myfile = new File(root, "CFdet" + fileNum + ".txt");
 				}
 				mygpsfile = new File(root, "CFgps" + fileNumGPS + ".txt");
 				while (mygpsfile.exists()) {
@@ -814,7 +831,7 @@ public class WorkoutTrackerService extends Service {
 	}
 
 	/**
-	 * This method "writes detailed accelerometer data to file."
+	 * This method writes detailed accelerometer data to "/CalFitD/CFdet.txt".
 	 */
 	public static void writeFileDetailNew2() {
 		File myfile;
@@ -836,10 +853,10 @@ public class WorkoutTrackerService extends Service {
 					written++;
 					if (written >= MAX_WRITTEN_2) { // start a new file
 						written = 0;
-						filenum++;
+						fileNum++;
 					}
 					// write the data to file on the device's SD card
-					myfile = new File(root, "CFdet" + filenum + ".txt");
+					myfile = new File(root, "CFdet" + fileNum + ".txt");
 					myfile.createNewFile();
 					FileWriter mywriter = new FileWriter(myfile, true);
 					BufferedWriter out = new BufferedWriter(mywriter);

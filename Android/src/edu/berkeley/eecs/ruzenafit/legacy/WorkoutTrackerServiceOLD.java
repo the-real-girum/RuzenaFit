@@ -48,7 +48,6 @@ package edu.berkeley.eecs.ruzenafit.legacy;
 //	 */
 //	protected final static float MIN_DISTANCE = 0; // in Meters
 //
-//	// FIXME: Make tick rate a variable tick_rate that's changed by preferences.
 //	/** The "tick rate" of the LocationManager */
 //	protected static long TICK_RATE = 500; // in Milliseconds (at least
 //													// every 20 secs)
