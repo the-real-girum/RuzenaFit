@@ -308,12 +308,48 @@ public class WorkoutTrackerService extends Service {
 		}
 
 		/******************************************
+		 * BINNING GPS
+		 * 
+		 * Note the use of MIN_TIME and MIN_DISTANCE which are only "hints" to
+		 * the android system
+		 *********************************************/
+		
+		private static int roundDownToNearestMulitpleOfThree(int n) {
+		    return n / 3 * 3;
+		}
+		
+		private static int roundDownToNearestMultipleOfThree(float n) {
+			int truncatedInteger = (int) n;
+			return roundDownToNearestMultipleOfThree(truncatedInteger);
+			}
+
+		private static int roundDownToNearestMulitpleOfFive(int n) {
+		    return n / 5 * 5;
+		}
+		
+		private static int roundDownToNearestMultipleOfFive(float n) {
+			int truncatedInteger = (int) n;
+			return roundDownToNearestMultipleOfThree(truncatedInteger);
+			}
+
+		/******************************************
 		 * GPS stuff
 		 * 
 		 * Note the use of MIN_TIME and MIN_DISTANCE which are only "hints" to
 		 * the android system
 		 *********************************************/
 		private void startGPS() {
+			SharedPreferences preferences = mContext.getSharedPreferences(
+					Constants.PREFS_NAMESPACE, 0);
+
+			String notSet = "Privacy not set";
+			String lSet = "lowPrivacy";
+			String mSet = "mediumPrivacy";
+			String hSet = "highPrivacy";
+			
+			String p = preferences.getString(Constants.PRIVACY_SETTING,
+					notSet);
+			
 			Log.i(TAG, "startGPS!!!");
 
 			// create my locationListener
@@ -349,12 +385,28 @@ public class WorkoutTrackerService extends Service {
 
 			Location loc = mLocationManager
 					.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+			
 			if (loc != null) {
+				// Get the SharedPreferences.Editor object we need to modify our
+				// String->String preferences map.
+				
 				mMostrecent_GPS_Time = loc.getTime();
 				mMostrecent_System_Time = java.lang.System.currentTimeMillis();
 				mMostrecent_GPS_Time = java.lang.System.currentTimeMillis();
-				mMostrecent_GPS_Latitude = (float) loc.getLatitude();
-				mMostrecent_GPS_Longitude = (float) loc.getLongitude();
+
+				//IF Privacy is set to Medium: BINNS GPS Latitutde & Longitude by Multiple of 3
+				if (p.equals(mSet))
+				{
+					mMostrecent_GPS_Latitude = roundDownToNearestMultipleOfThree((float) loc.getLatitude());
+					mMostrecent_GPS_Longitude = roundDownToNearestMultipleOfThree((float) loc.getLongitude());
+				}
+				//IF Privacy is set to High: BINNS GPS Latitutde & Longitude by Multiple of 5
+				if (p.equals(hSet))
+				{
+					mMostrecent_GPS_Latitude = roundDownToNearestMultipleOfFive((float) loc.getLatitude());
+					mMostrecent_GPS_Longitude = roundDownToNearestMultipleOfFive((float) loc.getLongitude());
+				}
+
 				mMostrecent_GPS_Altitude = (float) loc.getAltitude();
 				mMostrecent_GPS_Speed = loc.getSpeed();
 				mMostrecent_GPS_HasAccuracy = loc.hasAccuracy() ? 1 : 0;
