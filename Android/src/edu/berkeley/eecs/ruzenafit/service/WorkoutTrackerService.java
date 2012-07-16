@@ -35,7 +35,9 @@ import android.util.Log;
 import edu.berkeley.eecs.ruzenafit.R;
 import edu.berkeley.eecs.ruzenafit.access.FileAccessHelper;
 import edu.berkeley.eecs.ruzenafit.access.GoogleAppEngineHelper;
+import edu.berkeley.eecs.ruzenafit.access.SharedPreferencesHelper;
 import edu.berkeley.eecs.ruzenafit.activity.WorkoutTrackerActivity;
+import edu.berkeley.eecs.ruzenafit.model.PrivacyPreferenceEnum;
 import edu.berkeley.eecs.ruzenafit.model.WorkoutTick;
 import edu.berkeley.eecs.ruzenafit.util.Constants;
 
@@ -672,6 +674,29 @@ public class WorkoutTrackerService extends Service {
 				+ genfmt.format(accum_minute_V) + ","
 				+ genfmt.format(accum_minute_H) + ","
 				+ genfmt.format(mMostrecent_kCal);
+		
+		// Retrieve current privacy setting
+		SharedPreferencesHelper sharedPreferencesHelper = new SharedPreferencesHelper(mContext);
+		PrivacyPreferenceEnum privacySetting = sharedPreferencesHelper.getCurrentPrivacySetting();
+		
+		// Append the current privacy setting to the Edmundish string.
+		switch (privacySetting) {
+		case highPrivacy:
+			str += ",h";
+			break;
+		case mediumPrivacy:
+			str += ",m";
+			break;
+		case lowPrivacy:
+			str += ",l";
+			break;
+		default:
+			str += ",unknownPrivacySetting";
+			Log.e(TAG, "Unknown privacy setting when attempting to write to file.");
+			return;
+		}
+		
+		
 
 		if (Environment.MEDIA_MOUNTED.equals(state)) {
 			// We can read and write the media

@@ -1,6 +1,7 @@
 package edu.berkeley.eecs.ruzenafit.servlet;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
@@ -23,13 +24,15 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import edu.berkeley.eecs.ruzenafit.shared.model.PrivacyPreferenceEnum;
 import edu.berkeley.eecs.ruzenafit.shared.model.WorkoutTick;
 
 // TODO: Optimize the uniqueness sanity check to ensure that you only load in all
 // of the WorkoutTicks for a user once.
 @Path("/workout")
 public class WorkoutServlet {
-
+	private static final Logger log = Logger.getLogger(WorkoutServlet.class.getName());
+	
 	/**
 	 * Returns all WorkoutTick data for a particular user.
 	 */
@@ -41,53 +44,54 @@ public class WorkoutServlet {
 
 		DatastoreService datastore = DatastoreServiceFactory
 				.getDatastoreService();
-		Key key = KeyFactory.createKey("WorkoutTick IMEI", imei);
+		Key key = KeyFactory.createKey("WorkoutTick User", imei);
 		Query query = new Query("WorkoutTick", key);
 
 		List<Entity> workoutEntities = datastore.prepare(query).asList(
 				FetchOptions.Builder.withDefaults());
-
+		
 		WorkoutTick[] workoutTicks = new WorkoutTick[workoutEntities.size()];
 		int i = 0;
 		for (Entity workoutEntity : workoutEntities) {
-//			WorkoutTick workoutTick = new WorkoutTick();
-//			workoutTick.setAverageSpeed((String) workoutEntity
-//					.getProperty("averageSpeed"));
-//			workoutTick.setDate((String) workoutEntity.getProperty("date"));
-//			workoutTick.setDuration((String) workoutEntity
-//					.getProperty("duration"));
-//			workoutTick.setTotalCalories((String) workoutEntity
-//					.getProperty("totalCalories"));
-//			workoutTick.setTotalDistance((String) workoutEntity
-//					.getProperty("totalDistance"));
-//
-//			workoutTicks[i++] = workoutTick;
+			
+			WorkoutTick workoutTick = new WorkoutTick();
+			workoutTick.setAccumMinuteH((Double)workoutEntity.getProperty(WorkoutTick.KEY_ACCUM_MINUTE_H));
+			workoutTick.setAccumMinuteV((Double)workoutEntity.getProperty(WorkoutTick.KEY_ACCUM_MINUTE_V));
+			workoutTick.setAccuracy(((Double)workoutEntity.getProperty(WorkoutTick.KEY_ACCURACY)).floatValue());
+			workoutTick.setAltitude(((Double)workoutEntity.getProperty(WorkoutTick.KEY_ALTITUDE)).floatValue());
+			workoutTick.setHasAccuracy(((Double)workoutEntity.getProperty(WorkoutTick.KEY_HAS_ACCURACY)).floatValue());
+			workoutTick.setkCal(((Double)workoutEntity.getProperty(WorkoutTick.KEY_KCALS)).floatValue());
+			workoutTick.setLatitude(((Double) workoutEntity.getProperty(WorkoutTick.KEY_LATITUDE)).floatValue());
+			workoutTick.setLongitude(((Double) workoutEntity.getProperty(WorkoutTick.KEY_LONGITUDE)).floatValue());
+			workoutTick.setPrivacySetting((String)workoutEntity.getProperty(WorkoutTick.KEY_PRIVACY_SETTING));
+			workoutTick.setSpeed(((Double)workoutEntity.getProperty(WorkoutTick.KEY_SPEED)).floatValue());
+			workoutTick.setSystemTime((Long)workoutEntity.getProperty(WorkoutTick.KEY_SYSTEM_TIME));
+			workoutTick.setTime((Long)workoutEntity.getProperty(WorkoutTick.KEY_SYSTEM_TIME));
+			
+			workoutTicks[i++] = workoutTick;
 		}
-
 		return workoutTicks;
-
 	}
 
 	/**
-	 * Saves one WorkoutTick for a particular user.
+	 * Saves a bunch of WorkoutTicks for a particular user.
 	 */
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.TEXT_PLAIN)
 	@Path("/saveWorkoutTicks")
-	public String saveWorkoutTick(@FormParam("imei") String imei,
+	public String saveWorkoutTicks(@FormParam("imei") String imei,
 			@FormParam("workoutTicksJSONString") String workoutTicksJSONString) {
 
-		String result = "";
+		int newWorkoutsSaved = 0;
 		
 		// Parse the inputted JSON into an array of WorkoutTicks.
 		JsonParser jsonParser = new JsonParser();
-		JsonArray workoutTicksArray = jsonParser.parse(workoutTicksJSONString).getAsJsonArray();
+		JsonArray workoutTicksJSONArray = jsonParser.parse(workoutTicksJSONString).getAsJsonArray();
 		
-		for (JsonElement workoutElement : workoutTicksArray) {
+		for (JsonElement workoutElement : workoutTicksJSONArray) {
 			JsonObject workoutObject = workoutElement.getAsJsonObject();
 			
-			/** currently debugging my POST request setup */
 			WorkoutTick workoutTick = new WorkoutTick(
 					workoutObject.get(WorkoutTick.KEY_GPS_TIME).getAsLong(), 
 					workoutObject.get(WorkoutTick.KEY_LATITUDE).getAsFloat(), 
@@ -99,61 +103,63 @@ public class WorkoutServlet {
 					workoutObject.get(WorkoutTick.KEY_SYSTEM_TIME).getAsLong(), 
 					workoutObject.get(WorkoutTick.KEY_KCALS).getAsFloat(), 
 					workoutObject.get(WorkoutTick.KEY_ACCUM_MINUTE_V).getAsDouble(), 
-					workoutObject.get(WorkoutTick.KEY_ACCUM_MINUTE_H).getAsDouble());
+					workoutObject.get(WorkoutTick.KEY_ACCUM_MINUTE_H).getAsDouble(),
+					workoutObject.get(WorkoutTick.KEY_PRIVACY_SETTING).getAsString());
+
+			// Save each workout to the datastore
+			boolean newWorkoutWasSaved = saveWorkoutTickToDatastore(imei, workoutTick);
 			
-//			result += "Workout 1: " + workoutTick.toString() + ", ";
+			// Iterate the counter
+			if (newWorkoutWasSaved) newWorkoutsSaved++;
 		}
 
-		// TODO: Save each workoutTick into the datastore
-		// boolean result = saveWorkoutTickToDatastore(user, WorkoutTick);
-
-		// TODO: Return the number of new workouts that were saved into the datastore.
-		// return (result ? "success" : "WorkoutTick already exists");
-//		return "The IMEI " + imei + " send the following JSON String: " + workoutTicksJSONString;
-		return "success with imei: " + imei;
+		return "Saved " + newWorkoutsSaved + " new workout ticks";
 	}
 
 	/**
 	 * Helper method to save the WorkoutTick to GAE datastore.
 	 * 
-	 * @param user
-	 * @param WorkoutTick
+	 * @param userimei
+	 * @param workoutTick
 	 */
-	private boolean saveWorkoutTickToDatastore(String user,
-			WorkoutTick WorkoutTick) {
+	private boolean saveWorkoutTickToDatastore(String userimei,
+			WorkoutTick workoutTick) {
 
-		WorkoutTick[] currentWorkoutTicks = getAllWorkoutTicks(user);
+		// TODO: I only need to query this Workout[] array once -- I can hold onto it for
+		// each of the uniqueness checks that I have to do.
+		WorkoutTick[] currentWorkoutTicks = getAllWorkoutTicks(userimei);
 		boolean isUnique = true;
 
 		for (WorkoutTick iteratedWorkoutTick : currentWorkoutTicks) {
-			if (iteratedWorkoutTick.equals(WorkoutTick)) {
-				isUnique = false;
+			if (iteratedWorkoutTick.equals(workoutTick)) {
+				return false;
 			}
 		}
 
 		if (isUnique) {
-			Key userKey = KeyFactory.createKey("WorkoutTick User", user);
+			Key userKey = KeyFactory.createKey("WorkoutTick User", userimei);
 
-//			Entity WorkoutTickEntity = new Entity("WorkoutTick", userKey);
-//			WorkoutTickEntity.setProperty("privacySetting",
-//					WorkoutTick.getPrivacySetting());
-//			WorkoutTickEntity.setProperty("date", WorkoutTick.getDate());
-//			WorkoutTickEntity.setProperty("averageSpeed",
-//					WorkoutTick.getAverageSpeed());
-//			WorkoutTickEntity
-//					.setProperty("duration", WorkoutTick.getDuration());
-//			WorkoutTickEntity.setProperty("totalCalories",
-//					WorkoutTick.getTotalCalories());
-//			WorkoutTickEntity.setProperty("totalDistance",
-//					WorkoutTick.getTotalDistance());
-//			WorkoutTickEntity.setProperty("coordinatesXMLString",
-//					WorkoutTick.getCoordinatesXMLString());
-//
-//			DatastoreService datastore = DatastoreServiceFactory
-//					.getDatastoreService();
-//			datastore.put(WorkoutTickEntity);
+			Entity workoutTickEntity = new Entity("WorkoutTick", userKey);
+			
+			workoutTickEntity.setProperty(WorkoutTick.KEY_GPS_TIME, workoutTick.getTime()); 
+			workoutTickEntity.setProperty(WorkoutTick.KEY_LATITUDE, workoutTick.getLatitude()); 
+			workoutTickEntity.setProperty(WorkoutTick.KEY_LONGITUDE, workoutTick.getLongitude()); 
+			workoutTickEntity.setProperty(WorkoutTick.KEY_ALTITUDE, workoutTick.getAltitude()); 
+			workoutTickEntity.setProperty(WorkoutTick.KEY_SPEED, workoutTick.getSpeed()); 
+			workoutTickEntity.setProperty(WorkoutTick.KEY_HAS_ACCURACY, workoutTick.getHasAccuracy()); 
+			workoutTickEntity.setProperty(WorkoutTick.KEY_ACCURACY, workoutTick.getAccuracy()); 
+			workoutTickEntity.setProperty(WorkoutTick.KEY_SYSTEM_TIME, workoutTick.getSystemTime()); 
+			workoutTickEntity.setProperty(WorkoutTick.KEY_KCALS, workoutTick.getkCal()); 
+			workoutTickEntity.setProperty(WorkoutTick.KEY_ACCUM_MINUTE_V, workoutTick.getAccumMinuteV()); 
+			workoutTickEntity.setProperty(WorkoutTick.KEY_ACCUM_MINUTE_H, workoutTick.getAccumMinuteH());
+			workoutTickEntity.setProperty(WorkoutTick.KEY_PRIVACY_SETTING, workoutTick.getPrivacySetting().toString());
+			
+			DatastoreService datastore = DatastoreServiceFactory
+					.getDatastoreService();
+			datastore.put(workoutTickEntity);
 			return true;
-		} else {
+		} 
+		else {
 			return false;
 		}
 	}
@@ -185,7 +191,8 @@ public class WorkoutServlet {
 				0,
 				-99, 
 				-99, 
-				-99);
+				-99,
+				PrivacyPreferenceEnum.highPrivacy.toString());
 		WorkoutTick workoutTick2 = new WorkoutTick(
 				-99, 
 				-99,
@@ -197,7 +204,8 @@ public class WorkoutServlet {
 				0,
 				-99, 
 				-99, 
-				-99);
+				-99,
+				PrivacyPreferenceEnum.mediumPrivacy.toString());
 		WorkoutTick workoutTick3 = new WorkoutTick(
 				-99, 
 				-99,
@@ -209,13 +217,27 @@ public class WorkoutServlet {
 				0,
 				-99, 
 				-99, 
-				-99);
+				-99,
+				PrivacyPreferenceEnum.lowPrivacy.toString());
 		
 		allWorkoutTicks[0] = workoutTick1;
 		allWorkoutTicks[1] = workoutTick2;
 		allWorkoutTicks[2] = workoutTick3;
 		
 		return allWorkoutTicks;
+	}
+	
+	@GET
+	@Path("/deleteEverything")
+	@Produces(MediaType.TEXT_PLAIN)
+	public String deleteEverything(@QueryParam("imei") String imei) {
+		
+		DatastoreService datastore = DatastoreServiceFactory
+				.getDatastoreService();
+		Key key = KeyFactory.createKey("WorkoutTick User", imei);
+		datastore.delete(key);
+		
+		return "Deleted some workout ticks";
 	}
 
 }

@@ -4,7 +4,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.util.Log;
-import android.widget.Toast;
 
 /**
  * A model for each particular save point of a Workout. There is exactly one of
@@ -29,6 +28,7 @@ public class WorkoutTick {
 	public static final String KEY_ACCUM_MINUTE_V = "accum_minute_v";
 	public static final String KEY_ACCUM_MINUTE_H = "accum_minute_h";
 	public static final String KEY_GPS_TIME = "gps_time";
+	public static final String KEY_PRIVACY_SETTING = "privacy_setting";
 
 	private String imei;
 	private long time;
@@ -42,13 +42,12 @@ public class WorkoutTick {
 	private float kCal;
 	private double accumMinuteV;
 	private double accumMinuteH;
-	
-	// FIXME: Add a field in here for the currently set privacy setting.
+	private PrivacyPreferenceEnum privacySetting;
 
 	public WorkoutTick(String imei, long time, float latitude, float longitude,
 			float altitude, float speed, float hasAccuracy, float accuracy,
 			long systemTime, float kCal, double accumMinuteV,
-			double accumMinuteH) {
+			double accumMinuteH, PrivacyPreferenceEnum privacySetting) {
 		super();
 		this.imei = imei;
 		this.time = time;
@@ -62,6 +61,39 @@ public class WorkoutTick {
 		this.kCal = kCal;
 		this.accumMinuteV = accumMinuteV;
 		this.accumMinuteH = accumMinuteH;
+		this.privacySetting = privacySetting;
+	}
+	
+	public WorkoutTick(String imei, long time, float latitude, float longitude,
+			float altitude, float speed, float hasAccuracy, float accuracy,
+			long systemTime, float kCal, double accumMinuteV,
+			double accumMinuteH, String privacySetting) {
+		super();
+		this.imei = imei;
+		this.time = time;
+		this.latitude = latitude;
+		this.longitude = longitude;
+		this.altitude = altitude;
+		this.speed = speed;
+		this.hasAccuracy = hasAccuracy;
+		this.accuracy = accuracy;
+		this.systemTime = systemTime;
+		this.kCal = kCal;
+		this.accumMinuteV = accumMinuteV;
+		this.accumMinuteH = accumMinuteH;
+		
+		if (privacySetting.equals("h")) {
+			this.privacySetting = PrivacyPreferenceEnum.highPrivacy;
+		}
+		else if (privacySetting.equals("m")) {
+			this.privacySetting = PrivacyPreferenceEnum.mediumPrivacy;
+		}
+		else if (privacySetting.equals("l")) {
+			this.privacySetting = PrivacyPreferenceEnum.lowPrivacy;
+		}
+		else {
+			this.privacySetting = null;
+		}
 	}
 
 	public String getImei() {
@@ -159,15 +191,24 @@ public class WorkoutTick {
 	public void setAccumMinuteH(double accumMinuteH) {
 		this.accumMinuteH = accumMinuteH;
 	}
+	
+	public PrivacyPreferenceEnum getPrivacySetting() {
+		return privacySetting;
+	}
+
+	public void setPrivacySetting(PrivacyPreferenceEnum privacySetting) {
+		this.privacySetting = privacySetting;
+	}
 
 	@Override
 	public String toString() {
-		return "WorkoutPoint [imei=" + imei + ", time=" + time + ", latitude="
+		return "WorkoutTick [imei=" + imei + ", time=" + time + ", latitude="
 				+ latitude + ", longitude=" + longitude + ", altitude="
 				+ altitude + ", speed=" + speed + ", hasAccuracy="
 				+ hasAccuracy + ", accuracy=" + accuracy + ", systemTime="
 				+ systemTime + ", kCal=" + kCal + ", accumMinuteV="
-				+ accumMinuteV + ", accumMinuteH=" + accumMinuteH + "]";
+				+ accumMinuteV + ", accumMinuteH=" + accumMinuteH
+				+ ", privacySetting=" + privacySetting + "]";
 	}
 
 	/**
@@ -191,16 +232,17 @@ public class WorkoutTick {
 			long systemTime = Long.parseLong(explodedEdmundish[2]);
 			float latitude = Float.parseFloat(explodedEdmundish[3]);
 			float longitude = Float.parseFloat(explodedEdmundish[4]);
-			float altitude = Float.parseFloat(explodedEdmundish[5]);
-			float speed = Float.parseFloat(explodedEdmundish[6]);
+			float speed = Float.parseFloat(explodedEdmundish[5]);
+			float altitude = Float.parseFloat(explodedEdmundish[6]);
 			float hasAccuracy = Float.parseFloat(explodedEdmundish[7]);
 			float accuracy = Float.parseFloat(explodedEdmundish[8]);
 			double accumMinuteV = Double.parseDouble(explodedEdmundish[9]);
 			double accumMinuteH = Double.parseDouble(explodedEdmundish[10]);
 			float kCal = Float.parseFloat(explodedEdmundish[11]);
+			String privacyString = explodedEdmundish[12];
 			
 			// Lastly, return a new WorkoutTick
-			return new WorkoutTick(imei, gpsTime, latitude, longitude, altitude, speed, hasAccuracy, accuracy, systemTime, kCal, accumMinuteV, accumMinuteH);
+			return new WorkoutTick(imei, gpsTime, latitude, longitude, altitude, speed, hasAccuracy, accuracy, systemTime, kCal, accumMinuteV, accumMinuteH, privacyString);
 		}
 		catch (Exception e) {
 			Log.e(TAG, "Unable to parse Edmundish: " + e.getMessage());
@@ -226,8 +268,21 @@ public class WorkoutTick {
 			workoutJSONObject.put(WorkoutTick.KEY_ACCUM_MINUTE_V, "" + this.getAccumMinuteV());
 			workoutJSONObject.put(WorkoutTick.KEY_ACCUM_MINUTE_H, "" + this.getAccumMinuteH());
 			workoutJSONObject.put(WorkoutTick.KEY_GPS_TIME, 		"" + this.getTime());
+			
+			// Convert the enum to a letter
+			if (privacySetting.equals(PrivacyPreferenceEnum.highPrivacy))
+				workoutJSONObject.put(WorkoutTick.KEY_PRIVACY_SETTING, "h");
+			else if (privacySetting.equals(PrivacyPreferenceEnum.mediumPrivacy))
+				workoutJSONObject.put(WorkoutTick.KEY_PRIVACY_SETTING, "m");
+			else if (privacySetting.equals(PrivacyPreferenceEnum.lowPrivacy))
+				workoutJSONObject.put(WorkoutTick.KEY_PRIVACY_SETTING, "l");
+			else
+				throw new Exception("Unknown privacy setting");
+			
 		} catch (JSONException e) {
 			Log.e(TAG, "JSON Error occurred: " + e.getMessage());
+		} catch (Exception e) {
+			Log.e(TAG, "Exception occurred: " + e.getMessage());
 		}
 		
 		return workoutJSONObject;
