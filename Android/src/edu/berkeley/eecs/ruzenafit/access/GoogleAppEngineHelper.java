@@ -15,6 +15,7 @@ import org.json.JSONArray;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
@@ -27,17 +28,30 @@ import edu.berkeley.eecs.ruzenafit.util.Constants;
  * 
  * @author gibssa
  */
+
+// FIXME: Swap Facebook SDK to a jar.
 public class GoogleAppEngineHelper {
 	private static final String TAG = "ExternalDB";
 	
 	@SuppressWarnings("unused")
 	private static final String TEST_URL = "http://ruzenafit.appspot.com/rest/workout/test";
+	@SuppressWarnings("unused")
 	private static final String RETRIEVE_WORKOUTS_URL = "http://ruzenafit.appspot.com/rest/workout/getAllWorkouts"; 
 	private static final String SAVE_ALL_WORKOUTS_URL = "http://ruzenafit.appspot.com/rest/workout/saveWorkoutTicks";
 	
 	private static String deviceID = "";
+
+	/** App-wide context (used for toasts) */
+	private Context context;
 	
-	// FIXME: Asynchronize this whole process.
+	/**
+	 * Sole constructor -- must give this class the app's context
+	 * @param context
+	 */
+	public GoogleAppEngineHelper(Context context) {
+		this.context = context;
+	}
+	
 	/**
 	 *  If we have enough {@link WorkoutTick}s to send, then start attempting
 	 *  to silently send this data up to GAE.
@@ -45,7 +59,7 @@ public class GoogleAppEngineHelper {
 	 *  This uses <a href="http://en.wikipedia.org/wiki/Exponential_backoff">exponential backoff</a>.
 	 * @param workoutTicks
 	 */
-	public static void checkBatchSizeAndSendDataToGAE(WorkoutTick[] workoutTicks, Context context) {
+	public void checkBatchSizeAndSendDataToGAE(WorkoutTick[] workoutTicks, Context context) {
 		
 		// FIXME: Change this to add batch size for every 100, 200, 300, etc.
 		// If we don't have enough workout ticks to call this a "batch," then forget about it.
@@ -80,7 +94,7 @@ public class GoogleAppEngineHelper {
 //		}
 		
 		// Attempt to upload data to GAE
-		int result = submitDataToGAE(workoutTicks, context);
+		submitDataToGAE(workoutTicks, context);
 		
 	}
 	
@@ -88,7 +102,8 @@ public class GoogleAppEngineHelper {
 	 * Submits data to Google App Engine (Girum's account, as set by URL).
 	 * Returns the number of successful GAE submissions.
 	 */
-	private static int submitDataToGAE(WorkoutTick[] allWorkouts, Context context) {
+	@SuppressWarnings("unchecked")
+	private void submitDataToGAE(WorkoutTick[] allWorkouts, Context context) {
 		
 		// Make a JSON array of "workout ticks."
 		JSONArray workoutsJSONArray = new JSONArray();
@@ -98,7 +113,7 @@ public class GoogleAppEngineHelper {
 			workoutsJSONArray.put(workout.toJSON());
 		}
 		
-		Log.d(TAG, "Submitting the following JSON string: " + workoutsJSONArray.toString());
+		Log.d(TAG, "Asynchronously submitting the following JSON string to server: " + workoutsJSONArray.toString());
 		System.out.println(workoutsJSONArray.toString());
 		
 		// TODO: Send this array to GAE through the network layer.
@@ -111,46 +126,65 @@ public class GoogleAppEngineHelper {
 		String imei = sharedPreferencesHelper.retrieveValueForString(WorkoutTick.KEY_IMEI);
 		if (imei == null) {
 			Log.e(TAG, "IMEI not set.");
-			return -1;
 		}
 		
 		// Throw the IMEI and the JSONArray into the POST request.
 		nameValuePairs.add(new BasicNameValuePair(WorkoutTick.KEY_IMEI, imei));
 		nameValuePairs.add(new BasicNameValuePair(Constants.WORKOUTS_JSON_STRING, workoutsJSONArray.toString()));
 		
-		// Execute the POST request
-		int successfulSubmissions = executePOSTRequest(nameValuePairs);
-		
-		return successfulSubmissions;
-		
-		
+		// Execute the POST request asynchronously
+		new GAEAsyncTaskRunner().execute(nameValuePairs);
 	}
-	
+
 	/**
-	 * Executes the POST request.
+	 * Private inner class that runs the Networking asynchronously.
 	 * 
-	 * @param nameValuePairs
-	 * @return The number of new workout ticks that were successfully added.
+	 * @author gibssa
 	 */
-	private static int executePOSTRequest(List<NameValuePair> nameValuePairs) {
-		
-		// Setup the POST Request
-		HttpClient httpClient = new DefaultHttpClient();
-		HttpPost request = new HttpPost(SAVE_ALL_WORKOUTS_URL);
-		request.addHeader("deviceID:" , deviceID);
-		
-		// Execute the POST request.
-		try {
-			request.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+	private class GAEAsyncTaskRunner extends AsyncTask<List<NameValuePair>, Void, String> {
+
+		@Override
+		protected String doInBackground(List<NameValuePair>... nameValuePairs) {
+			// Setup the POST Request
+			HttpClient httpClient = new DefaultHttpClient();
+			HttpPost request = new HttpPost(SAVE_ALL_WORKOUTS_URL);
+			request.addHeader("deviceID:" , deviceID);
 			
-			HttpResponse response = httpClient.execute(request);
-			String responseString = EntityUtils.toString(response.getEntity());
-			Log.d(TAG, "HttpResponse: " + responseString);
-		} catch (Exception e) {
-			Log.e(TAG, "ERROR: " + e.getMessage());
-			return -1;
+			String responseString = null;
+			
+			// Execute the POST request.
+			try {
+				request.setEntity(new UrlEncodedFormEntity(nameValuePairs[0]));
+				
+				HttpResponse response = httpClient.execute(request);
+				responseString = EntityUtils.toString(response.getEntity());
+				Log.d(TAG, "HttpResponse: " + responseString);
+			} catch (Exception e) {
+				Log.e(TAG, "HTTP ERROR: " + e.getMessage());
+				return Constants.HTTP_ERROR + ": " + e.getMessage();
+			}
+			
+			return responseString;
 		}
-		return 1;
+
+		@Override
+		protected void onCancelled() {
+			super.onCancelled();
+		}
+
+		@Override
+		protected void onPostExecute(String result) {
+			super.onPostExecute(result);
+			
+			if (result.contains(Constants.HTTP_ERROR)) {
+				Toast.makeText(context, result, Toast.LENGTH_LONG).show();
+				return;
+			}
+			
+			// FIXME: This should only "succeed" after we check the response string to be OK.
+			Toast.makeText(context, "Successfully uploaded data to server.", Toast.LENGTH_LONG).show();
+		}
+		
 	}
 	
 	/**

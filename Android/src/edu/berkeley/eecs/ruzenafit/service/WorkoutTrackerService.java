@@ -646,7 +646,8 @@ public class WorkoutTrackerService extends Service {
 				WorkoutTick[] workoutTicks = FileAccessHelper.getAllWorkoutDataFromFile();
 				
 				// attempt to silently send data up to GAE
-				GoogleAppEngineHelper.checkBatchSizeAndSendDataToGAE(workoutTicks, mContext);
+				GoogleAppEngineHelper gaeHelper = new GoogleAppEngineHelper(mContext);
+				gaeHelper.checkBatchSizeAndSendDataToGAE(workoutTicks, mContext);
 				
 				// reset the counters
 				accum_minute_V = 0;
