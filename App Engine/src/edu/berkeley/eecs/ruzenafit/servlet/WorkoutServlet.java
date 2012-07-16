@@ -102,7 +102,7 @@ public class WorkoutServlet {
 //					workoutObject.get(WorkoutTick.KEY_ACCUM_MINUTE_V).getAsDouble(), 
 //					workoutObject.get(WorkoutTick.KEY_ACCUM_MINUTE_H).getAsDouble());
 			
-			result += "Workout 1: " + workoutTick.toString() + ", ";
+//			result += "Workout 1: " + workoutTick.toString() + ", ";
 		}
 
 		// TODO: Save each workoutTick into the datastore

@@ -8,6 +8,8 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 
+import org.json.JSONArray;
+
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -641,6 +643,7 @@ public class WorkoutTrackerService extends Service {
 				writeFile();
 
 				// FIXME: This is where I add server code.
+				String jsonString = getAllWorkoutDataFromFile();
 
 				/*
 				 * // post to server only on certain intervals if (postcounter >
@@ -689,6 +692,41 @@ public class WorkoutTrackerService extends Service {
 				counter = 0;
 			}
 		}
+	}
+	
+	/**
+	 * Helper method to read all workout data currently on File.
+	 */
+	private static String getAllWorkoutDataFromFile() {
+		File myFile, myGPSFile;
+		JSONArray jsonArray = new JSONArray();
+		
+		try {
+			File root = new File(Environment.getExternalStorageDirectory()
+					+ "/CalFitD");
+			if (!root.exists()) {
+				root.mkdir();
+			}
+			if (root.canWrite()) {
+				myFile = new File(root, "CFdet" + fileNum + ".txt");
+				while (myFile.exists()) {
+					fileNum++;
+					myFile = new File(root, "CFdet" + fileNum + ".txt");
+				}
+				myGPSFile = new File(root, "CFgps" + fileNumGPS + ".txt");
+				while (myGPSFile.exists()) {
+					fileNumGPS++;
+					myGPSFile = new File(root, "CFgps" + fileNumGPS + ".txt");
+				}
+			}
+		}
+		catch (Exception e) {
+			Log.e(TAG, "Could not getAllWorkoutDataFromFile(): " + e.getMessage());
+		}
+		
+		
+		
+		return jsonArray.toString();
 	}
 
 	/**

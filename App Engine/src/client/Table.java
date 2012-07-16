@@ -21,6 +21,9 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
+import edu.berkeley.eecs.ruzenafit.client.GreetingService;
+import edu.berkeley.eecs.ruzenafit.client.GreetingServiceAsync;
+
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
  */

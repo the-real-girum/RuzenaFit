@@ -109,20 +109,21 @@ public class PrivacyPreferencesActivity extends Activity {
 				privacyPreference.toString());
 		preferences.commit();
 
-		switch (privacyPreference) {
-		case highPrivacy:
-			Constants.setUPDATE_FREQUENCY(3600000); // one hour
-			break;
-		case mediumPrivacy:
-			Constants.setUPDATE_FREQUENCY(300000); // 5 minutes
-			break;
-		case lowPrivacy:
-			Constants.setUPDATE_FREQUENCY(5000); // 5 seconds
-			break;
-		default:
-			Constants.setUPDATE_FREQUENCY(3000); // 3 seconds if undefined.
-			break;
-		}
+		// FIXME: Variable tick rate all over again.
+//		switch (privacyPreference) {
+//		case highPrivacy:
+//			Constants.setUPDATE_FREQUENCY(3600000); // one hour
+//			break;
+//		case mediumPrivacy:
+//			Constants.setUPDATE_FREQUENCY(300000); // 5 minutes
+//			break;
+//		case lowPrivacy:
+//			Constants.setUPDATE_FREQUENCY(5000); // 5 seconds
+//			break;
+//		default:
+//			Constants.setUPDATE_FREQUENCY(3000); // 3 seconds if undefined.
+//			break;
+//		}
 
 		Toast.makeText(getApplicationContext(),
 				"Saved privacy setting: " + privacyPreference.toString(), 3)
