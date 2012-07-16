@@ -78,7 +78,7 @@ public class RankingActivity extends Activity {
 						cursor.getFloat(cursor.getColumnIndex(WorkoutTick.KEY_SPEED)), 
 						cursor.getFloat(cursor.getColumnIndex(WorkoutTick.KEY_HAS_ACCURACY)), 
 						cursor.getFloat(cursor.getColumnIndex(WorkoutTick.KEY_ACCURACY)), 
-						cursor.getString(cursor.getColumnIndex(WorkoutTick.KEY_SYSTEM_TIME)), 
+						cursor.getLong(cursor.getColumnIndex(WorkoutTick.KEY_SYSTEM_TIME)), 
 						cursor.getFloat(cursor.getColumnIndex(WorkoutTick.KEY_KCALS)), 
 						cursor.getDouble(cursor.getColumnIndex(WorkoutTick.KEY_ACCUM_MINUTE_V)), 
 						cursor.getDouble(cursor.getColumnIndex(WorkoutTick.KEY_ACCUM_MINUTE_H)));

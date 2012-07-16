@@ -1,5 +1,5 @@
 package com.example.table.client;
 
-public class button {
+public class Button {
 
 }

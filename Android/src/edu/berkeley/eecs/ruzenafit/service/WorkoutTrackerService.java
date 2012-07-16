@@ -1,11 +1,15 @@
 package edu.berkeley.eecs.ruzenafit.service;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.Locale;
 
 import org.json.JSONArray;
@@ -36,6 +40,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import edu.berkeley.eecs.ruzenafit.R;
 import edu.berkeley.eecs.ruzenafit.activity.WorkoutTrackerActivity;
+import edu.berkeley.eecs.ruzenafit.model.WorkoutTick;
 import edu.berkeley.eecs.ruzenafit.util.Constants;
 
 public class WorkoutTrackerService extends Service {
@@ -643,7 +648,7 @@ public class WorkoutTrackerService extends Service {
 				writeFile();
 
 				// FIXME: This is where I add server code.
-				String jsonString = getAllWorkoutDataFromFile();
+				WorkoutTick[] workoutTicks = getAllWorkoutDataFromFile();
 
 				/*
 				 * // post to server only on certain intervals if (postcounter >
@@ -697,36 +702,39 @@ public class WorkoutTrackerService extends Service {
 	/**
 	 * Helper method to read all workout data currently on File.
 	 */
-	private static String getAllWorkoutDataFromFile() {
-		File myFile, myGPSFile;
-		JSONArray jsonArray = new JSONArray();
+	private static WorkoutTick[] getAllWorkoutDataFromFile() {
+		
+		ArrayList<WorkoutTick> workoutTicks = new ArrayList<WorkoutTick>();
 		
 		try {
+			// TODO: String literal.
 			File root = new File(Environment.getExternalStorageDirectory()
 					+ "/CalFitD");
+			
+			// If there isn't a folder called "/CalFitD", then don't even bother reading.
 			if (!root.exists()) {
-				root.mkdir();
+				return null;
 			}
-			if (root.canWrite()) {
-				myFile = new File(root, "CFdet" + fileNum + ".txt");
-				while (myFile.exists()) {
-					fileNum++;
-					myFile = new File(root, "CFdet" + fileNum + ".txt");
+			
+			// Read each line from "CalFitEE.txt" as a string
+			if (root.canRead()) {
+				File calfitEE = new File(root, "CalFitEE.txt");
+				BufferedReader bufferedReader = new BufferedReader(new FileReader(calfitEE));
+				String lineOfInput = null;
+				
+				// Each line will be temporarily stored in 'lineOfInput'
+				while ((lineOfInput = bufferedReader.readLine()) != null) {
+					workoutTicks.add(WorkoutTick.parseEdmundish(lineOfInput));
 				}
-				myGPSFile = new File(root, "CFgps" + fileNumGPS + ".txt");
-				while (myGPSFile.exists()) {
-					fileNumGPS++;
-					myGPSFile = new File(root, "CFgps" + fileNumGPS + ".txt");
-				}
+				
+				Log.d(TAG, "Parsed " + workoutTicks.size() + " workout ticks from File");
 			}
 		}
 		catch (Exception e) {
 			Log.e(TAG, "Could not getAllWorkoutDataFromFile(): " + e.getMessage());
 		}
 		
-		
-		
-		return jsonArray.toString();
+		return workoutTicks.toArray(new WorkoutTick[workoutTicks.size()]);
 	}
 
 	/**
@@ -736,7 +744,8 @@ public class WorkoutTrackerService extends Service {
 		File myfile;
 		String state = Environment.getExternalStorageState();
 
-		String str = imei + "," + mMostrecent_GPS_Time + ","
+		String str = imei + ","
+				+ mMostrecent_GPS_Time + ","
 				+ mMostrecent_System_Time + ","
 				+ geofmt.format(mMostrecent_GPS_Latitude) + ","
 				+ geofmt.format(mMostrecent_GPS_Longitude) + ","
@@ -760,6 +769,7 @@ public class WorkoutTrackerService extends Service {
 					success = root.mkdir();
 				}
 				if (root.canWrite()) {
+					// TODO: String literal
 					myfile = new File(root, "CalFitEE.txt");
 					myfile.createNewFile();
 					FileWriter mywriter = new FileWriter(myfile, true);
