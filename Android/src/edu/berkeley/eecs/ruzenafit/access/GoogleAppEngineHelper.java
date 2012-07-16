@@ -28,8 +28,6 @@ import edu.berkeley.eecs.ruzenafit.util.Constants;
  * 
  * @author gibssa
  */
-
-// FIXME: Swap Facebook SDK to a jar.
 public class GoogleAppEngineHelper {
 	private static final String TAG = "ExternalDB";
 	
@@ -95,7 +93,6 @@ public class GoogleAppEngineHelper {
 		
 		// Attempt to upload data to GAE
 		submitDataToGAE(workoutTicks, context);
-		
 	}
 	
 	/**
