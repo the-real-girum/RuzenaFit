@@ -42,18 +42,22 @@ public class WorkoutServlet {
 	public WorkoutTick[] getAllWorkoutTicks(
 			@QueryParam("imei") String imei) {
 
+		// Prepare to make the query for all workout ticks
 		DatastoreService datastore = DatastoreServiceFactory
 				.getDatastoreService();
 		Key key = KeyFactory.createKey("WorkoutTick User", imei);
 		Query query = new Query("WorkoutTick", key);
 
+		// Execute the actual query
 		List<Entity> workoutEntities = datastore.prepare(query).asList(
 				FetchOptions.Builder.withDefaults());
 		
+		// Convert the List into a Java array of model objects: declare the array
 		WorkoutTick[] workoutTicks = new WorkoutTick[workoutEntities.size()];
 		int i = 0;
 		for (Entity workoutEntity : workoutEntities) {
 			
+			// Iterate through the Google-style entities, converting each one to a POJO
 			WorkoutTick workoutTick = new WorkoutTick();
 			workoutTick.setAccumMinuteH((Double)workoutEntity.getProperty(WorkoutTick.KEY_ACCUM_MINUTE_H));
 			workoutTick.setAccumMinuteV((Double)workoutEntity.getProperty(WorkoutTick.KEY_ACCUM_MINUTE_V));
@@ -70,6 +74,8 @@ public class WorkoutServlet {
 			
 			workoutTicks[i++] = workoutTick;
 		}
+		
+		// Return the Jersey-enhanced version of the POJO (Jersey can serialize POJOs for us)
 		return workoutTicks;
 	}
 
@@ -83,15 +89,21 @@ public class WorkoutServlet {
 	public String saveWorkoutTicks(@FormParam("imei") String imei,
 			@FormParam("workoutTicksJSONString") String workoutTicksJSONString) {
 
+		// Grab all of the current workout ticks to user for uniqueness checks later
+		WorkoutTick[] currentWorkoutTicks = getAllWorkoutTicks(imei);
+		
+		/** Counter for new, unique workouts */
 		int newWorkoutsSaved = 0;
 		
 		// Parse the inputted JSON into an array of WorkoutTicks.
 		JsonParser jsonParser = new JsonParser();
 		JsonArray workoutTicksJSONArray = jsonParser.parse(workoutTicksJSONString).getAsJsonArray();
 		
+		// For each workout tick JSON element, parse this 
 		for (JsonElement workoutElement : workoutTicksJSONArray) {
 			JsonObject workoutObject = workoutElement.getAsJsonObject();
-			
+
+			// Step through each of the 
 			WorkoutTick workoutTick = new WorkoutTick(
 					workoutObject.get(WorkoutTick.KEY_GPS_TIME).getAsLong(), 
 					workoutObject.get(WorkoutTick.KEY_LATITUDE).getAsFloat(), 
@@ -107,7 +119,7 @@ public class WorkoutServlet {
 					workoutObject.get(WorkoutTick.KEY_PRIVACY_SETTING).getAsString());
 
 			// Save each workout to the datastore
-			boolean newWorkoutWasSaved = saveWorkoutTickToDatastore(imei, workoutTick);
+			boolean newWorkoutWasSaved = saveIndividualTickToDatastore(imei, workoutTick, currentWorkoutTicks);
 			
 			// Iterate the counter
 			if (newWorkoutWasSaved) newWorkoutsSaved++;
@@ -120,48 +132,42 @@ public class WorkoutServlet {
 	 * Helper method to save the WorkoutTick to GAE datastore.
 	 * 
 	 * @param userimei
-	 * @param workoutTick
+	 * @param newWorkoutTick
 	 */
-	private boolean saveWorkoutTickToDatastore(String userimei,
-			WorkoutTick workoutTick) {
+	private boolean saveIndividualTickToDatastore(String userimei,
+			WorkoutTick newWorkoutTick, WorkoutTick[] currentWorkoutTicks) {
 
-		// TODO: I only need to query this Workout[] array once -- I can hold onto it for
-		// each of the uniqueness checks that I have to do.
-		WorkoutTick[] currentWorkoutTicks = getAllWorkoutTicks(userimei);
-		boolean isUnique = true;
-
+		// Ensure that this workout tick is really a new workout tick
 		for (WorkoutTick iteratedWorkoutTick : currentWorkoutTicks) {
-			if (iteratedWorkoutTick.equals(workoutTick)) {
+			if (iteratedWorkoutTick.equals(newWorkoutTick)) {
 				return false;
 			}
 		}
 
-		if (isUnique) {
-			Key userKey = KeyFactory.createKey("WorkoutTick User", userimei);
-
-			Entity workoutTickEntity = new Entity("WorkoutTick", userKey);
-			
-			workoutTickEntity.setProperty(WorkoutTick.KEY_GPS_TIME, workoutTick.getTime()); 
-			workoutTickEntity.setProperty(WorkoutTick.KEY_LATITUDE, workoutTick.getLatitude()); 
-			workoutTickEntity.setProperty(WorkoutTick.KEY_LONGITUDE, workoutTick.getLongitude()); 
-			workoutTickEntity.setProperty(WorkoutTick.KEY_ALTITUDE, workoutTick.getAltitude()); 
-			workoutTickEntity.setProperty(WorkoutTick.KEY_SPEED, workoutTick.getSpeed()); 
-			workoutTickEntity.setProperty(WorkoutTick.KEY_HAS_ACCURACY, workoutTick.getHasAccuracy()); 
-			workoutTickEntity.setProperty(WorkoutTick.KEY_ACCURACY, workoutTick.getAccuracy()); 
-			workoutTickEntity.setProperty(WorkoutTick.KEY_SYSTEM_TIME, workoutTick.getSystemTime()); 
-			workoutTickEntity.setProperty(WorkoutTick.KEY_KCALS, workoutTick.getkCal()); 
-			workoutTickEntity.setProperty(WorkoutTick.KEY_ACCUM_MINUTE_V, workoutTick.getAccumMinuteV()); 
-			workoutTickEntity.setProperty(WorkoutTick.KEY_ACCUM_MINUTE_H, workoutTick.getAccumMinuteH());
-			workoutTickEntity.setProperty(WorkoutTick.KEY_PRIVACY_SETTING, workoutTick.getPrivacySetting().toString());
-			
-			DatastoreService datastore = DatastoreServiceFactory
-					.getDatastoreService();
-			datastore.put(workoutTickEntity);
-			return true;
-		} 
-		else {
-			return false;
-		}
+		// Create a new entity to save to the datastore
+		Key userKey = KeyFactory.createKey("WorkoutTick User", userimei);
+		Entity workoutTickEntity = new Entity("WorkoutTick", userKey);
+		
+		// Set all of the entity's properties
+		workoutTickEntity.setProperty(WorkoutTick.KEY_GPS_TIME, newWorkoutTick.getTime()); 
+		workoutTickEntity.setProperty(WorkoutTick.KEY_LATITUDE, newWorkoutTick.getLatitude()); 
+		workoutTickEntity.setProperty(WorkoutTick.KEY_LONGITUDE, newWorkoutTick.getLongitude()); 
+		workoutTickEntity.setProperty(WorkoutTick.KEY_ALTITUDE, newWorkoutTick.getAltitude()); 
+		workoutTickEntity.setProperty(WorkoutTick.KEY_SPEED, newWorkoutTick.getSpeed()); 
+		workoutTickEntity.setProperty(WorkoutTick.KEY_HAS_ACCURACY, newWorkoutTick.getHasAccuracy()); 
+		workoutTickEntity.setProperty(WorkoutTick.KEY_ACCURACY, newWorkoutTick.getAccuracy()); 
+		workoutTickEntity.setProperty(WorkoutTick.KEY_SYSTEM_TIME, newWorkoutTick.getSystemTime()); 
+		workoutTickEntity.setProperty(WorkoutTick.KEY_KCALS, newWorkoutTick.getkCal()); 
+		workoutTickEntity.setProperty(WorkoutTick.KEY_ACCUM_MINUTE_V, newWorkoutTick.getAccumMinuteV()); 
+		workoutTickEntity.setProperty(WorkoutTick.KEY_ACCUM_MINUTE_H, newWorkoutTick.getAccumMinuteH());
+		workoutTickEntity.setProperty(WorkoutTick.KEY_PRIVACY_SETTING, newWorkoutTick.getPrivacySetting().toString());
+		
+		// Now we actually save to the datastore
+		DatastoreService datastore = DatastoreServiceFactory
+				.getDatastoreService();
+		datastore.put(workoutTickEntity);
+		
+		return true;
 	}
 
 	// ***************************************************************************
@@ -227,6 +233,15 @@ public class WorkoutServlet {
 		return allWorkoutTicks;
 	}
 	
+	/**
+	 * This is supposed to be a helper method to delete all entites from the datastore.
+	 * 
+	 * In reality, it can only delete ~1k entities from the datastore at a time (the request
+	 * will time out before it has time to delete them all).  Also, this appears to be broken
+	 * (as in it's currently written incorrectly).
+	 * @param imei
+	 * @return
+	 */
 	@GET
 	@Path("/deleteEverything")
 	@Produces(MediaType.TEXT_PLAIN)

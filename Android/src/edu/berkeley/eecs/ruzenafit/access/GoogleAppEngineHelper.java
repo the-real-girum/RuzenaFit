@@ -99,6 +99,7 @@ public class GoogleAppEngineHelper {
 		}
 		
 		Log.d(TAG, "Submitting the following JSON string: " + workoutsJSONArray.toString());
+		System.out.println(workoutsJSONArray.toString());
 		
 		// TODO: Send this array to GAE through the network layer.
 		// Throw all of the fields of the workout into a list of nameValuePairs for
