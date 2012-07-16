@@ -19,12 +19,12 @@ public class SharedPreferencesHelper {
 	 * When using an object of this class, you'll usually use "this" activity.
 	 * @param activity
 	 */
-	public SharedPreferencesHelper(Activity activity) {
+	public SharedPreferencesHelper(Context context) {
 		super();
 		
-		this.preferences = activity.getSharedPreferences(Constants.PREFS_NAMESPACE, 0);
+		this.preferences = context.getSharedPreferences(Constants.PREFS_NAMESPACE, 0);
 		this.editor = preferences.edit();
-		this.context = activity.getApplicationContext();
+		this.context = context;
 	}
 	
 	/**

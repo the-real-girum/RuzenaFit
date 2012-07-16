@@ -87,20 +87,19 @@ public class WorkoutServlet {
 		for (JsonElement workoutElement : workoutTicksArray) {
 			JsonObject workoutObject = workoutElement.getAsJsonObject();
 			
-//			/** currently debugging my POST request setup */
-//			WorkoutTick workoutTick = new WorkoutTick(
-//					null,
-//					workoutObject.get(WorkoutTick.KEY_GPS_TIME).getAsLong(), 
-//					workoutObject.get(WorkoutTick.KEY_LATITUDE).getAsFloat(), 
-//					workoutObject.get(WorkoutTick.KEY_LONGITUDE).getAsFloat(), 
-//					workoutObject.get(WorkoutTick.KEY_ALTITUDE).getAsFloat(), 
-//					workoutObject.get(WorkoutTick.KEY_SPEED).getAsFloat(), 
-//					workoutObject.get(WorkoutTick.KEY_HAS_ACCURACY).getAsFloat(), 
-//					workoutObject.get(WorkoutTick.KEY_ACCURACY).getAsFloat(), 
-//					workoutObject.get(WorkoutTick.KEY_SYSTEM_TIME).getAsString(), 
-//					workoutObject.get(WorkoutTick.KEY_KCALS).getAsFloat(), 
-//					workoutObject.get(WorkoutTick.KEY_ACCUM_MINUTE_V).getAsDouble(), 
-//					workoutObject.get(WorkoutTick.KEY_ACCUM_MINUTE_H).getAsDouble());
+			/** currently debugging my POST request setup */
+			WorkoutTick workoutTick = new WorkoutTick(
+					workoutObject.get(WorkoutTick.KEY_GPS_TIME).getAsLong(), 
+					workoutObject.get(WorkoutTick.KEY_LATITUDE).getAsFloat(), 
+					workoutObject.get(WorkoutTick.KEY_LONGITUDE).getAsFloat(), 
+					workoutObject.get(WorkoutTick.KEY_ALTITUDE).getAsFloat(), 
+					workoutObject.get(WorkoutTick.KEY_SPEED).getAsFloat(), 
+					workoutObject.get(WorkoutTick.KEY_HAS_ACCURACY).getAsFloat(), 
+					workoutObject.get(WorkoutTick.KEY_ACCURACY).getAsFloat(), 
+					workoutObject.get(WorkoutTick.KEY_SYSTEM_TIME).getAsLong(), 
+					workoutObject.get(WorkoutTick.KEY_KCALS).getAsFloat(), 
+					workoutObject.get(WorkoutTick.KEY_ACCUM_MINUTE_V).getAsDouble(), 
+					workoutObject.get(WorkoutTick.KEY_ACCUM_MINUTE_H).getAsDouble());
 			
 //			result += "Workout 1: " + workoutTick.toString() + ", ";
 		}
@@ -176,7 +175,6 @@ public class WorkoutServlet {
 		WorkoutTick[] allWorkoutTicks = new WorkoutTick[3];
 
 		WorkoutTick workoutTick1 = new WorkoutTick(
-				"sample imei 1", 
 				-99, 
 				-99,
 				-99, 
@@ -184,12 +182,11 @@ public class WorkoutServlet {
 				-99, 
 				1, 
 				0, 
-				"sample system time 1",
+				0,
 				-99, 
 				-99, 
 				-99);
 		WorkoutTick workoutTick2 = new WorkoutTick(
-				"sample imei 2", 
 				-99, 
 				-99,
 				-99, 
@@ -197,12 +194,11 @@ public class WorkoutServlet {
 				-99, 
 				1, 
 				0, 
-				"sample system time 2",
+				0,
 				-99, 
 				-99, 
 				-99);
 		WorkoutTick workoutTick3 = new WorkoutTick(
-				"sample imei 3", 
 				-99, 
 				-99,
 				-99, 
@@ -210,7 +206,7 @@ public class WorkoutServlet {
 				-99, 
 				1, 
 				0, 
-				"sample system time 3",
+				0,
 				-99, 
 				-99, 
 				-99);

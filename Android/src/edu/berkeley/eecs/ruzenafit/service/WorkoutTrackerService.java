@@ -1,18 +1,12 @@
 package edu.berkeley.eecs.ruzenafit.service;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.Locale;
-
-import org.json.JSONArray;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -39,6 +33,8 @@ import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Log;
 import edu.berkeley.eecs.ruzenafit.R;
+import edu.berkeley.eecs.ruzenafit.access.FileAccessHelper;
+import edu.berkeley.eecs.ruzenafit.access.GoogleAppEngineHelper;
 import edu.berkeley.eecs.ruzenafit.activity.WorkoutTrackerActivity;
 import edu.berkeley.eecs.ruzenafit.model.WorkoutTick;
 import edu.berkeley.eecs.ruzenafit.util.Constants;
@@ -400,10 +396,7 @@ public class WorkoutTrackerService extends Service {
 					mMostrecent_GPS_Longitude = (float) loc.getLongitude();
 					mMostrecent_GPS_Altitude = (float) loc.getAltitude();
 					mMostrecent_GPS_Speed = loc.getSpeed();
-					if (loc.hasAccuracy())
-						mMostrecent_GPS_HasAccuracy = 1;
-					else
-						mMostrecent_GPS_HasAccuracy = 0;
+					mMostrecent_GPS_HasAccuracy = loc.hasAccuracy() ? 1 : 0;
 					mMostrecent_GPS_Accuracy = loc.getAccuracy();
 					mMostrecent_Provider = loc.getProvider();
 
@@ -644,53 +637,15 @@ public class WorkoutTrackerService extends Service {
 				long currenttime = System.currentTimeMillis();
 				mMostrecent_System_Time = currenttime;
 
-				// write to file
-				writeFile();
+				// write to File
+				writeEEDataToFile();
 
-				// FIXME: This is where I add server code.
-				WorkoutTick[] workoutTicks = getAllWorkoutDataFromFile();
-
-				/*
-				 * // post to server only on certain intervals if (postcounter >
-				 * POSTINTERVAL) { // write to website server with POST
-				 * request... // Create a new HttpClient and Post Header Thread
-				 * httpthread = new Thread() { public void run() {
-				 * 
-				 * HttpClient httpclient = new DefaultHttpClient(); HttpPost
-				 * httppost = new
-				 * HttpPost("http://calfitd.dyndns.org/PHAST/CalFitd/index.php"
-				 * );
-				 * 
-				 * try { // Add your data List<NameValuePair> nameValuePairs =
-				 * new ArrayList<NameValuePair>(2); nameValuePairs.add(new
-				 * BasicNameValuePair("imei", imei)); nameValuePairs.add(new
-				 * BasicNameValuePair("time",
-				 * ((Integer)(mMostrecent_Time)).toString()));
-				 * nameValuePairs.add(new BasicNameValuePair("lat",
-				 * geofmt.format(mMostrecent_GPS_Latitude)));
-				 * nameValuePairs.add(new BasicNameValuePair("lon",
-				 * geofmt.format(mMostrecent_GPS_Longitude)));
-				 * nameValuePairs.add(new BasicNameValuePair("speed",
-				 * genfmt.format(mMostrecent_GPS_Speed)));
-				 * nameValuePairs.add(new BasicNameValuePair("alt",
-				 * genfmt.format(mMostrecent_GPS_Altitude)));
-				 * nameValuePairs.add(new BasicNameValuePair("v",
-				 * genfmt.format(localV))); nameValuePairs.add(new
-				 * BasicNameValuePair("h", genfmt.format(localH)));
-				 * nameValuePairs.add(new BasicNameValuePair("kcal",
-				 * genfmt.format(mMostrecent_kCal))); httppost.setEntity(new
-				 * UrlEncodedFormEntity(nameValuePairs));
-				 * 
-				 * // Execute HTTP Post Request ResponseHandler<String>
-				 * responseHandler = new BasicResponseHandler(); String
-				 * responseBody = httpclient.execute(httppost, responseHandler);
-				 * // HttpResponse response = httpclient.execute(httppost);
-				 * 
-				 * } catch (Exception e) { Log.e(getClass().getSimpleName(),
-				 * "HTTP error: " + e.getMessage()); } } }; httpthread.start();
-				 * postcounter = 0; } else { postcounter++; }
-				 */
-
+				// retrieve *all* workout ticks from File
+				WorkoutTick[] workoutTicks = FileAccessHelper.getAllWorkoutDataFromFile();
+				
+				// attempt to silently send data up to GAE
+				GoogleAppEngineHelper.checkBatchSizeAndSendDataToGAE(workoutTicks, mContext);
+				
 				// reset the counters
 				accum_minute_V = 0;
 				accum_minute_H = 0;
@@ -698,49 +653,10 @@ public class WorkoutTrackerService extends Service {
 			}
 		}
 	}
-	
-	/**
-	 * Helper method to read all workout data currently on File.
-	 */
-	private static WorkoutTick[] getAllWorkoutDataFromFile() {
-		
-		ArrayList<WorkoutTick> workoutTicks = new ArrayList<WorkoutTick>();
-		
-		try {
-			// TODO: String literal.
-			File root = new File(Environment.getExternalStorageDirectory()
-					+ "/CalFitD");
-			
-			// If there isn't a folder called "/CalFitD", then don't even bother reading.
-			if (!root.exists()) {
-				return null;
-			}
-			
-			// Read each line from "CalFitEE.txt" as a string
-			if (root.canRead()) {
-				File calfitEE = new File(root, "CalFitEE.txt");
-				BufferedReader bufferedReader = new BufferedReader(new FileReader(calfitEE));
-				String lineOfInput = null;
-				
-				// Each line will be temporarily stored in 'lineOfInput'
-				while ((lineOfInput = bufferedReader.readLine()) != null) {
-					workoutTicks.add(WorkoutTick.parseEdmundish(lineOfInput));
-				}
-				
-				Log.d(TAG, "Parsed " + workoutTicks.size() + " workout ticks from File");
-			}
-		}
-		catch (Exception e) {
-			Log.e(TAG, "Could not getAllWorkoutDataFromFile(): " + e.getMessage());
-		}
-		
-		return workoutTicks.toArray(new WorkoutTick[workoutTicks.size()]);
-	}
-
 	/**
 	 * This method writes true kCal data to "/CalfitD/CalFitEE.txt" 
 	 */
-	private static void writeFile() {
+	private static void writeEEDataToFile() {
 		File myfile;
 		String state = Environment.getExternalStorageState();
 

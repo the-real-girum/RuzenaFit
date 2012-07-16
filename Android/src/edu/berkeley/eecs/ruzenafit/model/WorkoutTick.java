@@ -1,6 +1,10 @@
 package edu.berkeley.eecs.ruzenafit.model;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.util.Log;
+import android.widget.Toast;
 
 /**
  * A model for each particular save point of a Workout. There is exactly one of
@@ -38,6 +42,8 @@ public class WorkoutTick {
 	private float kCal;
 	private double accumMinuteV;
 	private double accumMinuteH;
+	
+	// FIXME: Add a field in here for the currently set privacy setting.
 
 	public WorkoutTick(String imei, long time, float latitude, float longitude,
 			float altitude, float speed, float hasAccuracy, float accuracy,
@@ -179,6 +185,7 @@ public class WorkoutTick {
 		// Attempt to take all of the pieces and put them into their
 		// respective data types.
 		try {
+			// TODO: MAGIC NUMBERS, GROSS!!  How can I non-trivially solve this while still using CSV?
 			String imei = explodedEdmundish[0];
 			long gpsTime = Long.parseLong(explodedEdmundish[1]);
 			long systemTime = Long.parseLong(explodedEdmundish[2]);
@@ -199,6 +206,31 @@ public class WorkoutTick {
 			Log.e(TAG, "Unable to parse Edmundish: " + e.getMessage());
 			return null;
 		}
+	}
+	
+	/**
+	 * Returns a JSON representation of this WorkoutTick
+	 */
+	public JSONObject toJSON() {
+		JSONObject workoutJSONObject = new JSONObject();
+
+		try {
+			workoutJSONObject.put(WorkoutTick.KEY_KCALS, 			"" + this.getkCal());
+			workoutJSONObject.put(WorkoutTick.KEY_SYSTEM_TIME, 	"" + this.getSystemTime());
+			workoutJSONObject.put(WorkoutTick.KEY_LATITUDE, 		"" + this.getLatitude());
+			workoutJSONObject.put(WorkoutTick.KEY_LONGITUDE, 		"" + this.getLongitude());
+			workoutJSONObject.put(WorkoutTick.KEY_SPEED, 			"" + this.getSpeed());
+			workoutJSONObject.put(WorkoutTick.KEY_ALTITUDE, 		"" + this.getAltitude());
+			workoutJSONObject.put(WorkoutTick.KEY_HAS_ACCURACY,	"" + this.getHasAccuracy());
+			workoutJSONObject.put(WorkoutTick.KEY_ACCURACY, 		"" + this.getAccuracy());
+			workoutJSONObject.put(WorkoutTick.KEY_ACCUM_MINUTE_V, "" + this.getAccumMinuteV());
+			workoutJSONObject.put(WorkoutTick.KEY_ACCUM_MINUTE_H, "" + this.getAccumMinuteH());
+			workoutJSONObject.put(WorkoutTick.KEY_GPS_TIME, 		"" + this.getTime());
+		} catch (JSONException e) {
+			Log.e(TAG, "JSON Error occurred: " + e.getMessage());
+		}
+		
+		return workoutJSONObject;
 	}
 
 }

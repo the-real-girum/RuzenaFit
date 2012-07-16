@@ -12,10 +12,10 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
-import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 import edu.berkeley.eecs.ruzenafit.model.WorkoutTick;
@@ -37,53 +37,109 @@ public class GoogleAppEngineHelper {
 	
 	private static String deviceID = "";
 	
-	// TODO: Change this to be one POST request, as opposed to one POST request for each workout.
+	// FIXME: Asynchronize this whole process.
+	/**
+	 *  If we have enough {@link WorkoutTick}s to send, then start attempting
+	 *  to silently send this data up to GAE.
+	 * 
+	 *  This uses <a href="http://en.wikipedia.org/wiki/Exponential_backoff">exponential backoff</a>.
+	 * @param workoutTicks
+	 */
+	public static void checkBatchSizeAndSendDataToGAE(WorkoutTick[] workoutTicks, Context context) {
+		
+		// If we don't have enough workout ticks to call this a "batch," then forget about it.
+		if (workoutTicks.length < Constants.BATCH_SIZE) {
+			return;
+		}
+		
+		// Load up the SharedPreferences for this app
+		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+		SharedPreferences.Editor editor = preferences.edit();
+		
+		// Find out how many unsuccessful GAE attempts we've had so far 
+		int ticksSinceLastSuccessfulUpload = preferences.getInt(Constants.TICKS_SINCE_LAST_SUCCESSFUL_UPLOAD, -1);
+		
+		// If this is the first ever GAE attempt, then reset the unsuccessful attempts to 0
+		if (ticksSinceLastSuccessfulUpload == -1) {
+			Log.d(TAG, "First ever GAE attempt -- setting ticksSinceLastSuccessfulUpload to 0");
+			
+			ticksSinceLastSuccessfulUpload = 0;
+			editor.putInt(Constants.TICKS_SINCE_LAST_SUCCESSFUL_UPLOAD, ticksSinceLastSuccessfulUpload);
+			editor.commit();
+		}
+		
+		// FIXME: Put this back in when done debugging network code.
+//		// If this is NOT the first tick since the last successful upload, then only send data
+//		// once every 2^n ticks (see "Exponential Backoff").
+//		if (!isPowerOfTwo(ticksSinceLastSuccessfulUpload)) {
+//			Log.d(TAG, "Will not upload data on the #" + ticksSinceLastSuccessfulUpload + " upload after fail");
+//			editor.putInt(Constants.TICKS_SINCE_LAST_SUCCESSFUL_UPLOAD, ++ticksSinceLastSuccessfulUpload);
+//			editor.commit();
+//			return;
+//		}
+		
+		// Attempt to upload data to GAE
+		int result = submitDataToGAE(workoutTicks, context);
+		
+		if (result != -1) {
+			// Let the user know of the success
+			Log.d(TAG, "Successfully uploaded workout data to GAE");
+			Toast.makeText(context,
+					"Successfully uploaded workout data to server.",
+					Toast.LENGTH_SHORT).show();
+			
+			// Reset the ticks since last success back to 0, since we just had a success.
+			editor.putInt(Constants.TICKS_SINCE_LAST_SUCCESSFUL_UPLOAD, 0);
+			editor.commit();
+			
+			// TODO: Delete old data from File.
+		}
+		else {
+			// Let the user know of the failure
+			Log.e(TAG, "Error on uploading data to GAE");
+			Toast.makeText(context, 
+					"Couldn't upload workout data to server.  Check your Internet connection.", 
+					Toast.LENGTH_SHORT).show();
+			
+			// Add 1 to "ticks since last successful," since we just had a tick that did NOT successfully upload.
+			editor.putInt(Constants.TICKS_SINCE_LAST_SUCCESSFUL_UPLOAD, ++ticksSinceLastSuccessfulUpload);
+			editor.commit();
+		}
+		
+	}
+	
+	/**
+	 * Tiny, fast helper function to determine if a number is a power of two.
+	 * @param n
+	 * @return
+	 */
+	private static boolean isPowerOfTwo(int n) {
+		return ((n!=0) && (n&(n-1))==0);
+	}	
+
 	/**
 	 * Submits data to Google App Engine (Girum's account, as set by URL).
 	 * Returns the number of successful GAE submissions.
 	 */
-	public static int submitDataToGAE(WorkoutTick[] allWorkouts, String userEmail, String privacySetting, Activity activity) {
+	private static int submitDataToGAE(WorkoutTick[] allWorkouts, Context context) {
 		
 		// Make a JSON array of "workout ticks."
 		JSONArray workoutsJSONArray = new JSONArray();
 		
 		for (WorkoutTick workout : allWorkouts) {
-			// Each "workout tick" is a single JSON object
-			JSONObject workoutJSONObject = new JSONObject();
-			
-			// Throw each part of the WorkoutTick into this JSON object
-			try {
-				//intentionally omitted... added in later, once, at the top of the POST request.
-//				workoutJSONObject.put(WorkoutTick.KEY_IMEI, 			workout.getImei());  
-				workoutJSONObject.put(WorkoutTick.KEY_KCALS, 			"" + workout.getkCal());
-				workoutJSONObject.put(WorkoutTick.KEY_SYSTEM_TIME, 	"" + workout.getSystemTime());
-				workoutJSONObject.put(WorkoutTick.KEY_LATITUDE, 		"" + workout.getLatitude());
-				workoutJSONObject.put(WorkoutTick.KEY_LONGITUDE, 		"" + workout.getLongitude());
-				workoutJSONObject.put(WorkoutTick.KEY_SPEED, 			"" + workout.getSpeed());
-				workoutJSONObject.put(WorkoutTick.KEY_ALTITUDE, 		"" + workout.getAltitude());
-				workoutJSONObject.put(WorkoutTick.KEY_HAS_ACCURACY,	"" + workout.getHasAccuracy());
-				workoutJSONObject.put(WorkoutTick.KEY_ACCURACY, 		"" + workout.getAccuracy());
-				workoutJSONObject.put(WorkoutTick.KEY_ACCUM_MINUTE_V, "" + workout.getAccumMinuteV());
-				workoutJSONObject.put(WorkoutTick.KEY_ACCUM_MINUTE_H, "" + workout.getAccumMinuteH());
-				workoutJSONObject.put(WorkoutTick.KEY_GPS_TIME, 		"" + workout.getTime());
-			} catch (JSONException jsonException) {
-				Log.e(TAG, "JSON Error occurred: " + jsonException.getMessage());
-				Toast.makeText(activity.getApplicationContext(), "JSON exception occurred: " + jsonException.getMessage(), 3).show();
-			}
-			
 			// Throw this JSONObject into the whole JSONArray.
-			workoutsJSONArray.put(workoutJSONObject);	
+			workoutsJSONArray.put(workout.toJSON());
 		}
 		
-		Log.d(TAG, workoutsJSONArray.toString());
+		Log.d(TAG, "Submitting the following JSON string: " + workoutsJSONArray.toString());
 		
 		// TODO: Send this array to GAE through the network layer.
 		// Throw all of the fields of the workout into a list of nameValuePairs for
 		// the POST request to use.
 		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 		
-		// Retrieve the phone's IMEI from SharedPreferences
-		SharedPreferencesHelper sharedPreferencesHelper = new SharedPreferencesHelper(activity);
+		// Retrieve the phone's IMEI from SharedPreferences  TODO: Make this helper an object and save this SharedPrefs data.
+		SharedPreferencesHelper sharedPreferencesHelper = new SharedPreferencesHelper(context);
 		String imei = sharedPreferencesHelper.retrieveValueForString(WorkoutTick.KEY_IMEI);
 		if (imei == null) {
 			Log.e(TAG, "IMEI not set.");
@@ -96,13 +152,10 @@ public class GoogleAppEngineHelper {
 		
 		// Execute the POST request
 		int successfulSubmissions = executePOSTRequest(nameValuePairs);
-		Toast.makeText(activity.getApplicationContext(), 
-				"Successfully submitted " + successfulSubmissions + " workout \"ticks\"", 3).show();
 		
 		return successfulSubmissions;
 	}
 	
-	// TODO: Asynchronize this.
 	/**
 	 * Executes the POST request.
 	 * 
@@ -127,7 +180,7 @@ public class GoogleAppEngineHelper {
 			Log.e(TAG, "ERROR: " + e.getMessage());
 			return -1;
 		}
-		return 0;
+		return 1;
 	}
 	
 //	/**

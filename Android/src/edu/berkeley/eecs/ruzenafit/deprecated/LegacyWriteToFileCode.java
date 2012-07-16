@@ -1,4 +1,4 @@
-package edu.berkeley.eecs.ruzenafit.legacy;
+package edu.berkeley.eecs.ruzenafit.deprecated;
 
 public class LegacyWriteToFileCode {
 	

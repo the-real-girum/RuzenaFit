@@ -1,8 +1,6 @@
 package edu.berkeley.eecs.ruzenafit.activity;
 
 import android.app.Activity;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,9 +10,6 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 import edu.berkeley.eecs.ruzenafit.R;
-import edu.berkeley.eecs.ruzenafit.access.DBConn;
-import edu.berkeley.eecs.ruzenafit.access.DBHelper;
-import edu.berkeley.eecs.ruzenafit.access.GoogleAppEngineHelper;
 import edu.berkeley.eecs.ruzenafit.access.SharedPreferencesHelper;
 import edu.berkeley.eecs.ruzenafit.model.WorkoutTick;
 import edu.berkeley.eecs.ruzenafit.util.Constants;
@@ -33,66 +28,67 @@ public class RankingActivity extends Activity {
 		@Override
 		protected WorkoutTick[] doInBackground(Void... params) {
 			
-			WorkoutTick[] workouts;
+			WorkoutTick[] workouts = null;
 			
-			// Prep for DB insertion
-			DBConn dbHelper = new DBConn(getApplicationContext(), "dbName", null, 1);
-			SQLiteDatabase database = dbHelper.getWritableDatabase();
-
-			// Perform the actual query
-			Cursor cursor = database.query(Constants.WORKOUT_TABLE, new String[] {
-						WorkoutTick.KEY_IMEI,
-						WorkoutTick.KEY_KCALS,
-						WorkoutTick.KEY_SYSTEM_TIME,
-						WorkoutTick.KEY_LATITUDE,
-						WorkoutTick.KEY_LONGITUDE,
-						WorkoutTick.KEY_SPEED,
-						WorkoutTick.KEY_ALTITUDE,
-						WorkoutTick.KEY_HAS_ACCURACY,
-						WorkoutTick.KEY_ACCURACY,
-						WorkoutTick.KEY_ACCUM_MINUTE_V,
-						WorkoutTick.KEY_ACCUM_MINUTE_H,
-						WorkoutTick.KEY_GPS_TIME}, 
-					null, null, null, null, null);
-
-			// Instantiate the array that we're going to return, now that we know the length
-			int length = cursor.getCount();
-			workouts = new WorkoutTick[length];
-
-			// Iterate through the returned query
-			int i = 0;
-			cursor.moveToFirst();
-			while (!cursor.isAfterLast()) {
-				
-				// Debug output.
-				Log.d(TAG, "["+i+"] Delta kCals:  " + cursor.getFloat(cursor.getColumnIndex(WorkoutTick.KEY_KCALS)));
-				Log.d(TAG, "["+i+"] System time: " + cursor.getString(cursor.getColumnIndex(WorkoutTick.KEY_SYSTEM_TIME)));
-				
-				// Instantiate a new workout object using the data from the query. 
-				WorkoutTick workout = new WorkoutTick(
-						cursor.getString(cursor.getColumnIndex(WorkoutTick.KEY_IMEI)), 
-						cursor.getLong(cursor.getColumnIndex(WorkoutTick.KEY_GPS_TIME)), 
-						cursor.getFloat(cursor.getColumnIndex(WorkoutTick.KEY_LATITUDE)), 
-						cursor.getFloat(cursor.getColumnIndex(WorkoutTick.KEY_LONGITUDE)), 
-						cursor.getFloat(cursor.getColumnIndex(WorkoutTick.KEY_ALTITUDE)), 
-						cursor.getFloat(cursor.getColumnIndex(WorkoutTick.KEY_SPEED)), 
-						cursor.getFloat(cursor.getColumnIndex(WorkoutTick.KEY_HAS_ACCURACY)), 
-						cursor.getFloat(cursor.getColumnIndex(WorkoutTick.KEY_ACCURACY)), 
-						cursor.getLong(cursor.getColumnIndex(WorkoutTick.KEY_SYSTEM_TIME)), 
-						cursor.getFloat(cursor.getColumnIndex(WorkoutTick.KEY_KCALS)), 
-						cursor.getDouble(cursor.getColumnIndex(WorkoutTick.KEY_ACCUM_MINUTE_V)), 
-						cursor.getDouble(cursor.getColumnIndex(WorkoutTick.KEY_ACCUM_MINUTE_H)));
-
-				publishProgress((int) ((i / (float)length ) * 100));
-				
-				// Throw the new object into the array and move on
-				workouts[i++] = workout;
-				cursor.moveToNext();
-			}
-
-			// Don't forget to close cursors and databases!
-			cursor.close();
-			database.close();
+//			// Prep for DB insertion
+////			DBConn dbHelper = new DBConn(getApplicationContext(), "dbName", null, 1);
+////			SQLiteDatabase database = dbHelper.getWritableDatabase();
+//
+//			// Perform the actual query
+//			Cursor cursor = null; 
+////					database.query(Constants.WORKOUT_TABLE, new String[] {
+////						WorkoutTick.KEY_IMEI,
+////						WorkoutTick.KEY_KCALS,
+////						WorkoutTick.KEY_SYSTEM_TIME,
+////						WorkoutTick.KEY_LATITUDE,
+////						WorkoutTick.KEY_LONGITUDE,
+////						WorkoutTick.KEY_SPEED,
+////						WorkoutTick.KEY_ALTITUDE,
+////						WorkoutTick.KEY_HAS_ACCURACY,
+////						WorkoutTick.KEY_ACCURACY,
+////						WorkoutTick.KEY_ACCUM_MINUTE_V,
+////						WorkoutTick.KEY_ACCUM_MINUTE_H,
+////						WorkoutTick.KEY_GPS_TIME}, 
+////					null, null, null, null, null);
+//
+//			// Instantiate the array that we're going to return, now that we know the length
+//			int length = cursor.getCount();
+//			workouts = new WorkoutTick[length];
+//
+//			// Iterate through the returned query
+//			int i = 0;
+//			cursor.moveToFirst();
+//			while (!cursor.isAfterLast()) {
+//				
+//				// Debug output.
+//				Log.d(TAG, "["+i+"] Delta kCals:  " + cursor.getFloat(cursor.getColumnIndex(WorkoutTick.KEY_KCALS)));
+//				Log.d(TAG, "["+i+"] System time: " + cursor.getString(cursor.getColumnIndex(WorkoutTick.KEY_SYSTEM_TIME)));
+//				
+//				// Instantiate a new workout object using the data from the query. 
+//				WorkoutTick workout = new WorkoutTick(
+//						cursor.getString(cursor.getColumnIndex(WorkoutTick.KEY_IMEI)), 
+//						cursor.getLong(cursor.getColumnIndex(WorkoutTick.KEY_GPS_TIME)), 
+//						cursor.getFloat(cursor.getColumnIndex(WorkoutTick.KEY_LATITUDE)), 
+//						cursor.getFloat(cursor.getColumnIndex(WorkoutTick.KEY_LONGITUDE)), 
+//						cursor.getFloat(cursor.getColumnIndex(WorkoutTick.KEY_ALTITUDE)), 
+//						cursor.getFloat(cursor.getColumnIndex(WorkoutTick.KEY_SPEED)), 
+//						cursor.getFloat(cursor.getColumnIndex(WorkoutTick.KEY_HAS_ACCURACY)), 
+//						cursor.getFloat(cursor.getColumnIndex(WorkoutTick.KEY_ACCURACY)), 
+//						cursor.getLong(cursor.getColumnIndex(WorkoutTick.KEY_SYSTEM_TIME)), 
+//						cursor.getFloat(cursor.getColumnIndex(WorkoutTick.KEY_KCALS)), 
+//						cursor.getDouble(cursor.getColumnIndex(WorkoutTick.KEY_ACCUM_MINUTE_V)), 
+//						cursor.getDouble(cursor.getColumnIndex(WorkoutTick.KEY_ACCUM_MINUTE_H)));
+//
+//				publishProgress((int) ((i / (float)length ) * 100));
+//				
+//				// Throw the new object into the array and move on
+//				workouts[i++] = workout;
+//				cursor.moveToNext();
+//			}
+//
+//			// Don't forget to close cursors and databases!
+//			cursor.close();
+////			database.close();
 			
 			return workouts;
 		}
@@ -164,11 +160,11 @@ public class RankingActivity extends Activity {
 		String privacySetting = sharedPreferencesHelper.retrieveValueForString(Constants.PRIVACY_SETTING);
 		
 		// Network layer
-		GoogleAppEngineHelper.submitDataToGAE(
-				DBHelper.retrieveWorkouts(getApplicationContext()), 
-				imei, 
-				privacySetting,
-				this);
+//		GoogleAppEngineHelper.submitDataToGAE(
+//				DBHelper.retrieveWorkouts(getApplicationContext()), 
+//				imei, 
+//				privacySetting,
+//				this);
 	}
 
 	private void explicitRetrieve() {

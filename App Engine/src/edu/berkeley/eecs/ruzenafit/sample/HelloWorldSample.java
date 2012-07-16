@@ -18,6 +18,6 @@ public class HelloWorldSample {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public WorkoutTick sayXMLHello() {
-		return new WorkoutTick("test imei", 0, 0, 0, 0, 0, 0, 0, "test system time", 0, 0, 0);
+		return new WorkoutTick(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 	}
 }
