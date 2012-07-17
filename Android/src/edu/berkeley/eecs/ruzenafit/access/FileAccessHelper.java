@@ -36,7 +36,8 @@ public class FileAccessHelper {
 				BufferedReader bufferedReader = new BufferedReader(new FileReader(calfitEE));
 				String lineOfInput = null;
 				
-				int totalTicksSent = new SharedPreferencesHelper(context).getTotalTicksSent();
+				int totalTicksSent = context.getSharedPreferences(Constants.PREFS_NAMESPACE, 0)
+						.getInt(Constants.TOTAL_TICKS_SENT, -1);
 				Log.d(TAG, "totalTicksSent: " + totalTicksSent);
 				
 				// Parse each line of "Edmund-ish" into WorkoutTicks, doing data integrity checks as you go.

@@ -618,33 +618,27 @@ public class WorkoutTrackerService extends Service {
 			counter++;
 
 			if (counter >= (EEinterval / (float) (windowtimemillisec / 1000))) {
-				// EEact(k) = a*H^p1 + b*V^p2
-				//
-				// assume: mass(kg) = 80 kg
-				// gender = 1 (male)
-				//
-				// a = (12.81 * mass(kg) + 843.22) / 1000 = 1.87
-				// b = (38.90 * mass(kg) - 682.44 * gender(1=male,2=female) +
-				// 692.50)/1000 = 3.12
-				// p1 = (2.66 * mass(kg) + 146.72)/1000 = 0.36
-				// p2 = (-3.85 * mass(kg) + 968.28)/1000 = 0.66
-
-				// EE in units kcal/minute --> EE_minute
-				// the 4.184 is to convert from KJ to kilocalories
+				
+				/*********************** Some math notes ***********************
+				 *  EEact(k) = a*H^p1 + b*V^p2
+				 *	
+				 *	assume: mass(kg) = 80 kg
+				 *	gender = 1 (male)
+				 *	
+				 * 	a = (12.81 * mass(kg) + 843.22) / 1000 = 1.87
+				 * 	b = (38.90 * mass(kg) - 682.44 * gender(1=male,2=female) +
+				 * 	692.50)/1000 = 3.12
+				 *	p1 = (2.66 * mass(kg) + 146.72)/1000 = 0.36
+				 *	p2 = (-3.85 * mass(kg) + 968.28)/1000 = 0.66
+				 *
+				 *	EE in units kcal/minute --> EE_minute
+				 *	the 4.184 is to convert from KJ to kilocalories
+				 ****************************************************************/
 				EE_minute = (1.87 * Math.pow(accum_minute_H, 0.36) + 3.12 * Math
 						.pow(accum_minute_V, 0.66)) / 4.184;
 				mMostrecent_kCal = (float) EE_minute;
 
 				Log.i(TAG, "*** EE result: " + genfmt.format(EE_minute));
-
-				// TODO: Is this where we'll put our "binning" of GPS locations?
-				// activity-based thresholding of GPS
-				/*
-				 * if ((mMostrecent_kCal < lowactivitythresholdforGPS) &&
-				 * (GPSstatus==1)) { stopGPS(); } else if ((mMostrecent_kCal >=
-				 * lowactivitythresholdforGPS) && (GPSstatus==0)) { startGPS();
-				 * }
-				 */
 
 				// Returns the current system time in milliseconds since January
 				// 1, 1970 00:00:00 UTC.
@@ -668,6 +662,7 @@ public class WorkoutTrackerService extends Service {
 			}
 		}
 	}
+	
 	/**
 	 * This method writes true kCal data to "/CalfitD/CalFitEE.txt" 
 	 */

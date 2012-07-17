@@ -14,6 +14,7 @@ import edu.berkeley.eecs.ruzenafit.access.SharedPreferencesHelper;
 import edu.berkeley.eecs.ruzenafit.model.WorkoutTick;
 import edu.berkeley.eecs.ruzenafit.util.Constants;
 
+// FIXME: Change this whole activity to be a programmatic display of current rankings.
 public class RankingActivity extends Activity {
 	private static final String TAG = RankingActivity.class.getSimpleName();
 
@@ -21,8 +22,8 @@ public class RankingActivity extends Activity {
 	Button displayWorkouts, explicitSend, explicitRetrieve;
 	ProgressBar progressBar;
 	
-	// TODO: Move this out of the controller, and into a network or DB layer
-	// TODO: Change this one workout task to be used for all of the different network buttonss
+	// Move this out of the controller, and into a network or DB layer
+	// Change this one workout task to be used for all of the different network buttonss
 	private class RetrieveWorkoutsTask extends AsyncTask<Void, Integer, WorkoutTick[]> {
 
 		@Override

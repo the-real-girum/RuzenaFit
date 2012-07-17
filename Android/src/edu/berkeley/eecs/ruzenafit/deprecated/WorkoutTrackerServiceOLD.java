@@ -35,7 +35,7 @@ package edu.berkeley.eecs.ruzenafit.deprecated;
 //import edu.berkeley.eecs.ruzenafit.util.Constants;
 //import edu.berkeley.eecs.ruzenafit.util.KCalUtils;
 //
-//// TODO: Decompose this monster.
+////Decompose this monster.
 //public class WorkoutTrackerService extends Service {
 //	private static final String TAG = "WorkoutTrackerService";
 //	private static Context mContext;
@@ -106,7 +106,7 @@ package edu.berkeley.eecs.ruzenafit.deprecated;
 //	static DecimalFormat geofmt = new DecimalFormat(geoformat,
 //			new DecimalFormatSymbols(Locale.US));
 //
-//	// TODO: What's this?
+//	// What's this?
 //	protected void onResume() {
 //		//super.onResume();
 //		SharedPreferences preferences = getSharedPreferences(
@@ -195,7 +195,7 @@ package edu.berkeley.eecs.ruzenafit.deprecated;
 //		// fileNum = 0;
 //		// fileNumGPS = 0;
 //
-//		// TODO: Replace with code to write to disk?
+//		// Replace with code to write to disk?
 //		// FindNewFiles();
 //
 //		// this is needed to keep the service alive on Android 2.0+ systems
@@ -279,7 +279,6 @@ package edu.berkeley.eecs.ruzenafit.deprecated;
 //	/*************************************************************
 //	 * Kcal stuff
 //	 *************************************************************/
-//	// TODO: Change this to a proper class
 //	private static class Kcal extends Thread {
 //		@Override
 //		public void run() {
@@ -372,7 +371,7 @@ package edu.berkeley.eecs.ruzenafit.deprecated;
 //					mMostrecent_GPS_HasAccuracy = 0;
 //				mMostrecent_GPS_Accuracy = loc.getAccuracy();
 //			} else {
-//				// TODO: Change this whole service to NOT EVEN START if 
+//				// Change this whole service to NOT EVEN START if 
 //				// location services won't work.  That is, check to make 
 //				// sure that location is not null before you start this
 //				// service.
@@ -412,7 +411,7 @@ package edu.berkeley.eecs.ruzenafit.deprecated;
 //					// java.lang.System.currentTimeMillis(); // done above the
 //					// Log.i()
 //
-//					// TODO: IF GPS IS DISABLED ON THE PHONE, then disable
+//					// IF GPS IS DISABLED ON THE PHONE, then disable
 //					// tracking
 //					// and tell the user.
 //					mMostrecent_GPS_Latitude = (float) loc.getLatitude();
@@ -535,7 +534,7 @@ package edu.berkeley.eecs.ruzenafit.deprecated;
 //								+ genfmt.format(event.values[2]));
 //
 //						// write detail accelerometry to file. 
-//						// TODO: Replace with code to write to disk?
+//						// Replace with code to write to disk?
 //						// writeFileDetailNew2();
 //
 //						// calculate sample window part of kcal
@@ -651,10 +650,10 @@ package edu.berkeley.eecs.ruzenafit.deprecated;
 //		// Go ahead and insert this "tick" into the internal SQLite database.
 //		DBHelper.insertWorkoutIntoDatabase(workout, mContext);
 //		
-//		// TODO: Count up the number of "ticks" we've had so far.
+//		// Count up the number of "ticks" we've had so far.
 //		
 //		
-//		// TODO: If we have enough unsent "ticks" to batch up, then batch up 
+//		// If we have enough unsent "ticks" to batch up, then batch up 
 //		// the unsent "ticks" and send it over to the server.
 //	}
 //

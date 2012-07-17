@@ -55,8 +55,8 @@ package edu.berkeley.eecs.ruzenafit.deprecated;
 //		// Don't forget to close your databases and cursors!
 //		database.close();
 //		
-//		// TODO: Check for batch level, and if it's time to upload to GAE, then do it.
-//		// TODO: If network access fails, consider bringing up a notification saying
+//		// Check for batch level, and if it's time to upload to GAE, then do it.
+//		// If network access fails, consider bringing up a notification saying
 //		// that you can't connect to the network.
 //	}
 //	

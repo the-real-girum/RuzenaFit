@@ -25,9 +25,7 @@ public class AboutActivity extends Activity {
 				Intent i = new Intent();
 				i.setAction(Intent.ACTION_VIEW);
 				i.addCategory(Intent.CATEGORY_BROWSABLE);
-				// TODO: Add Edmund to credits.
-//				i.setData(Uri.parse("http://ehs.sph.berkeley.edu/edmund/calfit/"));
-				i.setData(Uri.parse("http://girum.org"));
+				i.setData(Uri.parse("http://ehs.sph.berkeley.edu/edmund/calfit/"));
 				startActivity(i); 
         	}
         });

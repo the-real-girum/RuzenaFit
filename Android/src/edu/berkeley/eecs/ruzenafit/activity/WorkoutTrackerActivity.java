@@ -38,10 +38,6 @@ public class WorkoutTrackerActivity extends Activity {
 	static private int MENU_ABOUT = 1;
 	TextView pSetting, userName;
 
-	// TODO: Change this to be a list of two items: "Resume Data Logging",
-	// and "TURN OFF Data Logging".
-	//List<CharSequence> turnoffITEMS = new ArrayList<CharSequence>();
-	
 	private final CharSequence[] turnoffITEMS = { "resume data logging0",
 			"resume data logging1", "resume data logging2",
 			"resume data logging3", "resume data logging4",

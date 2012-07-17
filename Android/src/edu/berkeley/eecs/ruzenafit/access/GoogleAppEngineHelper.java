@@ -74,7 +74,6 @@ public class GoogleAppEngineHelper {
 	public void checkBatchSizeAndSendDataToGAE(WorkoutTick[] workoutTicks,
 			Context context) {
 
-		// FIXME: Change this to add batch size for every 100, 200, 300, etc.
 		// If we don't have enough workout ticks to call this a "batch," then
 		// forget about it.
 		if (workoutTicks.length < Constants.BATCH_SIZE) {
@@ -84,28 +83,24 @@ public class GoogleAppEngineHelper {
 
 		ticksSinceLastSuccessfulUpload = context.getSharedPreferences(Constants.PREFS_NAMESPACE, 0).
 				getInt(Constants.TICKS_SINCE_LAST_SUCCESSFUL_UPLOAD, -1);
+		SharedPreferences.Editor editor = context.getSharedPreferences(Constants.PREFS_NAMESPACE, 0).edit();
 
 		// If this is the first ever GAE attempt, then reset the unsuccessful
 		// attempts to 0
 		if (ticksSinceLastSuccessfulUpload == -1) {
 			Log.d(TAG,
 					"First ever GAE attempt -- setting ticksSinceLastSuccessfulUpload to 0");
-			SharedPreferences.Editor editor = context.getSharedPreferences(Constants.PREFS_NAMESPACE, 0).edit();
 			editor.putInt(Constants.TICKS_SINCE_LAST_SUCCESSFUL_UPLOAD, 0);
 		}
 
-		// FIXME: Put this back in when done debugging network code.
-		// // If this is NOT the first tick since the last successful upload,
-		// then only send data
-		// // once every 2^n ticks (see "Exponential Backoff").
-		// if (!isPowerOfTwo(ticksSinceLastSuccessfulUpload)) {
-		// Log.d(TAG, "Will not upload data on the #" +
-		// ticksSinceLastSuccessfulUpload + " upload after fail");
-		// editor.putInt(Constants.TICKS_SINCE_LAST_SUCCESSFUL_UPLOAD,
-		// ++ticksSinceLastSuccessfulUpload);
-		// editor.commit();
-		// return;
-		// }
+		 // If this is NOT the first tick since the last successful upload,
+		 // then only send data once every 2^n ticks (see "Exponential Backoff").
+		 if (!isPowerOfTwo(ticksSinceLastSuccessfulUpload)) {
+			 Log.d(TAG, "Will not upload data on the #" + ticksSinceLastSuccessfulUpload + " upload after fail");
+			 editor.putInt(Constants.TICKS_SINCE_LAST_SUCCESSFUL_UPLOAD, ++ticksSinceLastSuccessfulUpload);
+			 editor.commit();
+			 return;
+		 }
 
 		// Attempt to upload data to GAE
 		submitDataToGAE(workoutTicks, context);
@@ -135,8 +130,7 @@ public class GoogleAppEngineHelper {
 		// the POST request to use.
 		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 
-		// Retrieve the phone's IMEI from SharedPreferences TODO: Make this
-		// helper an object and save this SharedPrefs data.
+		// Retrieve the phone's IMEI from SharedPreferences 
 		SharedPreferencesHelper sharedPreferencesHelper = new SharedPreferencesHelper(
 				context);
 		String imei = sharedPreferencesHelper

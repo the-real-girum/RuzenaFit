@@ -27,8 +27,6 @@ import com.google.gson.JsonParser;
 import edu.berkeley.eecs.ruzenafit.shared.model.PrivacyPreferenceEnum;
 import edu.berkeley.eecs.ruzenafit.shared.model.WorkoutTick;
 
-// TODO: Optimize the uniqueness sanity check to ensure that you only load in all
-// of the WorkoutTicks for a user once.
 @Path("/workout")
 public class WorkoutServlet {
 	private static final Logger log = Logger.getLogger(WorkoutServlet.class.getName());
@@ -137,12 +135,14 @@ public class WorkoutServlet {
 	private boolean saveIndividualTickToDatastore(String userimei,
 			WorkoutTick newWorkoutTick, WorkoutTick[] currentWorkoutTicks) {
 
-		// Ensure that this workout tick is really a new workout tick
-		for (WorkoutTick iteratedWorkoutTick : currentWorkoutTicks) {
-			if (iteratedWorkoutTick.equals(newWorkoutTick)) {
-				return false;
-			}
-		}
+		// We don't need server-side uniqueness checks anymore, since we're only sending
+		// new workout ticks from the client's side.
+//		// Ensure that this workout tick is really a new workout tick
+//		for (WorkoutTick iteratedWorkoutTick : currentWorkoutTicks) {
+//			if (iteratedWorkoutTick.equals(newWorkoutTick)) {
+//				return false;
+//			}
+//		}
 
 		// Create a new entity to save to the datastore
 		Key userKey = KeyFactory.createKey("WorkoutTick User", userimei);
