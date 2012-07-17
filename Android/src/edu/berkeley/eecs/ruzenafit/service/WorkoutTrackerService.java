@@ -8,6 +8,8 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 
+import nu.xom.jaxen.function.ext.LowerFunction;
+
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -40,6 +42,7 @@ import edu.berkeley.eecs.ruzenafit.activity.WorkoutTrackerActivity;
 import edu.berkeley.eecs.ruzenafit.model.PrivacyPreferenceEnum;
 import edu.berkeley.eecs.ruzenafit.model.WorkoutTick;
 import edu.berkeley.eecs.ruzenafit.util.Constants;
+import edu.berkeley.eecs.ruzenafit.util.KCalUtils;
 
 public class WorkoutTrackerService extends Service {
 	private static final String TAG = WorkoutTrackerService.class
@@ -308,29 +311,9 @@ public class WorkoutTrackerService extends Service {
 		}
 
 		/******************************************
-		 * BINNING GPS
-		 * 
 		 * Note the use of MIN_TIME and MIN_DISTANCE which are only "hints" to
 		 * the android system
-		 *********************************************/
-		
-		private static int roundDownToNearestMulitpleOfThree(int n) {
-		    return n / 3 * 3;
-		}
-		
-		private static int roundDownToNearestMultipleOfThree(float n) {
-			int truncatedInteger = (int) n;
-			return roundDownToNearestMultipleOfThree(truncatedInteger);
-			}
-
-		private static int roundDownToNearestMulitpleOfFive(int n) {
-		    return n / 5 * 5;
-		}
-		
-		private static int roundDownToNearestMultipleOfFive(float n) {
-			int truncatedInteger = (int) n;
-			return roundDownToNearestMultipleOfThree(truncatedInteger);
-			}
+		 ******************************************
 
 		/******************************************
 		 * GPS stuff
@@ -339,17 +322,6 @@ public class WorkoutTrackerService extends Service {
 		 * the android system
 		 *********************************************/
 		private void startGPS() {
-			SharedPreferences preferences = mContext.getSharedPreferences(
-					Constants.PREFS_NAMESPACE, 0);
-
-			String notSet = "Privacy not set";
-			String lSet = "lowPrivacy";
-			String mSet = "mediumPrivacy";
-			String hSet = "highPrivacy";
-			
-			String p = preferences.getString(Constants.PRIVACY_SETTING,
-					notSet);
-			
 			Log.i(TAG, "startGPS!!!");
 
 			// create my locationListener
@@ -394,17 +366,33 @@ public class WorkoutTrackerService extends Service {
 				mMostrecent_System_Time = java.lang.System.currentTimeMillis();
 				mMostrecent_GPS_Time = java.lang.System.currentTimeMillis();
 
-				//IF Privacy is set to Medium: BINNS GPS Latitutde & Longitude by Multiple of 3
-				if (p.equals(mSet))
-				{
-					mMostrecent_GPS_Latitude = roundDownToNearestMultipleOfThree((float) loc.getLatitude());
-					mMostrecent_GPS_Longitude = roundDownToNearestMultipleOfThree((float) loc.getLongitude());
-				}
-				//IF Privacy is set to High: BINNS GPS Latitutde & Longitude by Multiple of 5
-				if (p.equals(hSet))
-				{
-					mMostrecent_GPS_Latitude = roundDownToNearestMultipleOfFive((float) loc.getLatitude());
-					mMostrecent_GPS_Longitude = roundDownToNearestMultipleOfFive((float) loc.getLongitude());
+				
+				// ------------------------------------------------------------------------------------------
+				// BINNING OF GPS LOCATIONS HAPPENS HERE
+				// ------------------------------------------------------------------------------------------
+				// Grab the currently set privacy setting.
+				PrivacyPreferenceEnum privacySetting = new SharedPreferencesHelper(mContext).getCurrentPrivacySetting();
+				
+				// "Bin" (or "blur") the coordinate locations based on this setting.
+				switch (privacySetting) {
+				case highPrivacy:
+					//IF Privacy is set to High: BINNS GPS Latitutde & Longitude by Multiple of 5
+					mMostrecent_GPS_Latitude = KCalUtils.roundDownToNearestMultipleOfFive((float) loc.getLatitude());
+					mMostrecent_GPS_Longitude = KCalUtils.roundDownToNearestMultipleOfFive((float) loc.getLongitude());
+					break;
+				case mediumPrivacy:
+					//IF Privacy is set to Medium: BINNS GPS Latitutde & Longitude by Multiple of 3
+					mMostrecent_GPS_Latitude = KCalUtils.roundDownToNearestMultipleOfThree((float) loc.getLatitude());
+					mMostrecent_GPS_Longitude = KCalUtils.roundDownToNearestMultipleOfThree((float) loc.getLongitude());
+					break;
+				case lowPrivacy:
+					// If we have low privacy, then don't bin the locations at all
+					mMostrecent_GPS_Latitude = (float) loc.getLatitude();
+					mMostrecent_GPS_Longitude = (float) loc.getLongitude();
+					break;
+				default:
+					Log.e(TAG, "Unknown privacy setting set");
+					break;
 				}
 
 				mMostrecent_GPS_Altitude = (float) loc.getAltitude();

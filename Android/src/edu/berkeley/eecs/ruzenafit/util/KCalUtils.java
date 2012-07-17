@@ -60,4 +60,36 @@ public class KCalUtils {
 		}
 		return res;
 	}
+	
+	/**
+	 * Utility function to round floats (used for binning).
+	 * 
+	 * @param input
+	 * @return
+	 */
+	public static int roundDownToNearestMultipleOfThree(float input) {
+		// Truncate and round the float
+		return roundIntegerToNearestMultiple((int) input, 3);
+	}
+
+	/**
+	 * Utility function to round floats (used for binning).
+	 * 
+	 * @param input
+	 * @return
+	 */
+	public static int roundDownToNearestMultipleOfFive(float input) {
+		// Truncate and round the float
+		return roundIntegerToNearestMultiple((int) input, 5);
+	}
+	
+	/**
+	 * Private
+	 * @param numberToRound
+	 * @param multipleToRoundTo
+	 * @return
+	 */
+	private static int roundIntegerToNearestMultiple(int numberToRound, int multipleToRoundTo) {
+		return numberToRound / multipleToRoundTo * multipleToRoundTo;
+	}
 }
