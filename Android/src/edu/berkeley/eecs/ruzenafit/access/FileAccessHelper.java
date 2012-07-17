@@ -9,6 +9,7 @@ import android.content.Context;
 import android.os.Environment;
 import android.util.Log;
 import edu.berkeley.eecs.ruzenafit.model.WorkoutTick;
+import edu.berkeley.eecs.ruzenafit.util.Constants;
 
 public class FileAccessHelper {
 	private static final String TAG = FileAccessHelper.class.getSimpleName();
@@ -16,12 +17,11 @@ public class FileAccessHelper {
 	/**
 	 * Helper method to read all workout data currently on File.
 	 */
-	public static WorkoutTick[] getAllWorkoutDataFromFile(Context context) {
+	public static WorkoutTick[] getNewWorkoutDataFromFile(Context context) {
 		
 		ArrayList<WorkoutTick> workoutTicks = new ArrayList<WorkoutTick>();
 		
 		try {
-			// TODO: String literal.
 			File root = new File(Environment.getExternalStorageDirectory()
 					+ "/CalFitD");
 			
@@ -37,12 +37,14 @@ public class FileAccessHelper {
 				String lineOfInput = null;
 				
 				int totalTicksSent = new SharedPreferencesHelper(context).getTotalTicksSent();
+				Log.d(TAG, "totalTicksSent: " + totalTicksSent);
 				
-				// Each line will be temporarily stored in 'lineOfInput'
-				int i = 0;
-				while ((lineOfInput = bufferedReader.readLine()) != null) {
-					// Parse each line of "Edmund-ish" into WorkoutTicks, doing data integrity checks as you go.
-					if (i++ > totalTicksSent) {
+				// Parse each line of "Edmund-ish" into WorkoutTicks, doing data integrity checks as you go.
+				for (int i = 0; ((lineOfInput = bufferedReader.readLine()) != null) 
+						&& workoutTicks.size() < Constants.BATCH_SIZE; i++) {
+					// Check to only return the WorkoutTicks pertinent to this particular batch.
+					if (i > totalTicksSent && workoutTicks.size() < Constants.BATCH_SIZE) {
+						// Each line will be temporarily stored in 'lineOfInput'.
 						workoutTicks.add(WorkoutTick.parseEdmundish(lineOfInput));
 					}
 				}

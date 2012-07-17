@@ -91,19 +91,4 @@ public class SharedPreferencesHelper {
 		preferences.edit().commit();
 	}
 	
-	/**
-	 * "Getter" for totalTicksSent
-	 */
-	public int getTotalTicksSent() {
-		return preferences.getInt(Constants.TOTAL_TICKS_SENT, -1);
-	}
-	
-	/**
-	 * "Setter" for totalTicksSent
-	 */
-	public void setTotalTicksSent(int valueToSetTo) {
-		preferences.edit().putInt(Constants.TOTAL_TICKS_SENT, valueToSetTo);
-		preferences.edit().commit();
-	}
-	
 }

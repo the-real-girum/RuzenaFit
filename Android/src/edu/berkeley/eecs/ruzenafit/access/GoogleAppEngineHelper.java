@@ -16,7 +16,6 @@ import org.json.JSONArray;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 import edu.berkeley.eecs.ruzenafit.model.WorkoutTick;
@@ -79,17 +78,20 @@ public class GoogleAppEngineHelper {
 		// If we don't have enough workout ticks to call this a "batch," then
 		// forget about it.
 		if (workoutTicks.length < Constants.BATCH_SIZE) {
+			Log.d(TAG, "Not enough workouts to constitute a batch -- did NOT upload data to server");
 			return;
 		}
 
-		refreshValues();
+		ticksSinceLastSuccessfulUpload = context.getSharedPreferences(Constants.PREFS_NAMESPACE, 0).
+				getInt(Constants.TICKS_SINCE_LAST_SUCCESSFUL_UPLOAD, -1);
 
 		// If this is the first ever GAE attempt, then reset the unsuccessful
 		// attempts to 0
 		if (ticksSinceLastSuccessfulUpload == -1) {
 			Log.d(TAG,
 					"First ever GAE attempt -- setting ticksSinceLastSuccessfulUpload to 0");
-			sharedPreferencesHelper.setTicksSinceLastSuccessfulUpload(0);
+			SharedPreferences.Editor editor = context.getSharedPreferences(Constants.PREFS_NAMESPACE, 0).edit();
+			editor.putInt(Constants.TICKS_SINCE_LAST_SUCCESSFUL_UPLOAD, 0);
 		}
 
 		// FIXME: Put this back in when done debugging network code.
@@ -124,10 +126,8 @@ public class GoogleAppEngineHelper {
 			workoutsJSONArray.put(workout.toJSON());
 		}
 
-		Log.d(TAG,
-				"Asynchronously submitting the following JSON string to server: "
+		Log.d(TAG, "Asynchronously submitting the following JSON string to server: "
 						+ workoutsJSONArray.toString());
-		System.out.println(workoutsJSONArray.toString());
 
 		// TODO: Send this array to GAE through the network layer.
 		// Throw all of the fields of the workout into a list of nameValuePairs
@@ -202,6 +202,8 @@ public class GoogleAppEngineHelper {
 				return;
 			}
 
+			// This should only "succeed" after we check the response
+			// string to be OK.
 			if (!result.contains("Saved")) {
 				Toast.makeText(
 						context,
@@ -210,16 +212,22 @@ public class GoogleAppEngineHelper {
 				return;
 			}
 
-			// FIXME: This should only "succeed" after we check the response
-			// string to be OK.
 			Toast.makeText(context, "Successfully uploaded data to server.",
 					Toast.LENGTH_LONG).show();
 			
 			// Update the totalTicksSent to reflect that we've succeeded
-			SharedPreferencesHelper prefsHelper = new SharedPreferencesHelper(context);
-			int totalTicksSent = prefsHelper.getTotalTicksSent();
-			prefsHelper.setTotalTicksSent(totalTicksSent + Constants.BATCH_SIZE);
+			SharedPreferences preferences = context.getSharedPreferences(Constants.PREFS_NAMESPACE, 0);
+			int totalTicksSent = preferences.getInt(Constants.TOTAL_TICKS_SENT, -1);
 			
+			// Calculate new totalTicksSent
+			int newTotalTickSent = (totalTicksSent == -1 ? 0 : totalTicksSent) + Constants.BATCH_SIZE;
+			
+			// Set new totalTicksSent
+			SharedPreferences.Editor editor = preferences.edit();
+			editor.putInt(Constants.TOTAL_TICKS_SENT, newTotalTickSent);
+			editor.commit();
+			
+			Log.d(TAG, "Updated totalTicksSent to " + newTotalTickSent);
 		}
 
 	}

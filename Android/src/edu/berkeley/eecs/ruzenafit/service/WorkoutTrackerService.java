@@ -655,8 +655,8 @@ public class WorkoutTrackerService extends Service {
 				// write to File
 				writeEEDataToFile();
 
-				// retrieve *all* workout ticks from File
-				WorkoutTick[] workoutTicks = FileAccessHelper.getAllWorkoutDataFromFile(mContext);
+				// retrieve pertinent workout ticks from File
+				WorkoutTick[] workoutTicks = FileAccessHelper.getNewWorkoutDataFromFile(mContext);
 				
 				// attempt to silently send data up to GAE
 				new GoogleAppEngineHelper(mContext).checkBatchSizeAndSendDataToGAE(workoutTicks, mContext);
