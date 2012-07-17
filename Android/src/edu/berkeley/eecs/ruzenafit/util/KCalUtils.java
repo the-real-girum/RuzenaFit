@@ -1,5 +1,13 @@
 package edu.berkeley.eecs.ruzenafit.util;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import android.util.Log;
+import edu.berkeley.eecs.ruzenafit.access.SharedPreferencesHelper;
+import edu.berkeley.eecs.ruzenafit.model.PrivacyPreferenceEnum;
+import edu.berkeley.eecs.ruzenafit.model.WorkoutTick;
+
 public class KCalUtils {
 
 	// This is called on every sample window
@@ -92,4 +100,5 @@ public class KCalUtils {
 	private static int roundIntegerToNearestMultiple(int numberToRound, int multipleToRoundTo) {
 		return numberToRound / multipleToRoundTo * multipleToRoundTo;
 	}
+	
 }

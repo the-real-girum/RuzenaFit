@@ -6,9 +6,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
-
-import nu.xom.jaxen.function.ext.LowerFunction;
+import java.util.Map;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -365,36 +366,8 @@ public class WorkoutTrackerService extends Service {
 				mMostrecent_GPS_Time = loc.getTime();
 				mMostrecent_System_Time = java.lang.System.currentTimeMillis();
 				mMostrecent_GPS_Time = java.lang.System.currentTimeMillis();
-
-				
-				// ------------------------------------------------------------------------------------------
-				// BINNING OF GPS LOCATIONS HAPPENS HERE
-				// ------------------------------------------------------------------------------------------
-				// Grab the currently set privacy setting.
-				PrivacyPreferenceEnum privacySetting = new SharedPreferencesHelper(mContext).getCurrentPrivacySetting();
-				
-				// "Bin" (or "blur") the coordinate locations based on this setting.
-				switch (privacySetting) {
-				case highPrivacy:
-					//IF Privacy is set to High: BINNS GPS Latitutde & Longitude by Multiple of 5
-					mMostrecent_GPS_Latitude = KCalUtils.roundDownToNearestMultipleOfFive((float) loc.getLatitude());
-					mMostrecent_GPS_Longitude = KCalUtils.roundDownToNearestMultipleOfFive((float) loc.getLongitude());
-					break;
-				case mediumPrivacy:
-					//IF Privacy is set to Medium: BINNS GPS Latitutde & Longitude by Multiple of 3
-					mMostrecent_GPS_Latitude = KCalUtils.roundDownToNearestMultipleOfThree((float) loc.getLatitude());
-					mMostrecent_GPS_Longitude = KCalUtils.roundDownToNearestMultipleOfThree((float) loc.getLongitude());
-					break;
-				case lowPrivacy:
-					// If we have low privacy, then don't bin the locations at all
-					mMostrecent_GPS_Latitude = (float) loc.getLatitude();
-					mMostrecent_GPS_Longitude = (float) loc.getLongitude();
-					break;
-				default:
-					Log.e(TAG, "Unknown privacy setting set");
-					break;
-				}
-
+				mMostrecent_GPS_Latitude = (float) loc.getLatitude();
+				mMostrecent_GPS_Longitude = (float) loc.getLongitude();
 				mMostrecent_GPS_Altitude = (float) loc.getAltitude();
 				mMostrecent_GPS_Speed = loc.getSpeed();
 				mMostrecent_GPS_HasAccuracy = loc.hasAccuracy() ? 1 : 0;
@@ -434,6 +407,7 @@ public class WorkoutTrackerService extends Service {
 					// mMostrecent_System_Time =
 					// java.lang.System.currentTimeMillis(); // done above the
 					// Log.i()
+					
 					mMostrecent_GPS_Latitude = (float) loc.getLatitude();
 					mMostrecent_GPS_Longitude = (float) loc.getLongitude();
 					mMostrecent_GPS_Altitude = (float) loc.getAltitude();
@@ -686,8 +660,7 @@ public class WorkoutTrackerService extends Service {
 				WorkoutTick[] workoutTicks = FileAccessHelper.getAllWorkoutDataFromFile();
 				
 				// attempt to silently send data up to GAE
-				GoogleAppEngineHelper gaeHelper = new GoogleAppEngineHelper(mContext);
-				gaeHelper.checkBatchSizeAndSendDataToGAE(workoutTicks, mContext);
+				new GoogleAppEngineHelper(mContext).checkBatchSizeAndSendDataToGAE(workoutTicks, mContext);
 				
 				// reset the counters
 				accum_minute_V = 0;
@@ -703,11 +676,16 @@ public class WorkoutTrackerService extends Service {
 		File myfile;
 		String state = Environment.getExternalStorageState();
 
+		// JIT: Round the GPS locations based on whatever privacy settings are currently set
+		Map<String, Float> coordinates = binGPSLocations();
+		float binnedLatitude = coordinates.get(WorkoutTick.KEY_LATITUDE);
+		float binnedLongitude = coordinates.get(WorkoutTick.KEY_LONGITUDE);
+		
 		String str = imei + ","
 				+ mMostrecent_GPS_Time + ","
 				+ mMostrecent_System_Time + ","
-				+ geofmt.format(mMostrecent_GPS_Latitude) + ","
-				+ geofmt.format(mMostrecent_GPS_Longitude) + ","
+				+ geofmt.format(binnedLatitude) + ","
+				+ geofmt.format(binnedLongitude) + ","
 				+ genfmt.format(mMostrecent_GPS_Speed) + ","
 				+ genfmt.format(mMostrecent_GPS_Altitude) + ","
 				+ genfmt.format(mMostrecent_GPS_HasAccuracy) + ","
@@ -717,8 +695,7 @@ public class WorkoutTrackerService extends Service {
 				+ genfmt.format(mMostrecent_kCal);
 		
 		// Retrieve current privacy setting
-		SharedPreferencesHelper sharedPreferencesHelper = new SharedPreferencesHelper(mContext);
-		PrivacyPreferenceEnum privacySetting = sharedPreferencesHelper.getCurrentPrivacySetting();
+		PrivacyPreferenceEnum privacySetting = new SharedPreferencesHelper(mContext).getCurrentPrivacySetting();
 		
 		// Append the current privacy setting to the Edmundish string.
 		switch (privacySetting) {
@@ -904,4 +881,48 @@ public class WorkoutTrackerService extends Service {
 			}
 		}
 	}
+	
+
+	/**
+	 * Helper method to simply round the current locations that this object
+	 * has on hand.
+	 */
+	private static Map<String, Float> binGPSLocations() {
+
+		/** Maps from keys for the values to the values */
+		Map<String, Float> coordinatesMap = new HashMap<String, Float>();
+		
+		// Grab the currently set privacy setting (but grab the *correct* setting).
+		PrivacyPreferenceEnum privacySetting = new SharedPreferencesHelper(mContext).getCurrentPrivacySetting();
+		
+		// "Bin" (or "blur") the coordinate locations based on this setting.
+		switch (privacySetting) {
+		case highPrivacy:
+			//IF Privacy is set to High: BINNS GPS Latitutde & Longitude by Multiple of 5
+			coordinatesMap.put(WorkoutTick.KEY_LATITUDE, 
+					(float) KCalUtils.roundDownToNearestMultipleOfFive(mMostrecent_GPS_Latitude));
+			coordinatesMap.put(WorkoutTick.KEY_LONGITUDE,
+					(float) KCalUtils.roundDownToNearestMultipleOfFive(mMostrecent_GPS_Longitude));
+			break;
+		case mediumPrivacy:
+			//IF Privacy is set to Medium: BINNS GPS Latitutde & Longitude by Multiple of 3
+			coordinatesMap.put(WorkoutTick.KEY_LATITUDE, 
+					(float) KCalUtils.roundDownToNearestMultipleOfThree(mMostrecent_GPS_Latitude));
+			coordinatesMap.put(WorkoutTick.KEY_LONGITUDE,
+					(float) KCalUtils.roundDownToNearestMultipleOfThree(mMostrecent_GPS_Longitude));
+			break;
+		case lowPrivacy:
+			// If we have low privacy, then don't bin the locations at all
+			coordinatesMap.put(WorkoutTick.KEY_LATITUDE, 	mMostrecent_GPS_Latitude);
+			coordinatesMap.put(WorkoutTick.KEY_LONGITUDE, 	mMostrecent_GPS_Longitude);
+
+			break;
+		default:
+			Log.e(TAG, "Unknown privacy setting set");
+			break;
+		}
+		
+		return coordinatesMap;
+	}
+	
 }
