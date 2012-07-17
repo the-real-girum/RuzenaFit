@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -657,7 +656,7 @@ public class WorkoutTrackerService extends Service {
 				writeEEDataToFile();
 
 				// retrieve *all* workout ticks from File
-				WorkoutTick[] workoutTicks = FileAccessHelper.getAllWorkoutDataFromFile();
+				WorkoutTick[] workoutTicks = FileAccessHelper.getAllWorkoutDataFromFile(mContext);
 				
 				// attempt to silently send data up to GAE
 				new GoogleAppEngineHelper(mContext).checkBatchSizeAndSendDataToGAE(workoutTicks, mContext);
@@ -713,8 +712,6 @@ public class WorkoutTrackerService extends Service {
 			Log.e(TAG, "Unknown privacy setting when attempting to write to file.");
 			return;
 		}
-		
-		
 
 		if (Environment.MEDIA_MOUNTED.equals(state)) {
 			// We can read and write the media

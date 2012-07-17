@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 
+import android.content.Context;
 import android.os.Environment;
 import android.util.Log;
 import edu.berkeley.eecs.ruzenafit.model.WorkoutTick;
@@ -15,7 +16,7 @@ public class FileAccessHelper {
 	/**
 	 * Helper method to read all workout data currently on File.
 	 */
-	public static WorkoutTick[] getAllWorkoutDataFromFile() {
+	public static WorkoutTick[] getAllWorkoutDataFromFile(Context context) {
 		
 		ArrayList<WorkoutTick> workoutTicks = new ArrayList<WorkoutTick>();
 		
@@ -35,10 +36,15 @@ public class FileAccessHelper {
 				BufferedReader bufferedReader = new BufferedReader(new FileReader(calfitEE));
 				String lineOfInput = null;
 				
+				int totalTicksSent = new SharedPreferencesHelper(context).getTotalTicksSent();
+				
 				// Each line will be temporarily stored in 'lineOfInput'
+				int i = 0;
 				while ((lineOfInput = bufferedReader.readLine()) != null) {
 					// Parse each line of "Edmund-ish" into WorkoutTicks, doing data integrity checks as you go.
-					workoutTicks.add(WorkoutTick.parseEdmundish(lineOfInput));
+					if (i++ > totalTicksSent) {
+						workoutTicks.add(WorkoutTick.parseEdmundish(lineOfInput));
+					}
 				}
 				
 				Log.d(TAG, "Parsed " + workoutTicks.size() + " workout ticks from File");

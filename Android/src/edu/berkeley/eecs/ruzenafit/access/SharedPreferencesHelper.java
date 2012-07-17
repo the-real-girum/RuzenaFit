@@ -70,5 +70,40 @@ public class SharedPreferencesHelper {
 		}
 	}
 	
+	/**
+	 * "Getter" for ticksSinceLastSuccessfulUpload
+	 * 
+	 * Returns -1 if the value isn't yet set.
+	 * 
+	 * @return
+	 */
+	public int getTicksSinceLastSuccessfulUpload() {
+		return preferences.getInt(Constants.TICKS_SINCE_LAST_SUCCESSFUL_UPLOAD, -1);
+	}
+	
+	/**
+	 * "Setter" for ticksSinceLastSuccessfulUpload
+	 * @param valueToSetTo
+	 */
+	public void setTicksSinceLastSuccessfulUpload(int valueToSetTo) {
+		preferences.edit().putInt(Constants.TICKS_SINCE_LAST_SUCCESSFUL_UPLOAD,
+				valueToSetTo);
+		preferences.edit().commit();
+	}
+	
+	/**
+	 * "Getter" for totalTicksSent
+	 */
+	public int getTotalTicksSent() {
+		return preferences.getInt(Constants.TOTAL_TICKS_SENT, -1);
+	}
+	
+	/**
+	 * "Setter" for totalTicksSent
+	 */
+	public void setTotalTicksSent(int valueToSetTo) {
+		preferences.edit().putInt(Constants.TOTAL_TICKS_SENT, valueToSetTo);
+		preferences.edit().commit();
+	}
 	
 }
