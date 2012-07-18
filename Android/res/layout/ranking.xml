@@ -19,39 +19,12 @@
         android:text="@string/ranking"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
-    <Button
-        android:id="@+id/buttonSQLiteWorkouts"
-        android:layout_width="wrap_content"
+    <ListView
+        android:id="@+id/listviewRanking"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/TextView1"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="40dp"
-        android:text="Explicit Retrieve from Internal SQLite" />
-
-    <Button
-        android:id="@+id/buttonExplcitSend"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:text="Explicit Send to GAE" />
-
-    <Button
-        android:id="@+id/buttonExplicitRetrieve"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/buttonExplcitSend"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="48dp"
-        android:text="Explicit Retrieve from GAE" />
-
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true" />
+        android:layout_below="@+id/TextView1" >
+    </ListView>
 
     </RelativeLayout>
