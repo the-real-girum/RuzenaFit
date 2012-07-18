@@ -1,5 +1,6 @@
 package edu.berkeley.eecs.ruzenafit.servlet;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -87,15 +88,15 @@ public class WorkoutServlet {
 	public String saveWorkoutTicks(@FormParam("imei") String imei,
 			@FormParam("workoutTicksJSONString") String workoutTicksJSONString) {
 
-		// Grab all of the current workout ticks to user for uniqueness checks later
-		WorkoutTick[] currentWorkoutTicks = getAllWorkoutTicks(imei);
-		
 		/** Counter for new, unique workouts */
 		int newWorkoutsSaved = 0;
 		
 		// Parse the inputted JSON into an array of WorkoutTicks.
 		JsonParser jsonParser = new JsonParser();
 		JsonArray workoutTicksJSONArray = jsonParser.parse(workoutTicksJSONString).getAsJsonArray();
+		
+		/** Used later to calculate point value of ticks */
+		ArrayList<WorkoutTick> workoutTicks = new ArrayList<WorkoutTick>();
 		
 		// For each workout tick JSON element, parse this 
 		for (JsonElement workoutElement : workoutTicksJSONArray) {
@@ -115,13 +116,19 @@ public class WorkoutServlet {
 					workoutObject.get(WorkoutTick.KEY_ACCUM_MINUTE_V).getAsDouble(), 
 					workoutObject.get(WorkoutTick.KEY_ACCUM_MINUTE_H).getAsDouble(),
 					workoutObject.get(WorkoutTick.KEY_PRIVACY_SETTING).getAsString());
-
+			
+			// Throw this particular workoutTick into the ArrayList<WorkoutTick>
+			workoutTicks.add(workoutTick);
+			
 			// Save each workout to the datastore
-			boolean newWorkoutWasSaved = saveIndividualTickToDatastore(imei, workoutTick, currentWorkoutTicks);
+			boolean newWorkoutWasSaved = saveIndividualTickToDatastore(imei, workoutTick);
 			
 			// Iterate the counter
 			if (newWorkoutWasSaved) newWorkoutsSaved++;
 		}
+		
+		// Tally up points in individual user scores
+		calculateAndSavePoints(workoutTicks);
 
 		return "Saved " + newWorkoutsSaved + " new workout ticks";
 	}
@@ -133,16 +140,7 @@ public class WorkoutServlet {
 	 * @param newWorkoutTick
 	 */
 	private boolean saveIndividualTickToDatastore(String userimei,
-			WorkoutTick newWorkoutTick, WorkoutTick[] currentWorkoutTicks) {
-
-		// We don't need server-side uniqueness checks anymore, since we're only sending
-		// new workout ticks from the client's side.
-//		// Ensure that this workout tick is really a new workout tick
-//		for (WorkoutTick iteratedWorkoutTick : currentWorkoutTicks) {
-//			if (iteratedWorkoutTick.equals(newWorkoutTick)) {
-//				return false;
-//			}
-//		}
+			WorkoutTick newWorkoutTick) {
 
 		// Create a new entity to save to the datastore
 		Key userKey = KeyFactory.createKey("WorkoutTick User", userimei);
@@ -168,6 +166,25 @@ public class WorkoutServlet {
 		datastore.put(workoutTickEntity);
 		
 		return true;
+	}
+	
+	/**
+	 * Calculates the number of points to award to a user for the inputted
+	 * workout ticks, then saves those points.
+	 * 
+	 * @param workoutTicks
+	 */
+	private void calculateAndSavePoints(List<WorkoutTick> workoutTicks) {
+		
+		// Calculate the number of new points that the user earns from this batch
+		
+		// Retrieve the user's current point total from Google Datastore (or 
+		// set his current point total to 0 if it doesn't exist yet)
+		
+		// The user's new points = old points + this batch's points
+		
+		// Save the user's point total back into Google Datastore.
+		
 	}
 
 	// ***************************************************************************
