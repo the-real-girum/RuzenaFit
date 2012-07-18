@@ -174,6 +174,22 @@ public class WorkoutTick {
 	public void setPrivacySetting(String privacySetting) {
 		this.privacySetting = privacySetting;
 	}
+	
+	public float getScore() {
+		double pointMultiplier = 0;
+		
+		if (privacySetting.equals("h") || privacySetting.equals("highPrivacy")) {
+			pointMultiplier = 0.8;
+		}
+		else if (privacySetting.equals("m") || privacySetting.equals("mediumPrivacy")) {
+			pointMultiplier = 1.2;
+		}
+		else if (privacySetting.equals("l") || privacySetting.equals("lowPrivacy")) {
+			pointMultiplier = 1.8;
+		}
+		
+		return ((Double) (kCal * pointMultiplier)).floatValue();
+	}
 
 	@Override
 	public String toString() {
