@@ -14,6 +14,10 @@ public class UserRanking {
 		this.score = score;
 	}
 
+	public UserRanking() {
+		super();
+	}
+
 	public String getName() {
 		return name;
 	}
