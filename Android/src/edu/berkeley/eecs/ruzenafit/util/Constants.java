@@ -13,6 +13,7 @@ public class Constants {
 	public static final String TICKS_SINCE_LAST_SUCCESSFUL_UPLOAD = "ticksSinceLastSuccessfulUpload";
 	public static final String HTTP_ERROR = "Failed to upload data to server";
 	public static final String TOTAL_TICKS_SENT = "totalTicksSent";
+	public static final String FACEBOOK_POST_STRING = "facebookPostString";
 	
 	/** 
 	 * The number of "workout ticks" we should have before we start attempting to

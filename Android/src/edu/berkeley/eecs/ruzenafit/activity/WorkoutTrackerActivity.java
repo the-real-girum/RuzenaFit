@@ -1,6 +1,18 @@
 package edu.berkeley.eecs.ruzenafit.activity;
 
 //import edu.berkeley.sph.ehs.calfitd.ICalFitdService;
+import java.util.Arrays;
+import java.util.Comparator;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.NotificationManager;
@@ -8,6 +20,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
@@ -21,12 +34,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 import edu.berkeley.eecs.ruzenafit.R;
+import edu.berkeley.eecs.ruzenafit.model.User;
 import edu.berkeley.eecs.ruzenafit.model.WorkoutTick;
 import edu.berkeley.eecs.ruzenafit.service.WorkoutTrackerService;
 import edu.berkeley.eecs.ruzenafit.util.Constants;
+import edu.berkeley.eecs.ruzenafit.util.PostResultsToFacebookActivity;
 
 public class WorkoutTrackerActivity extends Activity {
-	private static final String TAG = WorkoutTrackerActivity.class.getSimpleName();
+	private static final String TAG = WorkoutTrackerActivity.class
+			.getSimpleName();
+
+	private static final String RETRIEVE_WORKOUTS_URL = "http://ruzenafit.appspot.com/rest/ranking/getRankings";
+
 	private static Context mContext;
 	// The primary interface we will be calling on the service.
 	// ICalFitdService mService = null;
@@ -44,7 +63,7 @@ public class WorkoutTrackerActivity extends Activity {
 			"resume data logging5", "resume data logging6",
 			"resume data logging7", "resume data logging8",
 			"resume data logging9", "TURN OFF data logging" };
-	
+
 	private static int whichitem = 0;
 	private static int turnoff_log = 10;
 	private ToggleButton tbutton;
@@ -58,8 +77,8 @@ public class WorkoutTrackerActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.tracking);
 
-		//		turnoffITEMS.add("resume data logging", "TURN OFF data logging");
-	
+		// turnoffITEMS.add("resume data logging", "TURN OFF data logging");
+
 		mContext = this;
 		// notificationManager = (NotificationManager)
 		// getSystemService(Context.NOTIFICATION_SERVICE);
@@ -77,10 +96,10 @@ public class WorkoutTrackerActivity extends Activity {
 			togglebutton.setChecked(true);
 		else
 			togglebutton.setChecked(false);
-		
+
 		pSetting = (TextView) findViewById(R.id.pset);
 		userName = (TextView) findViewById(R.id.userValue);
-		
+
 		togglebutton.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				// Perform action on clicks
@@ -100,7 +119,7 @@ public class WorkoutTrackerActivity extends Activity {
 																		// running
 					Toast.makeText(getApplicationContext(),
 							"Starting datalog...", Toast.LENGTH_SHORT).show();
-					//Warns user about how to effectively use the application
+					// Warns user about how to effectively use the application
 					Toast.makeText(
 							getApplicationContext(),
 							"WARNING: kCal measurements WILL NOT BE ACCURATE if you do not have this phone strapped to your waist or in your pocket.",
@@ -147,6 +166,10 @@ public class WorkoutTrackerActivity extends Activity {
 												"stoplog!!!");
 										// NotificationOff();
 										tbutton.setChecked(false);
+
+										startActivity(new Intent(
+												getApplicationContext(),
+												PostResultsToFacebookActivity.class));
 									}
 								}
 
@@ -228,21 +251,21 @@ public class WorkoutTrackerActivity extends Activity {
 		super.onRestart();
 
 		// set status of the toggle
-		final ToggleButton togglebutton = (ToggleButton) findViewById(R.id.togglebutton);
-		tbutton = togglebutton;
-		if (WorkoutTrackerService.getStatus() == 1)
-			togglebutton.setChecked(true);
-		else
-			togglebutton.setChecked(false);
+		final ToggleButton toggleButton = (ToggleButton) findViewById(R.id.togglebutton);
+		tbutton = toggleButton;
+		toggleButton.setChecked(WorkoutTrackerService.getStatus() == 1);
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
+		
+		// Retrieve current rankings from the server, and save it for facebook posting later
+		new FindPersonalRankingAsyncTask().execute();
 
 		pSetting = (TextView) findViewById(R.id.pset);
 		userName = (TextView) findViewById(R.id.userValue);
-		
+
 		SharedPreferences preferences = getSharedPreferences(
 				Constants.PREFS_NAMESPACE, 0);
 		String facebookName = preferences.getString(Constants.FACEBOOK_NAME,
@@ -250,18 +273,19 @@ public class WorkoutTrackerActivity extends Activity {
 
 		String p = preferences.getString(Constants.PRIVACY_SETTING,
 				"Privacy not set");
-		
-		//Checks if FB Name and/or privacy setting is set.
+
+		// Checks if FB Name and/or privacy setting is set.
 		Log.d(TAG, "p = " + p);
 		Log.d(TAG, "facebookName = " + facebookName);
-		
-		
-		if(facebookName.equals("Name not found.") || p.equals("Privacy not set")) {
-			Toast.makeText(getApplicationContext(),
-					"SORRY! You haven't logged into facebook or your privacy isn't set.", Toast.LENGTH_SHORT).show();
+
+		if (facebookName.equals("Name not found.")
+				|| p.equals("Privacy not set")) {
+			Toast.makeText(
+					getApplicationContext(),
+					"SORRY! You haven't logged into facebook or your privacy isn't set.",
+					Toast.LENGTH_SHORT).show();
 			tbutton.setEnabled(false);
-		}
-		else {
+		} else {
 			tbutton.setEnabled(true);
 		}
 
@@ -276,13 +300,100 @@ public class WorkoutTrackerActivity extends Activity {
 			pSetting.setText("Privacy Setting Not Set");
 
 		userName.setText(facebookName);
-		// set status of the toggle
-		final ToggleButton togglebutton = (ToggleButton) findViewById(R.id.togglebutton);
-		tbutton = togglebutton;
-		if (WorkoutTrackerService.getStatus() == 1)
-			togglebutton.setChecked(true);
-		else
-			togglebutton.setChecked(false);
+
+		// Check off the ToggleButton if the service is already running
+		final ToggleButton toggleButton = (ToggleButton) findViewById(R.id.togglebutton);
+		tbutton = toggleButton;
+		toggleButton.setChecked(WorkoutTrackerService.getStatus() == 1);
+	}
+
+	private class FindPersonalRankingAsyncTask extends
+			AsyncTask<Void, Void, User[]> {
+
+		@Override
+		protected User[] doInBackground(Void... params) {
+			Log.d(TAG, "Retrieving most current rankings to post to FB later");
+			
+			// Setup the GET Request
+			HttpClient httpClient = new DefaultHttpClient();
+			HttpGet request = new HttpGet(RETRIEVE_WORKOUTS_URL);
+
+			String responseString = null;
+
+			// Execute the GET request.
+			try {
+				HttpResponse response = httpClient.execute(request);
+				responseString = EntityUtils.toString(response.getEntity());
+				Log.d(TAG, "HttpResponse: " + responseString);
+			} catch (Exception e) {
+				Log.e(TAG, "HTTP ERROR: " + e.getMessage());
+			}
+
+			User rankings[] = null;
+
+			try {
+				// Parse the resulting JSON into the correct rankings array
+				JSONArray rankingsJSONArray = new JSONArray(responseString);
+				rankings = new User[rankingsJSONArray.length()];
+
+				for (int i = 0; i < rankingsJSONArray.length(); i++) {
+
+					JSONObject rankingJSONObject = rankingsJSONArray
+							.getJSONObject(i);
+
+					String userName = rankingJSONObject
+							.getString(User.KEY_USER);
+					double userScore = rankingJSONObject
+							.getDouble(User.KEY_SCORE);
+
+					rankings[i] = new User(userName, userScore);
+				}
+			} catch (JSONException e) {
+				Log.e(TAG, "JSON exception: " + e.getMessage());
+			}
+
+			return rankings;
+		}
+
+		@Override
+		protected void onPostExecute(User[] result) {
+			super.onPostExecute(result);
+
+			// Sort the list of users
+			Arrays.sort(result, new Comparator<User>() {
+				public int compare(User lhs, User rhs) {
+					return ((Double) lhs.getScore()).compareTo((Double) rhs
+							.getScore());
+				}
+			});
+
+			// Serialize and format the results
+			String[] formattedResults = new String[result.length];
+			for (int i = 0; i < formattedResults.length; i++) {
+
+				// Truncate the "user score" double value into an integer here.
+				formattedResults[i] = result[i].getName() + ": "
+						+ ((Double) result[i].getScore()).intValue()
+						+ " points";
+			}
+
+			// Generate the facebook post string
+			String facebookRankingsString = "Hey, here are the current rankings in our exercise game!  "
+					+ "How do I stack up against the competition?";
+			for (String userScoreString : formattedResults) {
+				facebookRankingsString += "\n--";
+				facebookRankingsString += userScoreString;
+			}
+
+			// Throw it into Shared Prefs
+			SharedPreferences.Editor editor = getApplicationContext()
+					.getSharedPreferences(Constants.PREFS_NAMESPACE, 0).edit();
+			editor.putString(Constants.FACEBOOK_POST_STRING, facebookRankingsString);
+			editor.commit();
+			Toast.makeText(getApplicationContext(), "Retrieved workout rankings", 2).show();
+
+		}
+
 	}
 
 }

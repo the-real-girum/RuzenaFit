@@ -131,7 +131,7 @@ public class RankingActivity extends Activity {
 					getApplicationContext(),
 					android.R.layout.simple_list_item_1, formattedResults));
 			
-			Toast.makeText(getApplicationContext(), "Loaded rankings.", Toast.LENGTH_SHORT);
+			Toast.makeText(getApplicationContext(), "Loaded rankings.", Toast.LENGTH_SHORT).show();
 		}
 
 		@Override

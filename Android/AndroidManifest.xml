@@ -48,7 +48,8 @@
         <activity android:name=".activity.RankingActivity"
             android:screenOrientation="portrait"></activity>
         <activity android:name=".activity.PrivacyPreferencesActivity"
-            android:screenOrientation="portrait"></activity> 	
+            android:screenOrientation="portrait"></activity>
+        <activity android:name=".util.PostResultsToFacebookActivity"></activity> 	
 				
 	</application>
 </manifest> 

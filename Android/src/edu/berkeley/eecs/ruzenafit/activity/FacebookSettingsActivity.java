@@ -373,5 +373,23 @@ public class FacebookSettingsActivity extends Activity {
 			}
 		});
 	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		
+		if (facebook.isSessionValid()) {
+			btnFbLogin.setVisibility(View.INVISIBLE);
+
+			// Making get profile button visible
+			btnFbGetProfile.setVisibility(View.VISIBLE);
+
+			// Making post to wall visible
+			btnPostToWall.setVisibility(View.VISIBLE);
+
+			// Making show access tokens button visible
+			btnShowAccessTokens.setVisibility(View.VISIBLE);
+		}
+	}
 
 }

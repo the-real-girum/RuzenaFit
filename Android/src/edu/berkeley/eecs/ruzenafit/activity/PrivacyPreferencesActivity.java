@@ -22,23 +22,20 @@ public class PrivacyPreferencesActivity extends Activity {
 			+ "x multiplier to your points. "
 			+ "You will also share the maximum amount of data about yourself possible. "
 			+ "For example anyone will be able to see exactly where you are working out "
-			+ "at whichever time your data is saved.  "
-			+ "\n\n"
-			+ "With this preference, your data will update ONCE EVERY 5 SECONDS.";
+			+ "at whichever time your data is saved.  ";
 	
 	private final String MEDIUM_PRIVACY_DESCRIPTION = "    With this setting you will earn a "
 			+ PrivacyPreferenceEnum.mediumPrivacy.getValue()
 			+ "x multiplier to your points. "
-			+ "You will also share a minimal amount of data about yourself."
-			+ "\n\n"
-			+ "With this preference, your data will update ONCE EVERY HOUR.";
+			+ "Your tracked location will be blurred slightly -- people will know where you are within"
+			+ "the nearest ~1.5 square miles";
 	
 	private final String LOW_PRIVACY_DESCRIPTION = "    With this setting you will earn a "
 			+ PrivacyPreferenceEnum.lowPrivacy.getValue()
 			+ "x multiplier to your points. "
 			+ "You will also share a minimal amount of data about yourself."
-			+ "\n\n"
-			+ "With this preference, your data will update ONCE EVERY HOUR.";
+			+ "Your tracked location will be blurred slightly -- people will know where you are within"
+			+ "the nearest ~5.0 square miles";
 	
 	// Initializing variables
 	RadioButton rbLow, rbMedium, rbHigh;
