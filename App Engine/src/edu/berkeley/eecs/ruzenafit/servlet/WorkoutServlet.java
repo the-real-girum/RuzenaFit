@@ -297,14 +297,34 @@ public class WorkoutServlet {
 	@GET
 	@Path("/deleteEverything")
 	@Produces(MediaType.TEXT_PLAIN)
-	public String deleteEverything(@QueryParam("imei") String imei) {
+	public String deleteEverything() {
 		
+		deleteEntityWithKey("WorkoutTick");
+		deleteEntityWithKey("WorkoutRanking");
+				
+		return "Deleted some workout ticks";
+	}
+	
+	/**
+	 * Helper method to delete all Entities for a given key
+	 * @param key
+	 */
+	private void deleteEntityWithKey(String key) {
+		
+		// Prep the datastore and query to query all existing workout ticks
 		DatastoreService datastore = DatastoreServiceFactory
 				.getDatastoreService();
-		Key key = KeyFactory.createKey("WorkoutTick User", imei);
-		datastore.delete(key);
+		Query query = new Query(key);
 		
-		return "Deleted some workout ticks";
+		// Execute the actual query
+		List<Entity> workoutEntities = datastore.prepare(query).asList(
+				FetchOptions.Builder.withDefaults());
+
+		// Delete each workout tick that exists
+		for (Entity workoutEntity : workoutEntities) {
+			datastore.delete(workoutEntity.getKey());
+		}
+
 	}
 
 }
