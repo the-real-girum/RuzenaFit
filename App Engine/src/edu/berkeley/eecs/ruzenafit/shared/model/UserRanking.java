@@ -35,7 +35,7 @@ public class UserRanking {
 	}
 
 	public static String convertImeiToUsername(String imei) {
-		if (imei.equals("")) {
+		if (imei.equals("99000044488456")) {
 			return "Girum";
 		}
 		

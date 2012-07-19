@@ -48,6 +48,8 @@ public class RankingActivity extends Activity {
 		protected String[] doInBackground(Void... params) {
 
 			rankings = new String[] { "test1", "test2", "test3" };
+			
+			
 
 			listView.setAdapter(new ArrayAdapter<String>(
 					getApplicationContext(),
