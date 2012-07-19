@@ -32,7 +32,7 @@
     <string name="hello">Hello World, HomeActivity!</string>
     <string name="app_name">RuzenaFit</string>
     <string name="tracking">Tracking</string>
-    <string name="ranking">Ranking</string>
+    <string name="ranking">Rankings</string>
     <string name="preferences">Privacy Preferences</string>
     <string name="main_menu">Main Menu</string>
     <string name="pref_text">Click a button to change the text.</string>

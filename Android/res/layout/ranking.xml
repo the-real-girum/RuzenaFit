@@ -27,4 +27,14 @@
         android:layout_below="@+id/TextView1" >
     </ListView>
 
+    <Button
+        android:id="@+id/buttonRefreshRankings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/TextView1"
+        android:layout_alignBottom="@+id/TextView1"
+        android:layout_alignRight="@+id/TextView1"
+        android:layout_margin="10dp"
+        android:text="Refresh" />
+
     </RelativeLayout>

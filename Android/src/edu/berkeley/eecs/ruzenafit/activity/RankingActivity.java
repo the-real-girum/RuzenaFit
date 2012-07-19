@@ -16,12 +16,23 @@ import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 import edu.berkeley.eecs.ruzenafit.R;
 import edu.berkeley.eecs.ruzenafit.model.User;
 
-// FIXME: Change this whole activity to be a programmatic display of current rankings.
+// TODO: Move this out of the controller, and into a network or DB layer
+// Change this one workout task to be used for all of the different network
+// buttonss
+/**
+ * This activity displays the current rankings of the RuzenaFit game.
+ * 
+ * @author gibssa
+ */
 public class RankingActivity extends Activity {
 	private static final String TAG = RankingActivity.class.getSimpleName();
 	
@@ -30,10 +41,8 @@ public class RankingActivity extends Activity {
 	// Initializing variables
 	ListView listView;
 	User[] rankings;
+	Button refreshRankings;
 
-	// Move this out of the controller, and into a network or DB layer
-	// Change this one workout task to be used for all of the different network
-	// buttonss
 
 	/** Called when the activity is first created. */
 	@Override
@@ -45,6 +54,14 @@ public class RankingActivity extends Activity {
 		listView = (ListView) findViewById(R.id.listviewRanking);
 		listView.setAdapter(new ArrayAdapter<String>(this,
 				android.R.layout.simple_list_item_1, new String[] {"Loading rankings..."}));
+		
+		refreshRankings = (Button) findViewById(R.id.buttonRefreshRankings);
+		refreshRankings.setOnClickListener(new OnClickListener() {
+			
+			public void onClick(View v) {
+				new FindRankingsAsyncTask().execute();
+			}
+		});
 
 		new FindRankingsAsyncTask().execute();
 	}
@@ -72,9 +89,8 @@ public class RankingActivity extends Activity {
 			try {
 				// Parse the resulting JSON into the correct rankings array
 				JSONArray rankingsJSONArray = new JSONArray(responseString);
-				
 				rankings = new User[rankingsJSONArray.length()];
-				
+
 				for (int i = 0; i < rankingsJSONArray.length(); i++) {
 					
 					JSONObject rankingJSONObject = rankingsJSONArray.getJSONObject(i);
@@ -84,8 +100,6 @@ public class RankingActivity extends Activity {
 					
 					rankings[i] = new User(userName, userScore);
 				}
-				
-				
 			} catch (JSONException e) {
 				Log.e(TAG, "JSON exception: " + e.getMessage());
 			}
@@ -107,6 +121,8 @@ public class RankingActivity extends Activity {
 			// Serialize and format the results
 			String[] formattedResults = new String[result.length];
 			for (int i = 0; i < formattedResults.length; i++) {
+				
+				// Truncate the "user score" double value into an integer here.
 				formattedResults[i] = result[i].getName() + ": " + ((Double)result[i].getScore()).intValue() + " points";
 			}
 			
@@ -114,6 +130,8 @@ public class RankingActivity extends Activity {
 			listView.setAdapter(new ArrayAdapter<String>(
 					getApplicationContext(),
 					android.R.layout.simple_list_item_1, formattedResults));
+			
+			Toast.makeText(getApplicationContext(), "Loaded rankings.", Toast.LENGTH_SHORT);
 		}
 
 		@Override
