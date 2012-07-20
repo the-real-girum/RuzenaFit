@@ -362,7 +362,7 @@ public class WorkoutTrackerActivity extends Activity {
 			// Sort the list of users
 			Arrays.sort(result, new Comparator<User>() {
 				public int compare(User lhs, User rhs) {
-					return ((Double) lhs.getScore()).compareTo((Double) rhs
+					return ((Double) rhs.getScore()).compareTo((Double) lhs
 							.getScore());
 				}
 			});

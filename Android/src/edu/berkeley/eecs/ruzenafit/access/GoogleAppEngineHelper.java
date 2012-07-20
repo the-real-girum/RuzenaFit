@@ -130,17 +130,21 @@ public class GoogleAppEngineHelper {
 		// the POST request to use.
 		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 
-		// Retrieve the phone's IMEI from SharedPreferences 
-		SharedPreferencesHelper sharedPreferencesHelper = new SharedPreferencesHelper(
-				context);
-		String imei = sharedPreferencesHelper
-				.retrieveValueForString(WorkoutTick.KEY_IMEI);
-		if (imei == null) {
-			Log.e(TAG, "IMEI not set.");
-		}
+		// TODO: Changed usage of IMEI to be usage of facebook
+//		// Retrieve the phone's IMEI from SharedPreferences 
+//		SharedPreferencesHelper sharedPreferencesHelper = new SharedPreferencesHelper(
+//				context);
+//		String imei = sharedPreferencesHelper
+//				.retrieveValueForString(WorkoutTick.KEY_IMEI);
+//		if (imei == null) {
+//			Log.e(TAG, "IMEI not set.");
+//		}
+		
+		String facebookName = context.getSharedPreferences(Constants.PREFS_NAMESPACE, 0)
+				.getString(Constants.FACEBOOK_NAME, Constants.UNDEFINED);
 
 		// Throw the IMEI and the JSONArray into the POST request.
-		nameValuePairs.add(new BasicNameValuePair(WorkoutTick.KEY_IMEI, imei));
+		nameValuePairs.add(new BasicNameValuePair(WorkoutTick.KEY_IMEI, facebookName));
 		nameValuePairs.add(new BasicNameValuePair(
 				Constants.WORKOUTS_JSON_STRING, workoutsJSONArray.toString()));
 

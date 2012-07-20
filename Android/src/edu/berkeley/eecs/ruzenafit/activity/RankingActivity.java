@@ -114,7 +114,7 @@ public class RankingActivity extends Activity {
 			// Sort the list
 			Arrays.sort(result, new Comparator<User>() {
 				public int compare(User lhs, User rhs) {
-					return ((Double)lhs.getScore()).compareTo((Double)rhs.getScore());
+					return ((Double)rhs.getScore()).compareTo((Double)lhs.getScore());
 				}
 			});
 

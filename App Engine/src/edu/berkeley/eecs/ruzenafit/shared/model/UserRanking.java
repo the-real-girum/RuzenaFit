@@ -35,11 +35,13 @@ public class UserRanking {
 	}
 
 	public static String convertImeiToUsername(String imei) {
-		if (imei.equals("99000044488456")) {
-			return "Girum";
-		}
-		
-		return "unknownIMEI";
+
+		// TODO: We no longer need to map the IMEI to username, since we're just using facebook name
+//		if (imei.equals("99000044488456")) {
+//			return "Girum";
+//		}
+//		return "unknownIMEI";
+		return imei;
 	}
 	
 }

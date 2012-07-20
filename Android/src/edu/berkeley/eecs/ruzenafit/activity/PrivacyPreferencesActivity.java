@@ -94,7 +94,7 @@ public class PrivacyPreferencesActivity extends Activity {
 
 		// Get the SharedPreferences.Editor object we need to modify our
 		// String->String preferences map.
-		SharedPreferences.Editor preferences = getSharedPreferences(
+		SharedPreferences.Editor editor = getSharedPreferences(
 				Constants.PREFS_NAMESPACE, 0).edit();
 
 		// Now, for the string "privacySetting", we have mapped one of the
@@ -102,9 +102,9 @@ public class PrivacyPreferencesActivity extends Activity {
 		// "highPrivacy"
 		// "lowPrivacy"
 		// "mediumPrivacy"
-		preferences.putString(Constants.PRIVACY_SETTING,
+		editor.putString(Constants.PRIVACY_SETTING,
 				privacyPreference.toString());
-		preferences.commit();
+		editor.commit();
 
 		// FIXME: Tell Aaron that variable tick rate won't happen, and is probably not a good idea.
 //		switch (privacyPreference) {
@@ -155,6 +155,9 @@ public class PrivacyPreferencesActivity extends Activity {
 		{
 			rbHigh.setChecked(true);
 			textOut.setText(HIGH_PRIVACY_DESCRIPTION);
+		}
+		else {
+			Toast.makeText(getApplicationContext(), "Unknown privacy preference found", Toast.LENGTH_SHORT).show();
 		}
 
 	}
