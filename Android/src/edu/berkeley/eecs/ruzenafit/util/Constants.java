@@ -19,7 +19,12 @@ public class Constants {
 	 * The number of "workout ticks" we should have before we start attempting to
 	 * send data up to GAE.
 	 */
-	public static final int BATCH_SIZE = 5; 
+	public static final int BATCH_SIZE = 5;
+	
+	
+	public static final String NO_INTERNET_CONNECTION_MESSAGE = 
+			"WARNING:  You are not connected to the internet right now.  " +
+			"You won't be able to see current rankings, or upload your data to the server.";
 	
 	// Pseudo-constant int.  This gets set based on the privacy setting.  This is the
 	// frequency between updates (for kcal, distance, pace, etc.) after starting

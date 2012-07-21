@@ -24,6 +24,8 @@ import android.widget.ListView;
 import android.widget.Toast;
 import edu.berkeley.eecs.ruzenafit.R;
 import edu.berkeley.eecs.ruzenafit.model.User;
+import edu.berkeley.eecs.ruzenafit.util.AndroidUtils;
+import edu.berkeley.eecs.ruzenafit.util.Constants;
 
 // TODO: Move this out of the controller, and into a network or DB layer
 // Change this one workout task to be used for all of the different network
@@ -59,12 +61,33 @@ public class RankingActivity extends Activity {
 		refreshRankings.setOnClickListener(new OnClickListener() {
 			
 			public void onClick(View v) {
-				new FindRankingsAsyncTask().execute();
+				if (AndroidUtils.isOnline(getApplicationContext())) {
+					new FindRankingsAsyncTask().execute();
+				}
 			}
 		});
 
-		new FindRankingsAsyncTask().execute();
+		// If the phone is online, then get the rankings from the server
+		if (AndroidUtils.isOnline(getApplicationContext())) {
+			new FindRankingsAsyncTask().execute();
+		}
 	}
+	
+	
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		
+		if (!AndroidUtils.isOnline(getApplicationContext())) {
+			Toast.makeText(
+					getApplicationContext(),
+					Constants.NO_INTERNET_CONNECTION_MESSAGE,
+					Toast.LENGTH_LONG).show();
+		}
+	}
+
+
 
 	private class FindRankingsAsyncTask extends AsyncTask<Void, Void, User[]> {
 
@@ -110,6 +133,11 @@ public class RankingActivity extends Activity {
 		@Override
 		protected void onPostExecute(User[] result) {
 			super.onPostExecute(result);
+			
+			// "result" could be null if the internet connection sanity check failed
+			if (result == null) {
+				return;
+			}
 			
 			// Sort the list
 			Arrays.sort(result, new Comparator<User>() {

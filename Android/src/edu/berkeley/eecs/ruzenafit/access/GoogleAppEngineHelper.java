@@ -19,6 +19,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 import edu.berkeley.eecs.ruzenafit.model.WorkoutTick;
+import edu.berkeley.eecs.ruzenafit.util.AndroidUtils;
 import edu.berkeley.eecs.ruzenafit.util.Constants;
 
 /**
@@ -148,6 +149,12 @@ public class GoogleAppEngineHelper {
 		nameValuePairs.add(new BasicNameValuePair(
 				Constants.WORKOUTS_JSON_STRING, workoutsJSONArray.toString()));
 
+		// Sanity check to see if the app is online
+		if (!AndroidUtils.isOnline(context)) {
+			Toast.makeText(context, Constants.NO_INTERNET_CONNECTION_MESSAGE, Toast.LENGTH_LONG).show();
+			return;
+		}
+		
 		// Execute the POST request asynchronously
 		new GAEAsyncTaskRunner().execute(nameValuePairs);
 	}
@@ -168,7 +175,7 @@ public class GoogleAppEngineHelper {
 			request.addHeader("deviceID:", deviceID);
 
 			String responseString = null;
-
+			
 			// Execute the POST request.
 			try {
 				request.setEntity(new UrlEncodedFormEntity(nameValuePairs[0]));

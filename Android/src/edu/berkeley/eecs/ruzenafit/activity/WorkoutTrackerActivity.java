@@ -37,6 +37,7 @@ import edu.berkeley.eecs.ruzenafit.R;
 import edu.berkeley.eecs.ruzenafit.model.User;
 import edu.berkeley.eecs.ruzenafit.model.WorkoutTick;
 import edu.berkeley.eecs.ruzenafit.service.WorkoutTrackerService;
+import edu.berkeley.eecs.ruzenafit.util.AndroidUtils;
 import edu.berkeley.eecs.ruzenafit.util.Constants;
 import edu.berkeley.eecs.ruzenafit.util.PostResultsToFacebookActivity;
 
@@ -167,9 +168,12 @@ public class WorkoutTrackerActivity extends Activity {
 										// NotificationOff();
 										tbutton.setChecked(false);
 
-										startActivity(new Intent(
-												getApplicationContext(),
-												PostResultsToFacebookActivity.class));
+										// As the Tracking stops, request the user if he wants to post results to FB
+										if (AndroidUtils.isOnline(getApplicationContext())) {
+											startActivity(new Intent(
+													getApplicationContext(),
+													PostResultsToFacebookActivity.class));
+										}
 									}
 								}
 
@@ -261,7 +265,9 @@ public class WorkoutTrackerActivity extends Activity {
 		super.onResume();
 		
 		// Retrieve current rankings from the server, and save it for facebook posting later
-		new FindPersonalRankingAsyncTask().execute();
+		if (AndroidUtils.isOnline(getApplicationContext())) {
+			new FindPersonalRankingAsyncTask().execute();
+		}
 
 		pSetting = (TextView) findViewById(R.id.pset);
 		userName = (TextView) findViewById(R.id.userValue);
