@@ -61,7 +61,7 @@ public class PrivacyPreferencesActivity extends Activity {
 		rbLow.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				setPrivacySetting(PrivacyPreferenceEnum.lowPrivacy);
-				textOut.setText(HIGH_PRIVACY_DESCRIPTION);
+				textOut.setText(LOW_PRIVACY_DESCRIPTION);
 			}
 		});
 
@@ -78,7 +78,7 @@ public class PrivacyPreferencesActivity extends Activity {
 		rbHigh.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				setPrivacySetting(PrivacyPreferenceEnum.highPrivacy);
-				textOut.setText(LOW_PRIVACY_DESCRIPTION);
+				textOut.setText(HIGH_PRIVACY_DESCRIPTION);
 			}
 		});
 

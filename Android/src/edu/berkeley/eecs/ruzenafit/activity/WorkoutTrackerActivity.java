@@ -4,6 +4,8 @@ package edu.berkeley.eecs.ruzenafit.activity;
 import java.util.Arrays;
 import java.util.Comparator;
 
+import nu.xom.jaxen.function.ext.LowerFunction;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -34,6 +36,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 import edu.berkeley.eecs.ruzenafit.R;
+import edu.berkeley.eecs.ruzenafit.model.PrivacyPreferenceEnum;
 import edu.berkeley.eecs.ruzenafit.model.User;
 import edu.berkeley.eecs.ruzenafit.model.WorkoutTick;
 import edu.berkeley.eecs.ruzenafit.service.WorkoutTrackerService;
@@ -118,16 +121,65 @@ public class WorkoutTrackerActivity extends Activity {
 																		// is
 																		// already
 																		// running
-					Toast.makeText(getApplicationContext(),
-							"Starting datalog...", Toast.LENGTH_SHORT).show();
-					// Warns user about how to effectively use the application
-					Toast.makeText(
-							getApplicationContext(),
-							"WARNING: kCal measurements WILL NOT BE ACCURATE if you do not have this phone strapped to your waist or in your pocket.",
-							Toast.LENGTH_LONG).show();
-					WorkoutTrackerService.startLog();
-					Log.i(getClass().getSimpleName(), "startlog!!!");
-					// NotificationOn();
+					
+					// Set up for the dialog box that asks the user for which privacy preference he wants
+					AlertDialog.Builder privacyAlertDialogBuilder = new AlertDialog.Builder(mContext);
+					privacyAlertDialogBuilder.setTitle("Choose your privacy setting");
+					privacyAlertDialogBuilder.setCancelable(false);
+					
+					// Set up the privacy selection alert dialog
+					String[] privacyPreferences = new String[] { "Low Privacy", "Medium Privacy", "High Privacy" };
+					privacyAlertDialogBuilder.setItems(privacyPreferences, new DialogInterface.OnClickListener() {
+						
+						public void onClick(DialogInterface dialog, int which) {
+							
+							SharedPreferences.Editor editor = getSharedPreferences(Constants.PREFS_NAMESPACE, 0).edit();
+							
+							// TODO: Not very DRY
+							switch (which) {
+							case 0: {
+								editor.putString(Constants.PRIVACY_SETTING, PrivacyPreferenceEnum.lowPrivacy.toString());
+								pSetting.setText(PrivacyPreferenceEnum.lowPrivacy.getDisplayName());
+								Log.d(TAG, "Saved new privacy preference: " + PrivacyPreferenceEnum.lowPrivacy.toString());
+								break;
+							}
+							case 1: {
+								editor.putString(Constants.PRIVACY_SETTING, PrivacyPreferenceEnum.mediumPrivacy.toString());
+								pSetting.setText(PrivacyPreferenceEnum.mediumPrivacy.getDisplayName());
+								Log.d(TAG, "Saved new privacy preference: " + PrivacyPreferenceEnum.mediumPrivacy.toString());
+								break;
+							}
+							case 2: {
+								editor.putString(Constants.PRIVACY_SETTING, PrivacyPreferenceEnum.highPrivacy.toString());
+								pSetting.setText(PrivacyPreferenceEnum.highPrivacy.getDisplayName());
+								Log.d(TAG, "Saved new privacy preference: " + PrivacyPreferenceEnum.highPrivacy.toString());
+								break;
+							}
+							default: {
+								Log.e(TAG, "Unknown privacy preference selection");
+							}
+							}
+							
+							// Make the privacy preference change
+							editor.commit();
+							
+							// Start the actual datalogging now.
+							Toast.makeText(getApplicationContext(),
+									"Starting datalog...", Toast.LENGTH_SHORT).show();
+							
+							// Warns user about how to effectively use the application
+							Toast.makeText(
+									getApplicationContext(),
+									"WARNING: kCal measurements WILL NOT BE ACCURATE if you do not have this phone strapped to your waist or in your pocket.",
+									Toast.LENGTH_LONG).show();
+							WorkoutTrackerService.startLog();
+							Log.i(getClass().getSimpleName(), "startlog!!!");
+						}
+					});
+					
+					// Show the privacy selection dialog
+					privacyAlertDialogBuilder.create().show();
+					
 				} else if ((togglebutton.isChecked() == false)
 						&& (WorkoutTrackerService.getStatus() == 1)) { // turn
 																		// off
@@ -364,6 +416,11 @@ public class WorkoutTrackerActivity extends Activity {
 		@Override
 		protected void onPostExecute(User[] result) {
 			super.onPostExecute(result);
+			
+			// Sanity check -- an exception could return null
+			if (result == null) {
+				return;
+			}
 
 			// Sort the list of users
 			Arrays.sort(result, new Comparator<User>() {

@@ -24,6 +24,7 @@ import com.facebook.android.Facebook.DialogListener;
 import com.facebook.android.FacebookError;
 
 import edu.berkeley.eecs.ruzenafit.R;
+import edu.berkeley.eecs.ruzenafit.util.AndroidUtils;
 import edu.berkeley.eecs.ruzenafit.util.Constants;
 
 // TODO: Try and move the network logic out of here and into the network package.
@@ -377,6 +378,10 @@ public class FacebookSettingsActivity extends Activity {
 	@Override
 	protected void onResume() {
 		super.onResume();
+		
+		if (!AndroidUtils.isOnline(getApplicationContext())) {
+			Toast.makeText(getApplicationContext(), Constants.NO_INTERNET_CONNECTION_MESSAGE, Toast.LENGTH_SHORT).show();
+		}
 		
 		if (facebook.isSessionValid()) {
 			btnFbLogin.setVisibility(View.INVISIBLE);
