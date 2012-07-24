@@ -15,6 +15,7 @@ import edu.berkeley.eecs.ruzenafit.model.PrivacyPreferenceEnum;
 import edu.berkeley.eecs.ruzenafit.util.Constants;
 
 public class PrivacyPreferencesActivity extends Activity {
+	private static final String TAG = PrivacyPreferencesActivity.class.getSimpleName();
 
 	// String descriptions of the privacy settings.
 	private final String HIGH_PRIVACY_DESCRIPTION = "    With this setting you will earn a " 
@@ -157,7 +158,8 @@ public class PrivacyPreferencesActivity extends Activity {
 			textOut.setText(HIGH_PRIVACY_DESCRIPTION);
 		}
 		else {
-			Toast.makeText(getApplicationContext(), "Unknown privacy preference found", Toast.LENGTH_SHORT).show();
+//			Toast.makeText(getApplicationContext(), "Unknown privacy preference found", Toast.LENGTH_SHORT).show();
+			Log.d(TAG, "Unknown privayc preference found");
 		}
 
 	}
