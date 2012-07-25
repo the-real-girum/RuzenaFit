@@ -15,29 +15,29 @@ import edu.berkeley.eecs.ruzenafit.model.PrivacyPreferenceEnum;
 import edu.berkeley.eecs.ruzenafit.util.Constants;
 
 public class PrivacyPreferencesActivity extends Activity {
-	private static final String TAG = PrivacyPreferencesActivity.class.getSimpleName();
+	private static final String TAG = PrivacyPreferencesActivity.class
+			.getSimpleName();
 
 	// String descriptions of the privacy settings.
-	private final String HIGH_PRIVACY_DESCRIPTION = "    With this setting you will earn a " 
+	private final String HIGH_PRIVACY_DESCRIPTION = "    With this setting you will earn a "
 			+ PrivacyPreferenceEnum.highPrivacy.getValue()
 			+ "x multiplier to your points. "
 			+ "You will also share the maximum amount of data about yourself possible. "
-			+ "For example anyone will be able to see exactly where you are working out "
-			+ "at whichever time your data is saved.  ";
-	
+			+ "Your tracked location will be blurred slightly -- people will know where you are within"
+			+ "the nearest ~5.0 square miles";
+
 	private final String MEDIUM_PRIVACY_DESCRIPTION = "    With this setting you will earn a "
 			+ PrivacyPreferenceEnum.mediumPrivacy.getValue()
 			+ "x multiplier to your points. "
 			+ "Your tracked location will be blurred slightly -- people will know where you are within"
 			+ "the nearest ~1.5 square miles";
-	
+
 	private final String LOW_PRIVACY_DESCRIPTION = "    With this setting you will earn a "
 			+ PrivacyPreferenceEnum.lowPrivacy.getValue()
 			+ "x multiplier to your points. "
 			+ "You will also share a minimal amount of data about yourself."
-			+ "Your tracked location will be blurred slightly -- people will know where you are within"
-			+ "the nearest ~5.0 square miles";
-	
+			+ "For example anyone will be able to see exactly where you are working out "
+			+ "at whichever time your data is saved.  ";
 	// Initializing variables
 	RadioButton rbLow, rbMedium, rbHigh;
 	TextView textOut;
@@ -107,21 +107,22 @@ public class PrivacyPreferencesActivity extends Activity {
 				privacyPreference.toString());
 		editor.commit();
 
-		// FIXME: Tell Aaron that variable tick rate won't happen, and is probably not a good idea.
-//		switch (privacyPreference) {
-//		case highPrivacy:
-//			Constants.setUPDATE_FREQUENCY(3600000); // one hour
-//			break;
-//		case mediumPrivacy:
-//			Constants.setUPDATE_FREQUENCY(300000); // 5 minutes
-//			break;
-//		case lowPrivacy:
-//			Constants.setUPDATE_FREQUENCY(5000); // 5 seconds
-//			break;
-//		default:
-//			Constants.setUPDATE_FREQUENCY(3000); // 3 seconds if undefined.
-//			break;
-//		}
+		// FIXME: Tell Aaron that variable tick rate won't happen, and is
+		// probably not a good idea.
+		// switch (privacyPreference) {
+		// case highPrivacy:
+		// Constants.setUPDATE_FREQUENCY(3600000); // one hour
+		// break;
+		// case mediumPrivacy:
+		// Constants.setUPDATE_FREQUENCY(300000); // 5 minutes
+		// break;
+		// case lowPrivacy:
+		// Constants.setUPDATE_FREQUENCY(5000); // 5 seconds
+		// break;
+		// default:
+		// Constants.setUPDATE_FREQUENCY(3000); // 3 seconds if undefined.
+		// break;
+		// }
 
 		Toast.makeText(getApplicationContext(),
 				"Saved privacy setting: " + privacyPreference.toString(), 3)
@@ -137,28 +138,23 @@ public class PrivacyPreferencesActivity extends Activity {
 		String lSet = "lowPrivacy";
 		String mSet = "mediumPrivacy";
 		String hSet = "highPrivacy";
-		
-		String p = preferences.getString(Constants.PRIVACY_SETTING,
-				notSet);
 
-		if (p.equals(lSet))
-		{
+		String p = preferences.getString(Constants.PRIVACY_SETTING, notSet);
+
+		if (p.equals(lSet)) {
 			rbLow.setChecked(true);
 			textOut.setText(LOW_PRIVACY_DESCRIPTION);
 		}
 
-		else if (p.equals(mSet))
-		{
+		else if (p.equals(mSet)) {
 			rbMedium.setChecked(true);
 			textOut.setText(MEDIUM_PRIVACY_DESCRIPTION);
-		}
-		else if (p.equals(hSet))
-		{
+		} else if (p.equals(hSet)) {
 			rbHigh.setChecked(true);
 			textOut.setText(HIGH_PRIVACY_DESCRIPTION);
-		}
-		else {
-//			Toast.makeText(getApplicationContext(), "Unknown privacy preference found", Toast.LENGTH_SHORT).show();
+		} else {
+			// Toast.makeText(getApplicationContext(),
+			// "Unknown privacy preference found", Toast.LENGTH_SHORT).show();
 			Log.d(TAG, "Unknown privayc preference found");
 		}
 
