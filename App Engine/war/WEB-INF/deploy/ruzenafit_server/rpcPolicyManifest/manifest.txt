@@ -1,2 +1,3 @@
 # Module ruzenafit_server
 # RPC service class, partial path of RPC policy file
+edu.berkeley.eecs.ruzenafit.client.RankingService, 050CB55E68BC8BC30F35121DF46C3DCB.gwt.rpc

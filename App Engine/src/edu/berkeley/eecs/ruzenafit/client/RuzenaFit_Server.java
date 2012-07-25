@@ -1,6 +1,8 @@
 package edu.berkeley.eecs.ruzenafit.client;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -21,9 +23,6 @@ public class RuzenaFit_Server implements EntryPoint {
 
 	private VerticalPanel mainPanel = new VerticalPanel();
 	private FlexTable rankingsFlexTable = new FlexTable();
-//	private HorizontalPanel addPanel = new HorizontalPanel();
-//	private TextBox newSymbolTextBox = new TextBox();
-//	private Button addStockButton = new Button("Add");
 	private Label lastUpdatedLabel = new Label();
 	private List<UserRanking> rankings = new ArrayList<UserRanking>();
 	private final RankingServiceAsync rankingService = GWT.create(RankingService.class);
@@ -34,34 +33,16 @@ public class RuzenaFit_Server implements EntryPoint {
 	 */
 	public void onModuleLoad() {
 
-		// Create table for stock data.
-		rankingsFlexTable.setText(0, 0, "Name");
-		rankingsFlexTable.setText(0, 1, "Points");
-//		rankingsFlexTable.setText(0, 2, "Hrs. Logged");
-		
-		// Add styles to elements in the stock list table.
-	    rankingsFlexTable.getRowFormatter().addStyleName(0, "rankingsListHeader");
-	    rankingsFlexTable.addStyleName("rankingsList");
-	    rankingsFlexTable.getCellFormatter().addStyleName(0, 1, "rankingsListNumericColumn");
-//	    rankingsFlexTable.getCellFormatter().addStyleName(0, 2, "rankingsListNumericColumn");
-
-//		// Assemble Add Stock panel.
-//		addPanel.add(newSymbolTextBox);
-//		addPanel.add(addStockButton);
+		setupFlexTable();
 
 		// Assemble Main panel.
 		mainPanel.add(rankingsFlexTable);
-//		mainPanel.add(addPanel);
 		mainPanel.add(lastUpdatedLabel);
 
 		// Associate the Main panel with the HTML host page.
 		RootPanel.get("ruzenaList").add(mainPanel);
 
-//		// Move cursor focus to the input box.
-//		newSymbolTextBox.setFocus(true);
-//		addRanking(new UserRanking("Girum", (float) 12.30));
-//		addRanking(new UserRanking("Maurice", (float) 23.30));
-		
+		// Load up the rankings initially (they'll be refreshed automatically after this)
 		loadRankings();
 
 		// Setup timer to refresh list automatically.
@@ -75,12 +56,25 @@ public class RuzenaFit_Server implements EntryPoint {
 		
 	}
 	
-	private void addRanking(UserRanking newRanking) {
+	/**
+	 * Initial GUI setup for the flex table
+	 */
+	private void setupFlexTable() {
+		// Create table for stock data.
+		rankingsFlexTable.setText(0, 0, "Name");
+		rankingsFlexTable.setText(0, 1, "Points");
 		
-		for (UserRanking currentRanking : rankings) {
-			if (newRanking.equals(currentRanking))
-				return;
-		}
+		// Add styles to elements in the stock list table.
+	    rankingsFlexTable.getRowFormatter().addStyleName(0, "rankingsListHeader");
+	    rankingsFlexTable.addStyleName("rankingsList");
+	    rankingsFlexTable.getCellFormatter().addStyleName(0, 1, "rankingsListNumericColumn");
+	}
+	
+	/**
+	 * Adds a {@link UserRanking} to the UI table
+	 * @param newRanking
+	 */
+	private void addRankingToFlexTable(UserRanking newRanking) {
 		
 		int row = rankingsFlexTable.getRowCount();
 	    rankings.add(newRanking);
@@ -93,16 +87,37 @@ public class RuzenaFit_Server implements EntryPoint {
 	    
 	}
 	
+	/**
+	 * Helper method that simply runs the Async callback of the Rankings servlet.
+	 */
 	private void loadRankings() {
 		rankingService.getRankings(new AsyncCallback<UserRanking[]>() {
 			
 			@SuppressWarnings("deprecation")
 			@Override
 			public void onSuccess(UserRanking[] result) {
+
+				// Sort the array, based on the user's score
+				Arrays.sort(result, new Comparator<UserRanking>() {
+					@Override
+					public int compare(UserRanking o1, UserRanking o2) {
+						return ((Float)o2.getScore()).compareTo((Float)o1.getScore());
+					}
+				});
+				
+				// Clear out all of the rows, then re-setup the flex table
+				rankingsFlexTable.removeAllRows();
+				setupFlexTable();
+				
+				// Fill up the new table, and the internal array
+				rankings = new ArrayList<UserRanking>(result.length);
 				for (UserRanking ranking : result) {
-					addRanking(ranking);
+					rankings.add(ranking);
+					addRankingToFlexTable(ranking);
 				}
-				lastUpdatedLabel.setText("Last update : "
+				
+				// Let the user know about the refresh
+				lastUpdatedLabel.setText("Last updated at: "
 						+ DateTimeFormat.getMediumDateTimeFormat().format(new Date()));
 			}
 			
