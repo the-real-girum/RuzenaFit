@@ -1,5 +1,31 @@
 /** Add css rules here for your application. */
 
+/* Formatting specific to the StockWatcher application */
+body {
+	padding: 10px;
+}
+
+
+/* stock list header row */
+.rankingsListHeader {
+	background-color: #2062B8;
+	color: white;
+	font-style: italic;
+	align: center;
+}
+
+/* stock list flex table */
+.rankingsList {
+  border: 1px solid silver;
+  padding: 2px;
+  margin-bottom:6px;
+}
+
+/* stock list Price and Change fields */
+.rankingsListNumericColumn {
+  text-align: right;
+  width:8em;
+}
 
 /** Example rules used by the template application (remove for your app) */
 h1 {
