@@ -30,13 +30,13 @@
 
 	<!-- Servlets -->
 	<servlet>
-		<servlet-name>greetServlet</servlet-name>
-		<servlet-class>edu.berkeley.eecs.ruzenafit.GreetingServiceImpl</servlet-class>
+		<servlet-name>rankingServiceImpl</servlet-name>
+		<servlet-class>edu.berkeley.eecs.ruzenafit.client.RankingServiceImpl</servlet-class>
 	</servlet>
 
 	<servlet-mapping>
-		<servlet-name>greetServlet</servlet-name>
-		<url-pattern>/ruzenafit_server/greet</url-pattern>
+		<servlet-name>rankingServiceImpl</servlet-name>
+		<url-pattern>/ruzenafit_server/rankings</url-pattern>
 	</servlet-mapping>
 
 	<!-- Default page to serve -->

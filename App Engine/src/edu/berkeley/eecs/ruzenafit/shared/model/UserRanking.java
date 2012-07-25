@@ -1,6 +1,8 @@
 package edu.berkeley.eecs.ruzenafit.shared.model;
 
-public class UserRanking {
+import java.io.Serializable;
+
+public class UserRanking implements Serializable {
 
 	public static final String USER_NAME = "userName";
 	public static final String POINT_TOTAL = "pointTotal";
@@ -32,6 +34,16 @@ public class UserRanking {
 
 	public void setScore(float score) {
 		this.score = score;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof UserRanking))
+			return false;
+		
+		UserRanking userRanking = (UserRanking) obj;
+		return userRanking.name.equals(this.name) &&
+				userRanking.score == this.score;
 	}
 
 	public static String convertImeiToUsername(String imei) {
