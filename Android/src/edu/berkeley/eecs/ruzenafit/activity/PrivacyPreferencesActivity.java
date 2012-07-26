@@ -107,8 +107,6 @@ public class PrivacyPreferencesActivity extends Activity {
 				privacyPreference.toString());
 		editor.commit();
 
-		// FIXME: Tell Aaron that variable tick rate won't happen, and is
-		// probably not a good idea.
 		// switch (privacyPreference) {
 		// case highPrivacy:
 		// Constants.setUPDATE_FREQUENCY(3600000); // one hour

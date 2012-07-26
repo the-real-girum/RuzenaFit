@@ -10,8 +10,11 @@ import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Query;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
+import edu.berkeley.eecs.ruzenafit.shared.model.UserData;
 import edu.berkeley.eecs.ruzenafit.shared.model.UserRanking;
 
+// TODO: This service isn't DRY against the servlets that we already have.  This class
+// and the servlets need to reference some common methods.
 public class RankingServiceImpl extends RemoteServiceServlet implements RankingService {
 	
 	private static final long serialVersionUID = 1L;
@@ -41,6 +44,20 @@ public class RankingServiceImpl extends RemoteServiceServlet implements RankingS
 		}
 		
 		return rankings.toArray(new UserRanking[rankings.size()]);
+	}
+	
+	/**
+	 * Returns an array of arrays of LatLngs, one for each user.
+	 */
+	public UserData[] getUserLocations() {
+		// FIXME: Make this actually retrieve user location data from datastore.
+		
+		// TODO: Retrieve location data from datastore for each user
+		
+		// TODO: For each user, add a new (different colored) overlay showing the
+		// locations that they were at.
+		
+		return null;
 	}
 	
 }
