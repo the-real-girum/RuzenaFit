@@ -1,11 +1,12 @@
 package edu.berkeley.eecs.ruzenafit.shared.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import javax.persistence.Id;
 
 
-public class UserData {
+public class UserData implements Serializable {
 
 	@Id
 	private String username;

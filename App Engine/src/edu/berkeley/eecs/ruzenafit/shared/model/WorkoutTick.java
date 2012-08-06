@@ -1,7 +1,11 @@
 package edu.berkeley.eecs.ruzenafit.shared.model;
 
+import java.io.Serializable;
+
 import javax.persistence.Id;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 
 /**
@@ -13,7 +17,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * 
  */
 @XmlRootElement(name = "workoutTick")
-public class WorkoutTick {
+public class WorkoutTick implements Serializable {
 	public static final String KEY_KCALS = "delta_kcals";				//
 	public static final String KEY_SYSTEM_TIME = "system_time";			//
 	public static final String KEY_LATITUDE = "latitude";				//
@@ -28,7 +32,9 @@ public class WorkoutTick {
 	public static final String KEY_PRIVACY_SETTING = "privacy_setting";	//
 
 	@Id
+	@JsonIgnore
 	private String facebookName;
+	
 	private long time;
 	private float latitude;
 	private float longitude;

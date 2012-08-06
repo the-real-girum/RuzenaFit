@@ -1,2 +1,2 @@
 serviceClass: edu.berkeley.eecs.ruzenafit.client.RankingService
-path: C430524277751258D2B32A49DF3728F6.gwt.rpc
+path: 5F77529E28CFD3FBFA61C47659B2C512.gwt.rpc
