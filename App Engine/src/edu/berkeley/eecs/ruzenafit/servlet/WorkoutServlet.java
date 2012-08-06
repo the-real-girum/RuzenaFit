@@ -2,7 +2,6 @@ package edu.berkeley.eecs.ruzenafit.servlet;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
@@ -30,7 +29,6 @@ import edu.berkeley.eecs.ruzenafit.shared.model.WorkoutTick;
 
 @Path("/workout")
 public class WorkoutServlet {
-	private static final Logger log = Logger.getLogger(WorkoutServlet.class.getName());
 	
 	/**
 	 * Returns all WorkoutTick data for a particular user.
@@ -104,6 +102,7 @@ public class WorkoutServlet {
 
 			// Step through each of the 
 			WorkoutTick workoutTick = new WorkoutTick(
+					imei,
 					workoutObject.get(WorkoutTick.KEY_GPS_TIME).getAsLong(), 
 					workoutObject.get(WorkoutTick.KEY_LATITUDE).getAsFloat(), 
 					workoutObject.get(WorkoutTick.KEY_LONGITUDE).getAsFloat(), 
@@ -186,6 +185,7 @@ public class WorkoutServlet {
 		WorkoutTick[] allWorkoutTicks = new WorkoutTick[3];
 
 		WorkoutTick workoutTick1 = new WorkoutTick(
+				"test imei 1",
 				-99, 
 				-99,
 				-99, 
@@ -199,6 +199,7 @@ public class WorkoutServlet {
 				-99,
 				PrivacyPreferenceEnum.highPrivacy.toString());
 		WorkoutTick workoutTick2 = new WorkoutTick(
+				"test imei 2",
 				-99, 
 				-99,
 				-99, 
@@ -212,6 +213,7 @@ public class WorkoutServlet {
 				-99,
 				PrivacyPreferenceEnum.mediumPrivacy.toString());
 		WorkoutTick workoutTick3 = new WorkoutTick(
+				"test imei 3",
 				-99, 
 				-99,
 				-99, 

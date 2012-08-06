@@ -1,11 +1,26 @@
 package edu.berkeley.eecs.ruzenafit.shared.model;
 
-import com.google.gwt.maps.client.geom.LatLng;
+import java.util.ArrayList;
+
+import javax.persistence.Id;
+
 
 public class UserData {
 
+	@Id
 	private String username;
-	private LatLng[] locations;
+	private ArrayList<WorkoutTick> locations;
+
+	public UserData() {
+		super();
+		this.locations = new ArrayList<WorkoutTick>();
+	}
+
+	public UserData(String username, ArrayList<WorkoutTick> locations) {
+		super();
+		this.username = username;
+		this.locations = locations;
+	}
 
 	public String getUsername() {
 		return username;
@@ -15,11 +30,11 @@ public class UserData {
 		this.username = username;
 	}
 
-	public LatLng[] getLocations() {
+	public ArrayList<WorkoutTick> getLocations() {
 		return locations;
 	}
 
-	public void setLocations(LatLng[] locations) {
+	public void setLocations(ArrayList<WorkoutTick> locations) {
 		this.locations = locations;
 	}
 }

@@ -5,7 +5,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import edu.berkeley.eecs.ruzenafit.shared.model.PrivacyPreferenceEnum;
 import edu.berkeley.eecs.ruzenafit.shared.model.WorkoutTick;
 
 /**
@@ -19,6 +18,6 @@ public class HelloWorldSample {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public WorkoutTick sayXMLHello() {
-		return new WorkoutTick(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "l");
+		return new WorkoutTick("test imei", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "l");
 	}
 }

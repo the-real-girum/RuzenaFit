@@ -28,6 +28,7 @@ import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
+import edu.berkeley.eecs.ruzenafit.shared.model.UserData;
 import edu.berkeley.eecs.ruzenafit.shared.model.UserRanking;
 
 public class RuzenaFit_Server implements EntryPoint {
@@ -80,6 +81,28 @@ public class RuzenaFit_Server implements EntryPoint {
 				buildMapUI();
 			}
 		});
+		
+		loadKeys();
+	}
+	
+	private void loadKeys() {
+		rankingService.getUserLocations(new AsyncCallback<UserData[]>() {
+
+			@Override
+			public void onSuccess(UserData[] result) {
+				GWT.log("Retrieved " + result.length + " keys");
+				for (UserData data : result) {
+					GWT.log("User key: " + data.getUsername() + ", with " + data.getLocations().size() + " workout ticks");
+				}
+				Window.alert("Retrieved " + result.length + " sets of user data: " + result[0].getUsername());
+			}
+			
+			@Override	
+			public void onFailure(Throwable caught) {
+				Window.alert("Failed to retrieve user data: " + caught.getMessage());
+			}
+
+		});
 	}
 
 	/**
@@ -111,13 +134,8 @@ public class RuzenaFit_Server implements EntryPoint {
 		rankingsFlexTable.setText(row, 1,
 				((Integer) (int) newRanking.getScore()).toString());
 
-		// rankingsFlexTable.getCellFormatter().addStyleName(row, 0,
-		// "rankingsListNumericColumn");
 		rankingsFlexTable.getCellFormatter().addStyleName(row, 1,
 				"rankingsListNumericColumn");
-		// rankingsFlexTable.getCellFormatter().addStyleName(row, 2,
-		// "rankingsListNumericColumn");
-
 	}
 
 	/**
@@ -212,8 +230,8 @@ public class RuzenaFit_Server implements EntryPoint {
 //			points[i] = LatLng.newInstance(southWest.getLatitude() + latSpan
 //					* Math.random(),
 //					southWest.getLongitude() + lngSpan * Math.random());
-			GWT.log("points[" + i + "] = " + points[i] + " z-index = "
-					+ Marker.getZIndex(points[i].getLatitude()), null);
+//			GWT.log("points[" + i + "] = " + points[i] + " z-index = "
+//					+ Marker.getZIndex(points[i].getLatitude()), null);
 		}
 
 		// Add a polyline with NUM_POINTS random points. Sort the points by

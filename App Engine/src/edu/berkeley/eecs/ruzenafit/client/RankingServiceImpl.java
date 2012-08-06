@@ -1,7 +1,9 @@
 package edu.berkeley.eecs.ruzenafit.client;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -12,6 +14,7 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 import edu.berkeley.eecs.ruzenafit.shared.model.UserData;
 import edu.berkeley.eecs.ruzenafit.shared.model.UserRanking;
+import edu.berkeley.eecs.ruzenafit.shared.model.WorkoutTick;
 
 // TODO: This service isn't DRY against the servlets that we already have.  This class
 // and the servlets need to reference some common methods.
@@ -46,18 +49,34 @@ public class RankingServiceImpl extends RemoteServiceServlet implements RankingS
 		return rankings.toArray(new UserRanking[rankings.size()]);
 	}
 	
+	// FIXME: Make this actually retrieve user location data from datastore.
 	/**
 	 * Returns an array of arrays of LatLngs, one for each user.
 	 */
 	public UserData[] getUserLocations() {
-		// FIXME: Make this actually retrieve user location data from datastore.
+		// Retrieve all user rankings from Google Datastore
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+		Query query = new Query("WorkoutTick");
 		
-		// TODO: Retrieve location data from datastore for each user
+		// Execute the actual query for WorkoutTick entities
+		List<Entity> workoutRankingEntities = datastore.prepare(query).asList(
+				FetchOptions.Builder.withDefaults());
 		
-		// TODO: For each user, add a new (different colored) overlay showing the
-		// locations that they were at.
+		Set<String> imeis = new HashSet<String>(workoutRankingEntities.size());
+		for (Entity workoutEntity : workoutRankingEntities) {
+			imeis.add(workoutEntity.getKey().getParent().getName());
+			List<WorkoutTick> workoutTicks = new ArrayList<WorkoutTick>();
+			return new UserData[] { new UserData(workoutEntity.getKey().getParent().getName(), (ArrayList<WorkoutTick>) workoutTicks) };
+		}
 		
-		return null;
+		List<UserData> userdataList = new ArrayList<UserData>();
+		for (String imei : imeis) {
+			UserData userData = new UserData();
+			userData.setUsername(imei);
+			userdataList.add(userData);
+		}
+		
+		return userdataList.toArray(new UserData[userdataList.size()]);
 	}
 	
 }

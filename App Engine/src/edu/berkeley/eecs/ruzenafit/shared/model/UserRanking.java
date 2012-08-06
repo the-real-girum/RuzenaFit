@@ -1,12 +1,14 @@
 package edu.berkeley.eecs.ruzenafit.shared.model;
 
-import java.io.Serializable;
+import javax.persistence.Id;
 
-public class UserRanking implements Serializable {
+
+public class UserRanking {
 
 	public static final String USER_NAME = "userName";
 	public static final String POINT_TOTAL = "pointTotal";
 	
+	@Id
 	private String name;
 	private float score;
 

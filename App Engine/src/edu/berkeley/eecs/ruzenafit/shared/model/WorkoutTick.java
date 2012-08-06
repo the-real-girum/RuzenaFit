@@ -1,5 +1,9 @@
 package edu.berkeley.eecs.ruzenafit.shared.model;
 
+import javax.persistence.Id;
+import javax.xml.bind.annotation.XmlRootElement;
+
+
 /**
  * A model for each particular save point of a Workout. There is exactly one of
  * these for each "tick" of the app. This also means that there is exactly one
@@ -8,9 +12,8 @@ package edu.berkeley.eecs.ruzenafit.shared.model;
  * @author gibssa
  * 
  */
+@XmlRootElement(name = "workoutTick")
 public class WorkoutTick {
-	private final static String TAG = WorkoutTick.class.getSimpleName();
-
 	public static final String KEY_KCALS = "delta_kcals";				//
 	public static final String KEY_SYSTEM_TIME = "system_time";			//
 	public static final String KEY_LATITUDE = "latitude";				//
@@ -24,6 +27,8 @@ public class WorkoutTick {
 	public static final String KEY_GPS_TIME = "gps_time";				//
 	public static final String KEY_PRIVACY_SETTING = "privacy_setting";	//
 
+	@Id
+	private String facebookName;
 	private long time;
 	private float latitude;
 	private float longitude;
@@ -36,16 +41,17 @@ public class WorkoutTick {
 	private double accumMinuteV;
 	private double accumMinuteH;
 	private String privacySetting;
-
+	
 	public WorkoutTick() {
 		super();
 	}
-	
-	public WorkoutTick(long time, float latitude, float longitude,
-			float altitude, float speed, float hasAccuracy, float accuracy,
-			long systemTime, float kCal, double accumMinuteV,
+
+	public WorkoutTick(String facebookName, long time, float latitude,
+			float longitude, float altitude, float speed, float hasAccuracy,
+			float accuracy, long systemTime, float kCal, double accumMinuteV,
 			double accumMinuteH, String privacySetting) {
 		super();
+		this.facebookName = facebookName;
 		this.time = time;
 		this.latitude = latitude;
 		this.longitude = longitude;
@@ -59,25 +65,14 @@ public class WorkoutTick {
 		this.accumMinuteH = accumMinuteH;
 		this.privacySetting = privacySetting;
 	}
-	
-//	public WorkoutTick(long time, float latitude, float longitude,
-//			float altitude, float speed, float hasAccuracy, float accuracy,
-//			long systemTime, float kCal, double accumMinuteV,
-//			double accumMinuteH, String privacySetting) {
-//		super();
-//		this.time = time;
-//		this.latitude = latitude;
-//		this.longitude = longitude;
-//		this.altitude = altitude;
-//		this.speed = speed;
-//		this.hasAccuracy = hasAccuracy;
-//		this.accuracy = accuracy;
-//		this.systemTime = systemTime;
-//		this.kCal = kCal;
-//		this.accumMinuteV = accumMinuteV;
-//		this.accumMinuteH = accumMinuteH;
-//		this.privacySetting = findPrivacyEnumType(privacySetting);
-//	}
+
+	public String getFacebookName() {
+		return facebookName;
+	}
+
+	public void setFacebookName(String facebookName) {
+		this.facebookName = facebookName;
+	}
 
 	public long getTime() {
 		return time;

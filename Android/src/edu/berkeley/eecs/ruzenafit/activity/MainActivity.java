@@ -11,6 +11,7 @@ import edu.berkeley.eecs.ruzenafit.R;
 import edu.berkeley.eecs.ruzenafit.util.AndroidUtils;
 import edu.berkeley.eecs.ruzenafit.util.Constants;
 
+// TODO: The GUI for this activity is gross.  At least make the buttons the same size.
 public class MainActivity extends Activity {
 
 	@SuppressWarnings("unused")
