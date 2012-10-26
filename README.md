@@ -5,6 +5,8 @@ Research project for UC Berkeley's TRUST-REU program.  "How can we incentivize u
 
 Working under Professor Ruzena Bajcsy <http://www.eecs.berkeley.edu/Faculty/Homepages/bajcsy.html>.
 
+TODO: Refactor Datastore access to use Objectify as opposed to the low-level Datastore API (see the project "hang" for reference).
+
 
 General Overview of App (for Aaron)
 =======================
